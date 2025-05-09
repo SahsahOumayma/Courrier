@@ -1,0 +1,211 @@
+body {
+    margin: 0;
+    font-family: "Times New Roman", Times, serif;
+    background: #fefefe;
+    color: #333;
+    scroll-behavior: smooth;
+  }
+  
+  /* --------- HERO SECTION --------- */
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: url("https://www.telos-eu.com/medias/articles/medecine.png") no-repeat center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(2px);
+    background-color: rgba(0, 0, 0, 0.55);
+    z-index: 1;
+  }
+  
+  /* --------- LOGIN PAGE --------- */
+  .login-page {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    max-width: 850px;
+    width: 100%;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    height: 440px;
+  }
+  
+  .login-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+  }
+  
+  .login-left img {
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+  }
+  
+  /* --------- RIGHT SIDE FORM --------- */
+  .login-right {
+    flex: 1;
+    background-color: #0052A5;
+    color: white;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login-right h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-family: "Times New Roman", Times, serif;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  /* --------- INPUTS --------- */
+  .input-icon {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    margin: 10px 0;
+  }
+  
+  .input-icon i {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #555;
+    font-size: 15px;
+  }
+  
+  .input-icon input {
+    width: 100%;
+    padding: 10px 10px 10px 36px;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+    font-family: "Times New Roman", Times, serif;
+    background-color: #fff;
+    color: #333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input-icon input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #4fa1f1;
+  }
+  
+  /* --------- CHECKBOX --------- */
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    font-size: 17px;
+    color: #eee;
+    max-width: 340px;
+    width: 100%;
+    font-family: "Times New Roman", Times, serif;
+  }
+  
+  .remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+  
+  /* --------- BUTTON --------- */
+  .login-form button {
+    width: 100%;
+    max-width: 340px; 
+    padding: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: #003974;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+  
+  .login-form button:hover {
+    background-color: #002b57;
+  }
+  
+  /* --------- LINKS --------- */
+  .extra-links {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 340px;
+    font-size: 17px;
+    margin-top: 15px;
+    font-family: "Times New Roman", Times, serif;
+  }
+  
+  .extra-links a {
+    color: #ffffff;
+    text-decoration: none;
+  }
+  
+  .extra-links a:hover {
+    text-decoration: underline;
+  }
+  
+  /* --------- RESPONSIVE --------- */
+  @media (max-width: 768px) {
+    .hero {
+      padding: 20px;
+      min-height: auto;
+    }
+  
+    .login-page {
+      flex-direction: column;
+      max-width: 90%;
+      height: auto;
+    }
+  
+    .login-left,
+    .login-right {
+      padding: 20px;
+    }
+  
+    .login-form button {
+      width: 100%;
+    }
+  
+    .extra-links {
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+  }
+  

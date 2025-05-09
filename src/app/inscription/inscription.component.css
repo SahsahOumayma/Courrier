@@ -1,0 +1,181 @@
+body {
+  margin: 0;
+  font-family: "Times New Roman", Times, serif;
+  background: #fefefe;
+  color: #333;
+}
+
+/* --------- BACKGROUND --------- */
+.register {
+  height: 100vh;
+  background: url("https://www.telos-eu.com/medias/articles/medecine.png")
+    no-repeat center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.register::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 1;
+}
+
+/* --------- CONTAINER --------- */
+.register-container {
+  position: relative;
+  z-index: 2;
+  background-color: #ffffffee;
+  display: flex;
+  width: 90%;
+  max-width: 850px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* --------- LEFT (IMAGE) --------- */
+.register-left {
+  flex: 1;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.register-left img {
+  max-width: 90%;
+  max-height: 90%;
+  width: 100%; 
+  height: auto;
+  object-fit: cover;
+}
+
+
+/* --------- RIGHT (FORM) --------- */
+.register-right {
+  flex: 1;
+  background-color: #0052a5;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+}
+
+.register-right h2 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+}
+
+/* --------- FORM --------- */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.input-icon {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+}
+
+.input-icon i {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #666;
+  font-size: 16px;
+}
+
+.input-icon input {
+  width: 100%;
+  padding: 10px 10px 10px 36px;
+  border-radius: 6px;
+  border: none;
+  font-size: 17px;
+  font-family: "Times New Roman", Times, serif;
+  background-color: #fff;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-icon input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #4fa1f1;
+}
+
+/* --------- SUBMIT BUTTON --------- */
+.register-form button {
+  width: 100%;
+  max-width: 340px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  background-color: #003974;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.register-form button:hover {
+  background-color: #002b57;
+}
+
+/* --------- LINK BELOW FORM --------- */
+.login-link {
+  margin-top: 14px;
+  font-size: 15px;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.login-link a {
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* --------- RESPONSIVE --------- */
+@media (max-width: 768px) {
+  .register {
+    padding: 20px;
+    height: auto;
+  }
+
+  .register-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .register-left,
+  .register-right {
+    padding: 20px;
+  }
+
+  .register-form button {
+    width: 100%;
+  }
+
+  .input-icon {
+    max-width: 100%;
+  }
+}
