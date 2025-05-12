@@ -1,0 +1,120 @@
+<section class="p-8 bg-gradient-to-b from-sky-50 to-white rounded-3xl shadow-xl">
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+    <h2 class="text-2xl font-bold text-sky-800 flex items-center">
+      <i data-feather="inbox" class="w-6 h-6 mr-2 text-sky-600"></i>
+      Courriers Arrivés
+    </h2>
+
+    <div class="flex flex-col md:flex-row gap-2 md:items-center">
+      <!-- Tri -->
+      <div class="flex items-center gap-2">
+        <label for="tri" class="text-sm font-medium text-gray-600">Trier par :</label>
+        <select id="tri"
+                [(ngModel)]="selectedTri"
+                (change)="trierCourriers()"
+                class="px-3 py-2 text-sm rounded-lg border border-gray-300 shadow-sm">
+          <option value="urgence">Niveau d'urgence</option>
+          <option value="alphabetique">Ordre alphabétique</option>
+          <option value="date">Date d'arrivée</option>
+        </select>
+      </div>
+
+      <!-- Filtre statut -->
+      <div class="flex items-center gap-2">
+        <label for="filtre" class="text-sm font-medium text-gray-600">Statut :</label>
+        <select id="filtre"
+                [(ngModel)]="filtreStatut"
+                class="px-3 py-2 text-sm rounded-lg border border-gray-300 shadow-sm">
+          <option value="tous">Tous</option>
+          <option value="En cours">En cours</option>
+          <option value="Traité">Traité</option>
+          <option value="Non traité">Non traité</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau -->
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
+      <thead class="text-xs uppercase text-gray-600">
+        <tr>
+          <th class="bg-white px-4 py-3 rounded-l-xl">N°</th>
+          <th class="bg-white px-4 py-3">Objet</th>
+          <th class="bg-white px-4 py-3">Expéditeur</th>
+          <th class="bg-white px-4 py-3">Date arrivée</th>
+          <th class="bg-white px-4 py-3">Urgence</th>
+          <th class="bg-white px-4 py-3">Confid.</th>
+          <th class="bg-white px-4 py-3">Statut</th>
+          <th class="bg-white px-4 py-3">Service</th>
+          <th class="bg-white px-4 py-3">Réf. réponse</th>
+          <th class="bg-white px-4 py-3">Date réponse</th>
+          <th class="bg-white px-4 py-3">Description</th>
+          <th class="bg-white px-4 py-3 rounded-r-xl">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let courrier of courriers | statutFiltre:filtreStatut"
+            [ngClass]="{
+              'bg-red-50': courrier.urgence === 'Élevé',
+              'bg-white': courrier.urgence !== 'Élevé'
+            }"
+            class="shadow-sm hover:shadow-md transition rounded-xl">
+          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ courrier.numero }}</td>
+          <td class="px-4 py-4">{{ courrier.objet }}</td>
+          <td class="px-4 py-4">{{ courrier.expediteur }}</td>
+          <td class="px-4 py-4">{{ courrier.dateArrivee }}</td>
+
+          <!-- Urgence -->
+          <td class="px-4 py-4">
+            <span
+              class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
+              [ngClass]="{
+                'bg-red-500 text-white': courrier.urgence === 'Élevé',
+                'bg-yellow-100 text-yellow-800': courrier.urgence === 'Moyen',
+                'bg-green-100 text-green-800': courrier.urgence === 'Faible'
+              }">
+              {{ courrier.urgence }}
+            </span>
+          </td>
+
+          <td class="px-4 py-4">{{ courrier.confidentialite }}</td>
+
+          <!-- Statut -->
+          <td class="px-4 py-4">
+            <span
+              class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
+              [ngClass]="{
+                'bg-yellow-100 text-yellow-800': courrier.statut === 'En cours',
+                'bg-green-100 text-green-800': courrier.statut === 'Traité',
+                'bg-gray-200 text-gray-700': courrier.statut === 'Non traité'
+              }">
+              {{ courrier.statut }}
+            </span>
+          </td>
+
+          <td class="px-4 py-4">{{ courrier.service }}</td>
+          <td class="px-4 py-4">{{ courrier.numeroReponse }}</td>
+          <td class="px-4 py-4">{{ courrier.dateReponse }}</td>
+          <td class="px-4 py-4">{{ courrier.description }}</td>
+
+          <!-- Action -->
+          <td class="px-4 py-4 rounded-r-xl">
+            <div class="flex flex-wrap gap-2">
+              <a [routerLink]="['/arrivee/details', courrier.numero]"
+   [state]="{ courrier: courrier }"
+   class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
+   Voir
+</a>
+
+              <button (click)="telechargerPDF(courrier)"
+                      class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
+                Télécharger
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

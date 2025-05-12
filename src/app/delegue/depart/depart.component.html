@@ -1,0 +1,49 @@
+<section class="p-8 bg-gradient-to-b from-sky-50 to-white rounded-3xl shadow-xl">
+  <h2 class="text-2xl font-bold text-sky-800 mb-6 flex items-center">
+    <i data-feather="arrow-up-circle" class="w-6 h-6 mr-2 text-sky-600"></i>
+    Courriers Départs
+  </h2>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
+      <thead class="text-xs uppercase text-gray-600">
+        <tr>
+          <th class="bg-white px-4 py-3 rounded-l-xl">N°</th>
+          <th class="bg-white px-4 py-3">Objet</th>
+          <th class="bg-white px-4 py-3">Destinataire</th>
+          <th class="bg-white px-4 py-3">Date envoi</th>
+          <th class="bg-white px-4 py-3">Réf. réponse</th>
+          <th class="bg-white px-4 py-3">Date réponse</th>
+          <th class="bg-white px-4 py-3">Description</th>
+          <th class="bg-white px-4 py-3 rounded-r-xl">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let courrier of courriers"
+            class="shadow-sm hover:shadow-md transition rounded-xl bg-white">
+          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ courrier.numero }}</td>
+          <td class="px-4 py-4">{{ courrier.objet }}</td>
+          <td class="px-4 py-4">{{ courrier.recepteur }}</td>
+          <td class="px-4 py-4">{{ courrier.dateEnvoi }}</td>
+          <td class="px-4 py-4">{{ courrier.numeroReponse || '—' }}</td>
+          <td class="px-4 py-4">{{ courrier.dateReponse || '—' }}</td>
+          <td class="px-4 py-4">{{ courrier.description }}</td>
+          <td class="px-4 py-4 rounded-r-xl">
+            <div class="flex flex-wrap gap-2">
+              <a [routerLink]="['/depart/details', courrier.numero]"
+   [state]="{ courrier: courrier }"
+   class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
+   Voir
+</a>
+
+              <button (click)="telechargerPDF(courrier)"
+                      class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
+                Télécharger
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
