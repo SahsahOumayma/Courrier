@@ -4,6 +4,33 @@
     Courriers Départs
   </h2>
 
+  <!-- Barre de recherche compacte + filtre destinataire + pagination size -->
+  <div class="mb-6 flex flex-wrap gap-4 items-center">
+    <!-- Recherche générale -->
+    <input
+      type="text"
+      [(ngModel)]="filterText"
+      placeholder="Rechercher..."
+      class="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+    />
+    <!-- Filtre destinataire -->
+    <select
+      [(ngModel)]="filterRecepteur"
+      class="w-56 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+    >
+      <option value="">Tous destinataires</option>
+      <option *ngFor="let r of destinataires" [value]="r">{{ r }}</option>
+    </select>
+    <!-- Sélecteur nombre de lignes -->
+    <select
+      [(ngModel)]="pageSize"
+      (change)="onPageSizeChange(pageSize)"
+      class="w-48 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+    >
+      <option *ngFor="let opt of pageOptions" [value]="opt">{{ opt }} / page</option>
+    </select>
+  </div>
+
   <div class="overflow-x-auto">
     <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
       <thead class="text-xs uppercase text-gray-600">
@@ -19,31 +46,34 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let courrier of courriers"
-            class="shadow-sm hover:shadow-md transition rounded-xl bg-white">
-          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ courrier.numero }}</td>
-          <td class="px-4 py-4">{{ courrier.objet }}</td>
-          <td class="px-4 py-4">{{ courrier.recepteur }}</td>
-          <td class="px-4 py-4">{{ courrier.dateEnvoi }}</td>
-          <td class="px-4 py-4">{{ courrier.numeroReponse || '—' }}</td>
-          <td class="px-4 py-4">{{ courrier.dateReponse || '—' }}</td>
-          <td class="px-4 py-4">{{ courrier.description }}</td>
+        <tr *ngFor="let courrier of paginatedCourriers" class="shadow-sm hover:shadow-md transition rounded-xl bg-white">
+          <td class="px-4 py-4 font-semibold rounded-l-xl">{{courrier.numero}}</td>
+          <td class="px-4 py-4">{{courrier.objet}}</td>
+          <td class="px-4 py-4">{{courrier.recepteur}}</td>
+          <td class="px-4 py-4">{{courrier.dateEnvoi}}</td>
+          <td class="px-4 py-4">{{courrier.numeroReponse||'—'}}</td>
+          <td class="px-4 py-4">{{courrier.dateReponse||'—'}}</td>
+          <td class="px-4 py-4">{{courrier.description}}</td>
           <td class="px-4 py-4 rounded-r-xl">
             <div class="flex flex-wrap gap-2">
-              <a [routerLink]="['/depart/details', courrier.numero]"
-   [state]="{ courrier: courrier }"
-   class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
-   Voir
-</a>
-
-              <button (click)="telechargerPDF(courrier)"
-                      class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
-                Télécharger
-              </button>
+              <a [routerLink]="['/depart/details', courrier.numero]" [state]="{courrier}" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">Voir</a>
+              <button (click)="telechargerPDF(courrier)" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">Télécharger</button>
             </div>
           </td>
         </tr>
+        <tr *ngIf="filteredCourriers.length===0">
+          <td colspan="8" class="text-center py-4 text-gray-500">Aucun courrier trouvé.</td>
+        </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="mt-4 flex justify-between items-center">
+    <button (click)="prevPage()" [disabled]="currentPage===1" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">Précédent</button>
+    <div class="space-x-1">
+      <button *ngFor="let p of totalPagesArray" (click)="changePage(p)" [class.font-bold]="currentPage===p" class="px-3 py-1 bg-white rounded shadow-sm hover:bg-gray-100">{{p}}</button>
+    </div>
+    <button (click)="nextPage()" [disabled]="currentPage===totalPages" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">Suivant</button>
   </div>
 </section>

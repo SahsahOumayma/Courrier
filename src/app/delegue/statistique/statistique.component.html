@@ -1,0 +1,71 @@
+<!-- statistics.component.html -->
+<div class="mx-auto max-w-7xl space-y-8">
+
+  <!-- Cards summary -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Total employés (indigo icon) -->
+    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+      <div class="p-3 bg-indigo-100 rounded-full mr-4">
+        <i data-feather="users" class="w-6 h-6 text-indigo-600"></i>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Total employés</p>
+        <p class="text-2xl font-semibold">24</p>
+      </div>
+    </div>
+
+    <!-- Services actifs (purple icon) -->
+    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+      <div class="p-3 bg-purple-100 rounded-full mr-4">
+        <i data-feather="briefcase" class="w-6 h-6 text-purple-600"></i>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Services actifs</p>
+        <p class="text-2xl font-semibold">8</p>
+      </div>
+    </div>
+
+    <!-- Courriers urgents (red icon) -->
+    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+      <div class="p-3 bg-red-100 rounded-full mr-4">
+        <i data-feather="alert-circle" class="w-6 h-6 text-red-600"></i>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Courriers urgents</p>
+        <p class="text-2xl font-semibold">5</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly trend & pie -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow">
+      <h3 class="text-lg font-semibold mb-4">Tendance mensuelle</h3>
+      <canvas #monthlyStatsChart height="100"></canvas>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow flex flex-col items-center">
+      <h3 class="text-lg font-semibold mb-4">Confidentialité</h3>
+      <canvas #confidentialityChart width="150" height="150"></canvas>
+    </div>
+  </div>
+
+  <!-- Courriers par service -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-lg font-semibold mb-4">Courriers par service</h3>
+    <canvas #byServiceChart height="100"></canvas>
+  </div>
+
+  <!-- Courriers traités par employé -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-lg font-semibold mb-4">Courriers traités par employé</h3>
+    <canvas #byEmployeeChart height="80"></canvas>
+  </div>
+
+  <!-- Temps moyen de traitement -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-lg font-semibold mb-4">Temps moyen de traitement</h3>
+    <p class="text-2xl font-bold">3.5 jours</p>
+    <p class="text-sm text-gray-600 mt-1">Basé sur les 30 derniers jours</p>
+  </div>
+
+</div>

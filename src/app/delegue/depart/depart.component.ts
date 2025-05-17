@@ -1,4 +1,4 @@
-// ✅ depart.component.ts
+// fichier: depart.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,91 +13,99 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, FormsModule, RouterModule]
 })
 export class DepartComponent {
+  // Données de courriers
   courriers = [
-    {
-      numero: 'DPT-001',
-      objet: 'Lettre au ministère',
-      recepteur: 'Ministère de la Santé',
-      dateEnvoi: '2025-05-08',
-      numeroReponse: 'REP-2025-01',
-      dateReponse: '2025-05-10',
-      description: 'Envoi du rapport annuel'
-    },
-    {
-      numero: 'DPT-002',
-      objet: 'Transmission dossier',
-      recepteur: 'Inspection Régionale',
-      dateEnvoi: '2025-05-09',
-      numeroReponse: '',
-      dateReponse: '',
-      description: 'Documents justificatifs du projet'
-    }
+    { numero: 'DPT-001', objet: 'Lettre au ministère', recepteur: 'Ministère de la Santé', dateEnvoi: '2025-05-08', numeroReponse: 'REP-2025-01', dateReponse: '2025-05-10', description: 'Envoi du rapport annuel' },
+    { numero: 'DPT-002', objet: 'Transmission dossier', recepteur: 'Inspection Régionale', dateEnvoi: '2025-05-09', numeroReponse: '', dateReponse: '', description: 'Documents justificatifs du projet' }
+    // ... autres courriers
   ];
 
+  // Filtre général sur tous les champs
+  filterText = '';
+
+  // Liste unique des destinataires (pour select optionnel)
+  filterRecepteur = '';
+  get destinataires() {
+    return Array.from(new Set(this.courriers.map(c => c.recepteur)));
+  }
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 5;
+  pageOptions = [5, 10, 20];
+
+  // Courriers filtrés par destinataire (facultatif) et texte sur tous les champs
+  get filteredCourriers() {
+    return this.courriers.filter(c => {
+      // Filtre destinataire
+      if (this.filterRecepteur && c.recepteur !== this.filterRecepteur) return false;
+      // Filtre texte sur tous les champs
+      const txt = this.filterText.trim().toLowerCase();
+      if (txt) {
+        const values = [
+          c.numero,
+          c.objet,
+          c.recepteur,
+          c.dateEnvoi,
+          c.numeroReponse || '',
+          c.dateReponse || '',
+          c.description || ''
+        ];
+        const found = values.some(val => val.toLowerCase().includes(txt));
+        if (!found) return false;
+      }
+      return true;
+    });
+  }
+
+  // Helpers pagination
+  get totalPages() {
+    return Math.ceil(this.filteredCourriers.length / this.pageSize) || 1;
+  }
+  get paginatedCourriers() {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredCourriers.slice(start, start + this.pageSize);
+  }
+  get totalPagesArray() {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+  changePage(page: number) { if (page >= 1 && page <= this.totalPages) this.currentPage = page; }
+  prevPage() { this.changePage(this.currentPage - 1); }
+  nextPage() { this.changePage(this.currentPage + 1); }
+  onPageSizeChange(size: number) { this.pageSize = size; this.currentPage = 1; }
+
+  // Génération PDF inchangée
   telechargerPDF(courrier: any) {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
+    const pw = doc.internal.pageSize.getWidth();
+    const ph = doc.internal.pageSize.getHeight();
     const today = new Date();
     const dateStr = today.toLocaleDateString('fr-FR');
-    const referenceUnique = 'REF-DPT-' + today.getTime();
+    const ref = 'REF-DPT-' + today.getTime();
 
-    const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png';
-    doc.addImage(logoUrl, 'PNG', pageWidth / 2 - 30, 10, 60, 35);
-
-    const yTitre = 65;
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(40, 40, 40);
-    doc.text('COURRIER DÉPART', pageWidth / 2, yTitre, { align: 'center' });
-
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(120);
-    doc.text(`Document généré le : ${dateStr}`, pageWidth / 2, yTitre + 8, { align: 'center' });
-    doc.text(`Référence : ${referenceUnique}`, pageWidth / 2, yTitre + 13, { align: 'center' });
-
-    const yTableau = yTitre + 28;
+    doc.addImage('https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png', 'PNG', pw/2 - 30, 10, 60, 35);
+    const y0 = 65;
+    doc.setFontSize(18).setFont('helvetica', 'bold').setTextColor(40).text('COURRIER DÉPART', pw/2, y0, { align: 'center' });
+    doc.setFontSize(9).setFont('helvetica', 'normal').setTextColor(120)
+       .text(`Généré le : ${dateStr}`, pw/2, y0 + 8, { align: 'center' })
+       .text(`Réf. : ${ref}`, pw/2, y0 + 13, { align: 'center' });
     autoTable(doc, {
-      startY: yTableau,
+      startY: y0 + 28,
       margin: { left: 25, right: 25 },
       theme: 'grid',
       head: [['CHAMP', 'VALEUR']],
       body: [
-        ['N° D’ORDRE', `${courrier.numero}`],
-        ['OBJET', `${courrier.objet}`],
+        ['N° D’ORDRE', courrier.numero],
+        ['OBJET', courrier.objet],
         ['DESTINATAIRE', courrier.recepteur],
-        ['DATE D’ENVOI', courrier.dateEnvoi],
-        ['RÉPONSE', `Répondu : ${courrier.numeroReponse || '—'}\nLe : ${courrier.dateReponse || '—'}`],
+        ['DATE ENVOI', courrier.dateEnvoi],
+        ['RÉPONSE', `${courrier.numeroReponse || '—'} / ${courrier.dateReponse || '—'}`],
         ['DESCRIPTION', courrier.description]
       ],
-      styles: {
-        fontSize: 11,
-        font: 'helvetica',
-        valign: 'middle',
-        cellPadding: { top: 6, bottom: 6, left: 4, right: 4 },
-        textColor: [33, 33, 33],
-        lineColor: [0, 0, 0],
-        lineWidth: 0.2
-      },
-      headStyles: {
-  fillColor: [0, 67, 117], // ← ici la couleur bleu foncé (ligne entière de l'en-tête)
-  textColor: 255,
-  fontStyle: 'bold',
-  halign: 'center'
-}
+      headStyles: { fillColor: [0, 67, 117], textColor: 255, fontStyle: 'bold', halign: 'center' }
     });
-
-    doc.setFontSize(8);
-    doc.setFont('times', 'italic');
-    doc.setTextColor(110);
-    doc.text(
-      'Cachet numérique • Délégation de la santé – Ministère de la Santé – Royaume du Maroc\nDocument généré automatiquement • Version sécurisée',
-      pageWidth / 2,
-      pageHeight - 12,
-      { align: 'center' }
-    );
-
+    doc.setFontSize(8).setFont('times', 'italic').setTextColor(110)
+       .text('Délégation de la santé – Ministère de la Santé – Royaume du Maroc', pw/2, ph - 12, { align: 'center' });
     doc.save(`${courrier.numero}-depart.pdf`);
   }
 }

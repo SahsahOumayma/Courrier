@@ -15,12 +15,18 @@ import * as feather from 'feather-icons';
 })
 export class DelegueComponent implements AfterViewInit {
   showConsulter = false;
+  sidebarOpen = false;
+  toggleSidebar() {
+  this.sidebarOpen = !this.sidebarOpen;
+}
 
-  ngAfterViewInit(): void {
-    feather.replace();
+  ngAfterViewInit() {
+    feather.replace();           // remplace les icônes au premier chargement
   }
 
-  toggleConsulter(): void {
+  toggleConsulter() {
     this.showConsulter = !this.showConsulter;
+    // un petit délai pour laisser Angular injecter le <ul> dans le DOM…
+    setTimeout(() => feather.replace(), 0);
   }
 }

@@ -1,0 +1,111 @@
+<section class="p-6 sm:p-8 bg-gradient-to-b from-sky-50 to-white rounded-3xl shadow-xl max-w-6xl mx-auto">
+  <h1 class="text-2xl font-bold text-sky-800 mb-8 flex items-center">
+    <i data-feather="user" class="w-6 h-6 mr-2 text-sky-600"></i>
+    Mon profil
+  </h1>
+
+  <!-- Onglets -->
+  <div class="flex flex-wrap gap-3 mb-6">
+    <button
+      class="px-5 py-2 rounded-full text-sm font-medium border transition"
+      [ngClass]="{
+        'bg-sky-600 text-white border-sky-600': ongletActif === 'info',
+        'bg-white text-gray-700 border-gray-300 hover:bg-gray-100': ongletActif !== 'info'
+      }"
+      (click)="changerOnglet('info')">
+      Informations personnelles
+    </button>
+
+    <button
+      class="px-5 py-2 rounded-full text-sm font-medium border transition"
+      [ngClass]="{
+        'bg-sky-600 text-white border-sky-600': ongletActif === 'securite',
+        'bg-white text-gray-700 border-gray-300 hover:bg-gray-100': ongletActif !== 'securite'
+      }"
+      (click)="changerOnglet('securite')">
+      Sécurité
+    </button>
+
+    <button
+      class="px-5 py-2 rounded-full text-sm font-medium border transition"
+      [ngClass]="{
+        'bg-sky-600 text-white border-sky-600': ongletActif === 'preferences',
+        'bg-white text-gray-700 border-gray-300 hover:bg-gray-100': ongletActif !== 'preferences'
+      }"
+      (click)="changerOnglet('preferences')">
+      Préférences
+    </button>
+  </div>
+
+  <!-- Onglet : Infos -->
+  <div *ngIf="ongletActif === 'info'" class="space-y-6">
+    <h2 class="text-lg font-semibold text-sky-700">Détails personnels</h2>
+    <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block mb-1 text-sm text-gray-600">Nom complet</label>
+        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500" value="Jean Dupont" />
+      </div>
+      <div>
+        <label class="block mb-1 text-sm text-gray-600">Email</label>
+        <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500" value="user@example.com" />
+      </div>
+      <div>
+        <label class="block mb-1 text-sm text-gray-600">Téléphone</label>
+        <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500" value="+212600000000" />
+      </div>
+      <div>
+        <label class="block mb-1 text-sm text-gray-600">Département</label>
+        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500" value="RH" />
+      </div>
+    </form>
+    <div class="text-right">
+      <button class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition">Sauvegarder</button>
+    </div>
+  </div>
+
+  <!-- Onglet : Sécurité -->
+  <div *ngIf="ongletActif === 'securite'" class="space-y-6">
+    <h2 class="text-lg font-semibold text-sky-700">Sécurité du compte</h2>
+    <form class="space-y-4">
+      <div>
+        <label class="block text-sm text-gray-600">Mot de passe actuel</label>
+        <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500" />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-gray-600">Nouveau mot de passe</label>
+          <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600">Confirmer le mot de passe</label>
+          <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500" />
+        </div>
+      </div>
+      <div class="text-right">
+        <button class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition">Mettre à jour</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Onglet : Préférences -->
+  <div *ngIf="ongletActif === 'preferences'" class="space-y-6">
+    <h2 class="text-lg font-semibold text-sky-700">Préférences de notification</h2>
+    <form class="space-y-4">
+      <label class="flex items-center gap-3">
+        <input type="checkbox" checked class="h-5 w-5 text-sky-600 border-gray-300 rounded" />
+        <span class="text-gray-600">Recevoir les notifications par email</span>
+      </label>
+      <label class="flex items-center gap-3">
+        <input type="checkbox" class="h-5 w-5 text-sky-600 border-gray-300 rounded" />
+        <span class="text-gray-600">Recevoir les notifications par SMS</span>
+      </label>
+      <label class="flex items-center gap-3">
+        <input type="checkbox" checked class="h-5 w-5 text-sky-600 border-gray-300 rounded" />
+        <span class="text-gray-600">Notifications push de l'application</span>
+      </label>
+      <div class="text-right">
+        <button class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</section>

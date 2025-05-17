@@ -1,121 +1,85 @@
-<div class="flex h-screen bg-blue-50 text-gray-800 font-poppins">
-  <!-- Sidebar -->
-  <aside class="flex flex-col w-72 bg-gradient-to-b from-sky-900 to-sky-700 text-sky-100 p-6">
-    <!-- Logo -->
-    <div class="mb-6 flex justify-center">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png" alt="Ministère Santé" class="h-12" />
-    </div>
-
-    <!-- Recherche -->
-    <div class="mb-6">
-      <input type="text" placeholder="Recherche..." class="w-full px-4 py-2 rounded-lg bg-sky-800 text-sky-200 placeholder-sky-400 focus:bg-sky-700 focus:outline-none transition" />
-    </div>
-
-    <!-- Navigation -->
-    <nav class="flex-1 space-y-2">
-      <a [routerLink]="['/dashboard']"
-         routerLinkActive="bg-white text-sky-900"
-         class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
-        <i data-feather="home" class="w-5 h-5 mr-3"></i>
-        <span>Dashboard</span>
-      </a>
-
-      <!-- Consulter -->
-      <div (click)="toggleConsulter()" class="flex items-center justify-between px-4 py-2 rounded-lg hover:bg-sky-800 cursor-pointer transition">
-        <div class="flex items-center">
-          <i data-feather="folder" class="w-5 h-5 mr-3"></i>
-          <span>Consulter Courrier</span>
-        </div>
-        <i data-feather="chevron-down" class="w-4 h-4 transition-transform duration-200" [ngClass]="{ 'rotate-180': showConsulter }"></i>
+<!-- dashboard.component.html -->
+<div class="p-8 space-y-8 bg-blue-50 min-h-full">
+  <!-- Résumé chiffré -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+      <div class="p-3 bg-blue-100 rounded-full mr-4">
+        <i data-feather="arrow-down-circle" class="w-6 h-6 text-blue-600"></i>
       </div>
-      <ul *ngIf="showConsulter" class="ml-6 mt-2 space-y-2">
-        <li>
-          <a [routerLink]="['/delegue']" routerLinkActive="bg-white text-sky-900" [routerLinkActiveOptions]="{ exact: true }"
-             class="flex items-center px-3 py-1 rounded-lg transition hover:bg-sky-800">
-            <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i>
-            <span>Arrivée</span>
-          </a>
-        </li>
-        <li>
-          <a [routerLink]="['/delegue','depart']" routerLinkActive="bg-white text-sky-900"
-             class="flex items-center px-3 py-1 rounded-lg transition hover:bg-sky-800">
-            <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i>
-            <span>Départ</span>
-          </a>
-        </li>
-      </ul>
-
-      <a [routerLink]="['/statistiques']"
-         routerLinkActive="bg-white text-sky-900"
-         class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
-        <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i>
-        <span>Statistiques</span>
-      </a>
-    </nav>
-
-    <!-- Bas -->
-    <div class="mt-auto space-y-2">
-      <a [routerLink]="['/profil']" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
-        <i data-feather="user" class="w-5 h-5 mr-3"></i><span>Profil</span>
-      </a>
-      <a [routerLink]="['/support']" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
-        <i data-feather="help-circle" class="w-5 h-5 mr-3"></i><span>Support</span>
-      </a>
+      <div>
+        <p class="text-sm text-gray-600">Arrivées en cours</p>
+        <p class="text-2xl font-semibold">12</p>
+      </div>
     </div>
-  </aside>
-
-  <!-- Main Content -->
-  <div class="flex-1 flex flex-col">
-    <header class="flex items-center justify-between h-16 px-8 bg-white border-b shadow-sm">
-      <h1 class="text-2xl font-semibold text-gray-700">Tableau de bord</h1>
-    </header>
-
-    <main class="flex-1 overflow-y-auto p-8 space-y-8">
-      <!-- Cartes -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-4 rounded-lg shadow flex items-center">
-          <div class="p-3 bg-blue-100 rounded-full mr-4">
-            <i data-feather="arrow-down-circle" class="w-6 h-6 text-blue-600"></i>
-          </div>
-          <div>
-            <p class="text-sm text-gray-600">Arrivées en cours</p>
-            <p class="text-2xl font-semibold">12</p>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow flex items-center">
-          <div class="p-3 bg-green-100 rounded-full mr-4">
-            <i data-feather="arrow-up-circle" class="w-6 h-6 text-green-600"></i>
-          </div>
-          <div>
-            <p class="text-sm text-gray-600">Départs en cours</p>
-            <p class="text-2xl font-semibold">8</p>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow flex items-center">
-          <div class="p-3 bg-indigo-100 rounded-full mr-4">
-            <i data-feather="check-circle" class="w-6 h-6 text-indigo-600"></i>
-          </div>
-          <div>
-            <p class="text-sm text-gray-600">Arrivées archivées</p>
-            <p class="text-2xl font-semibold">34</p>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow flex items-center">
-          <div class="p-3 bg-yellow-100 rounded-full mr-4">
-            <i data-feather="archive" class="w-6 h-6 text-yellow-600"></i>
-          </div>
-          <div>
-            <p class="text-sm text-gray-600">Départs archivés</p>
-            <p class="text-2xl font-semibold">27</p>
-          </div>
-        </div>
+    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+      <div class="p-3 bg-green-100 rounded-full mr-4">
+        <i data-feather="arrow-up-circle" class="w-6 h-6 text-green-600"></i>
       </div>
-
-      <!-- Graphique -->
-      <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-semibold mb-4">Tendance mensuelle</h2>
-        <canvas id="monthlyChart" height="100"></canvas>
+      <div>
+        <p class="text-sm text-gray-600">Départs en cours</p>
+        <p class="text-2xl font-semibold">8</p>
       </div>
-    </main>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+      <div class="p-3 bg-indigo-100 rounded-full mr-4">
+        <i data-feather="check-circle" class="w-6 h-6 text-indigo-600"></i>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Arrivées archivées</p>
+        <p class="text-2xl font-semibold">34</p>
+      </div>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+      <div class="p-3 bg-yellow-100 rounded-full mr-4">
+        <i data-feather="archive" class="w-6 h-6 text-yellow-600"></i>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Départs archivés</p>
+        <p class="text-2xl font-semibold">27</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Derniers courriers -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h2 class="text-lg font-semibold mb-4">Derniers courriers</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-sky-50">
+          <tr>
+            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Objet</th>
+            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Type</th>
+            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Service</th>
+            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Date</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr class="hover:bg-sky-100">
+            <td class="px-4 py-3">Compte rendu réunion</td>
+            <td class="px-4 py-3">Arrivée</td>
+            <td class="px-4 py-3">RH</td>
+            <td class="px-4 py-3">2025-05-08</td>
+          </tr>
+          <tr class="hover:bg-sky-100">
+            <td class="px-4 py-3">Facture fournisseur</td>
+            <td class="px-4 py-3">Départ</td>
+            <td class="px-4 py-3">Finance</td>
+            <td class="px-4 py-3">2025-05-07</td>
+          </tr>
+          <tr class="hover:bg-sky-100">
+            <td class="px-4 py-3">Demande congé</td>
+            <td class="px-4 py-3">Arrivée</td>
+            <td class="px-4 py-3">RH</td>
+            <td class="px-4 py-3">2025-05-06</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tendance mensuelle -->
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h2 class="text-lg font-semibold mb-4">Tendance mensuelle</h2>
+    <canvas id="monthlyChart" height="100"></canvas>
   </div>
 </div>

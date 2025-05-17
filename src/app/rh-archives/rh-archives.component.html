@@ -1,0 +1,106 @@
+<!-- BOUTON ☰ AU DÉMARRAGE -->
+<button
+  *ngIf="!sidebarOpen"
+  (click)="toggleSidebar()"
+  class="fixed top-4 left-4 z-50 p-2 bg-white rounded shadow-md"
+  aria-label="Menu"
+>
+  <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" stroke-width="2"
+       viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+</button>
+
+<!-- OVERLAY MOBILE -->
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+  *ngIf="sidebarOpen"
+  (click)="toggleSidebar()"
+></div>
+
+<!-- CONTAINER GLOBAL -->
+<div class="relative min-h-screen bg-blue-50 text-gray-800 font-poppins overflow-x-hidden">
+
+
+  <!-- SIDEBAR RH -->
+  <aside
+    class="fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-sky-900 to-sky-700 text-sky-100 p-6 pt-12 flex flex-col justify-between transform transition-transform duration-300 ease-in-out"
+    [ngClass]="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
+  >
+    <!-- ❌ EN HAUT À DROITE -->
+    <button
+      *ngIf="sidebarOpen"
+      (click)="toggleSidebar()"
+      class="absolute top-4 right-4 text-white hover:bg-white/20 bg-white/10 p-2 rounded-full transition duration-200 z-50"
+      aria-label="Fermer le menu"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+           viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <!-- PARTIE HAUTE -->
+    <div>
+      <!-- LOGO -->
+      <div class="flex justify-center mt-4 mb-6">
+        <img
+          src="https://cod.sante.gov.ma/images/mus.png"
+          alt="Ministère Santé"
+          class="h-16 rounded shadow"
+        />
+      </div>
+
+      <!-- Ligne -->
+      <div class="my-6 border-t border-sky-300"></div>
+
+      <!-- MENU PRINCIPAL -->
+      <nav class="space-y-2">
+        <a routerLink="dashboard" routerLinkActive="bg-white text-sky-900"
+           class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+          <i data-feather="home" class="w-5 h-5 mr-3"></i> Tableau de bord
+        </a>
+        <a routerLink="archives" routerLinkActive="bg-white text-sky-900"
+           class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+          <i data-feather="archive" class="w-5 h-5 mr-3"></i> Archives Employés
+        </a>
+        <a routerLink="utilisateurs" routerLinkActive="bg-white text-sky-900"
+           class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+          <i data-feather="users" class="w-5 h-5 mr-3"></i> Utilisateurs
+        </a>
+      </nav>
+    </div>
+
+    <!-- PARTIE BASSE -->
+    <div class="space-y-2">
+      <a routerLink="/rh/profil" routerLinkActive="bg-white text-sky-900"
+         class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+        <i data-feather="user" class="w-5 h-5 mr-3"></i> Profil
+      </a>
+      <a routerLink="/rh/support" routerLinkActive="bg-white text-sky-900"
+         class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+        <i data-feather="help-circle" class="w-5 h-5 mr-3"></i> Support
+      </a>
+      <a routerLink="/logout"
+         class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+        <i data-feather="log-out" class="w-5 h-5 mr-3"></i> Déconnexion
+      </a>
+    </div>
+  </aside>
+
+  <!-- CONTENU PRINCIPAL -->
+  <div class="flex-1 flex flex-col transition-all duration-300"
+       [ngClass]="{ 'ml-72': sidebarOpen }">
+
+    <!-- HEADER -->
+    <header class="flex items-center justify-between h-16 px-20 bg-white border-b shadow-sm">
+      <h1 class="text-2xl font-semibold text-gray-700">GESTION DES ARCHIVES</h1>
+    </header>
+
+    <!-- CONTENU CENTRAL -->
+    <main class="flex-1 p-8">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

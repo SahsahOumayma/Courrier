@@ -1,0 +1,155 @@
+<div class="flex-1 flex flex-col">
+  <main class="flex-1 overflow-y-auto p-8">
+    <section class="p-8 bg-sky-50 rounded-3xl shadow-xl">
+      <h2 class="text-2xl font-bold text-sky-800 mb-6 flex items-center">
+        <i data-feather="archive" class="w-6 h-6 mr-2 text-sky-600"></i>
+        Archives Employés
+      </h2>
+
+      <!-- Barre de recherche à gauche + Filtres à droite -->
+      <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <!-- Recherche -->
+        <input
+          type="text"
+          [(ngModel)]="recherche"
+          placeholder="Rechercher par nom, objet, CIN..."
+          class="w-full md:w-96 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+        />
+
+        <!-- Filtres -->
+        <div class="flex flex-wrap gap-4 items-center">
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-600">Statut :</label>
+            <select
+              [(ngModel)]="filtreStatut"
+              class="px-3 py-2 text-sm rounded-lg border border-gray-300 shadow-sm"
+            >
+              <option value="tous">Tous</option>
+              <option value="En cours">En cours</option>
+              <option value="Traité">Traité</option>
+              <option value="Non traité">Non traité</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-600">Trier :</label>
+            <select
+              [(ngModel)]="filtreTri"
+              class="px-3 py-2 text-sm rounded-lg border border-gray-300 shadow-sm"
+            >
+              <option value="aucun">Par défaut</option>
+              <option value="alphabetique">Ordre alphabétique</option>
+              <option value="date">Date d’archivage</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-600">Afficher :</label>
+            <select
+              [(ngModel)]="pageSize"
+              (change)="onPageSizeChange(pageSize)"
+              class="px-3 py-2 text-sm rounded-lg border border-gray-300 shadow-sm"
+            >
+              <option *ngFor="let option of pageOptions" [value]="option">
+                {{ option }}/page
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tableau -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
+          <thead class="text-xs uppercase text-sky-800 bg-sky-50 rounded-xl">
+            <tr>
+              <th class="px-4 py-3 rounded-l-xl">Matricule</th>
+              <th class="px-4 py-3">CIN</th>
+              <th class="px-4 py-3">Objet</th>
+              <th class="px-4 py-3">Employé</th>
+              <th class="px-4 py-3">Service</th>
+              <th class="px-4 py-3">Date d’archivage</th>
+              <th class="px-4 py-3">Statut</th>
+              <th class="px-4 py-3 rounded-r-xl">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let e of paginatedEmployes; let i = index"
+              [ngClass]="{ 'bg-gray-50': i % 2 === 0, 'bg-white': i % 2 !== 0 }"
+              class="shadow-sm hover:shadow-md transition rounded-xl"
+            >
+              <td class="px-4 py-4 font-semibold rounded-l-xl">{{ e.matricule }}</td>
+              <td class="px-4 py-4">{{ e.cin }}</td>
+              <td class="px-4 py-4">{{ e.objet }}</td>
+              <td class="px-4 py-4">{{ e.employe }}</td>
+              <td class="px-4 py-4">{{ e.service }}</td>
+              <td class="px-4 py-4">{{ e.dateArchivage }}</td>
+              <td class="px-4 py-4">
+                <span
+                  class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
+                  [ngClass]="{
+                    'bg-yellow-100 text-yellow-800': e.statut === 'En cours',
+                    'bg-green-100 text-green-800': e.statut === 'Traité',
+                    'bg-gray-200 text-gray-700': e.statut === 'Non traité'
+                  }"
+                >
+                  {{ e.statut }}
+                </span>
+              </td>
+              <td class="px-4 py-4 rounded-r-xl">
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    (click)="voirDetails(e)"
+                    class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition"
+                  >
+                    Voir
+                  </button>
+                  <button
+                    (click)="telechargerPDF(e)"
+                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition"
+                  >
+                    Télécharger
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="paginatedEmployes.length === 0">
+              <td colspan="8" class="text-center py-4 text-gray-500">
+                Aucun résultat trouvé.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination centrée avec numéro unique -->
+      <div class="mt-6 flex justify-between items-center">
+        <!-- Précédent -->
+        <button
+          (click)="prevPage()"
+          [disabled]="currentPage === 1"
+          class="px-4 py-2 bg-gray-200 text-gray-600 rounded hover:bg-gray-300 disabled:opacity-50"
+        >
+          Précédent
+        </button>
+
+        <!-- Numéro actuel -->
+       <div class="text-sm font-semibold px-4 py-2 border border-gray-200 rounded shadow bg-white">
+  Page {{ currentPage }} / {{ totalPages }}
+</div>
+
+
+        <!-- Suivant -->
+        <button
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          class="px-4 py-2 bg-gray-200 text-gray-600 rounded hover:bg-gray-300 disabled:opacity-50"
+        >
+          Suivant
+        </button>
+      </div>
+    </section>
+  </main>
+</div>
