@@ -4,13 +4,12 @@ import { RouterModule } from '@angular/router';
 import feather from 'feather-icons';
 
 @Component({
-  selector: 'app-profil',
-  standalone: true,
-  templateUrl: './profil.component.html',
-  styleUrls: ['./profil.component.css'], // facultatif
-  imports: [CommonModule, RouterModule]
+  selector: 'app-bc-profil',
+  templateUrl: './bc-profil.component.html',
+   imports: [CommonModule],
+  styleUrls: ['./bc-profil.component.css']
 })
-export class ProfilComponent implements AfterViewInit {
+export class BcProfilComponent implements AfterViewInit {
   ongletActif: 'info' | 'securite' | 'preferences' = 'info';
   showCourrier = false;
 

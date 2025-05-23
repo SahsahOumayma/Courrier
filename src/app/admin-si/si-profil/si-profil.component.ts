@@ -4,13 +4,12 @@ import { RouterModule } from '@angular/router';
 import feather from 'feather-icons';
 
 @Component({
-  selector: 'app-profil',
-  standalone: true,
-  templateUrl: './profil.component.html',
-  styleUrls: ['./profil.component.css'], // facultatif
-  imports: [CommonModule, RouterModule]
+  selector: 'app-si-profil',
+  imports: [CommonModule],
+  templateUrl: './si-profil.component.html',
+  styleUrl: './si-profil.component.css'
 })
-export class ProfilComponent implements AfterViewInit {
+export class SiProfilComponent implements AfterViewInit {
   ongletActif: 'info' | 'securite' | 'preferences' = 'info';
   showCourrier = false;
 

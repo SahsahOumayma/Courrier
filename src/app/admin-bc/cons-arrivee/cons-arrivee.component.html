@@ -1,0 +1,100 @@
+<section class="p-10 max-w-6xl mx-auto bg-gradient-to-br from-[#f2faff] via-white to-white rounded-3xl shadow-xl border border-[#c7e4f6] space-y-12 mt-4 mb-20">
+
+  <!-- Titre principal -->
+  <div class="flex items-center gap-4 text-[#004b74]">
+    <div class="bg-[#0d88c6]/10 p-3 rounded-full shadow-inner">
+      <i data-feather="inbox" class="w-7 h-7 text-[#0d88c6]"></i>
+    </div>
+    <h2 class="text-2xl font-extrabold italic tracking-wide text-[#004b74]">Courriers arrivés</h2>
+  </div>
+
+  <!-- Courriers EN COURS -->
+  <section class="space-y-4">
+    <div class="flex items-center gap-3 text-[#0b4c81] text-lg font-semibold">
+      <div class="bg-[#e0f2fe] p-2 rounded-full">
+        <i data-feather="clock" class="w-5 h-5 text-[#0ea5e9]"></i>
+      </div>
+      <h3 class="text-xl font-bold">En cours</h3>
+    </div>
+    <div class="overflow-x-auto rounded-xl border border-[#bae6fd] shadow bg-white">
+      <table class="min-w-full text-sm text-gray-800 divide-y divide-gray-200">
+        <thead class="bg-[#e0f7ff] text-[#0369a1] font-semibold text-xs uppercase tracking-wide">
+          <tr>
+            <th class="px-6 py-3 text-left">Objet</th>
+            <th class="px-6 py-3 text-left">Service</th>
+            <th class="px-6 py-3 text-left">Date</th>
+            <th class="px-6 py-3 text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody id="encoursArrivee" class="divide-y divide-gray-100">
+          <tr class="hover:bg-blue-50 transition-all">
+            <td class="px-6 py-4 font-medium">Rapport annuel</td>
+            <td class="px-6 py-4">Finance</td>
+            <td class="px-6 py-4">2025-05-07</td>
+            <td class="px-6 py-4 space-x-3">
+              <a class="text-blue-600 font-medium hover:underline cursor-pointer">Voir</a>
+              <button class="text-emerald-600 font-medium hover:underline traiter-btn">Traiter</button>
+            </td>
+          </tr>
+          <tr class="hover:bg-blue-50 transition-all">
+            <td class="px-6 py-4 font-medium">Lettre RH</td>
+            <td class="px-6 py-4">RH</td>
+            <td class="px-6 py-4">2025-05-06</td>
+            <td class="px-6 py-4 space-x-3">
+              <a class="text-blue-600 font-medium hover:underline cursor-pointer">Voir</a>
+              <button class="text-emerald-600 font-medium hover:underline traiter-btn">Traiter</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Courriers ARCHIVÉS -->
+  <section class="space-y-4">
+    <div class="flex items-center gap-3 text-[#4b5563] text-lg font-semibold">
+      <div class="bg-[#fef9c3] p-2 rounded-full">
+        <i data-feather="archive" class="w-5 h-5 text-[#ca8a04]"></i>
+      </div>
+      <h3 class="text-xl font-bold">Archivé</h3>
+    </div>
+    <div class="overflow-x-auto rounded-xl border border-[#fef3c7] shadow bg-white">
+      <table class="min-w-full text-sm text-gray-800 divide-y divide-gray-200">
+        <thead class="bg-[#fff7ed] text-[#92400e] font-semibold text-xs uppercase tracking-wide">
+          <tr>
+            <th class="px-6 py-3 text-left">Objet</th>
+            <th class="px-6 py-3 text-left">Service</th>
+            <th class="px-6 py-3 text-left">Date</th>
+            <th class="px-6 py-3 text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody id="archivesArrivee" class="divide-y divide-gray-100">
+          <tr class="hover:bg-yellow-50 transition-all">
+            <td class="px-6 py-4 font-medium">Commande matériel</td>
+            <td class="px-6 py-4">Logistique</td>
+            <td class="px-6 py-4">2025-04-30</td>
+            <td class="px-6 py-4">
+              <a class="text-blue-600 font-medium hover:underline cursor-pointer">Voir</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    feather.replace();
+
+    document.querySelectorAll('.traiter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tr = btn.closest('tr');
+        tr.remove();
+        const tdAction = tr.querySelector('td:last-child');
+        tdAction.innerHTML = '<a class="text-blue-600 font-medium hover:underline cursor-pointer">Voir</a>';
+        document.getElementById('archivesArrivee').appendChild(tr);
+      });
+    });
+  });
+</script>

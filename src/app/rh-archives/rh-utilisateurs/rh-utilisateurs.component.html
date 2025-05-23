@@ -1,64 +1,71 @@
-<section class="p-8 bg-sky-50 rounded-3xl shadow-xl">
+<section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
+
   <!-- Titre -->
-  <h2 class="text-2xl font-bold text-sky-800 flex items-center mb-6">
-    <i data-feather="users" class="w-6 h-6 mr-2 text-sky-600"></i>
+  <h2 class="text-3xl font-extrabold text-[#0d4e78] mb-8 flex items-center tracking-wide">
+    <i data-feather="users" class="w-7 h-7 mr-3 text-[#0d88c6]"></i>
     Liste des Utilisateurs
   </h2>
 
-  <!-- Barre de recherche + filtres alignés -->
-  <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+  <!-- Recherche + Filtres alignés -->
+  <div class="mb-8 flex flex-wrap items-center justify-between gap-6 text-sm text-gray-700 font-medium">
+
     <!-- Recherche -->
     <input
       type="text"
       [(ngModel)]="recherche"
-      placeholder="Rechercher un utilisateur..."
-      class="w-full md:w-96 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+      placeholder="🔍 Rechercher un utilisateur..."
+      class="w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
     />
 
-    <!-- Filtres -->
-    <div class="flex flex-wrap items-center gap-4">
-      <div class="flex items-center gap-2">
-        <label class="text-sm font-medium text-gray-600">Filtrer par rôle :</label>
+    <!-- Filtres à droite -->
+    <div class="flex flex-wrap gap-4 items-center justify-end ml-auto">
+
+      <!-- Filtrer par rôle -->
+      <label class="flex items-center gap-2">
+        <span>Rôle :</span>
         <select
           [(ngModel)]="filtreRole"
-          class="px-3 py-2 text-sm rounded-lg border border-gray-300 shadow-sm"
+          class="w-48 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
         >
           <option value="tous">Tous</option>
           <option value="Responsable RH">Responsable RH</option>
           <option value="Délégué RH">Délégué RH</option>
         </select>
-      </div>
+      </label>
 
-      <div class="flex items-center gap-2">
-        <label class="text-sm font-medium text-gray-600">Statut :</label>
+      <!-- Filtrer par statut -->
+      <label class="flex items-center gap-2">
+        <span>Statut :</span>
         <select
           [(ngModel)]="filtreStatut"
-          class="px-3 py-2 text-sm rounded-lg border border-gray-300 shadow-sm"
+          class="w-40 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
         >
           <option value="tous">Tous</option>
           <option value="actif">Actif</option>
           <option value="inactif">Inactif</option>
         </select>
-      </div>
+      </label>
 
-      <!-- Choix par page -->
-      <div class="flex items-center gap-2">
-        <label class="text-sm font-medium text-gray-600">Afficher :</label>
+      <!-- Page size -->
+      <label class="flex items-center gap-2">
+        <span>Afficher :</span>
         <select
           [(ngModel)]="pageSize"
           (change)="onPageSizeChange(pageSize)"
-          class="px-3 py-2 text-sm rounded-lg border border-gray-300 shadow-sm"
+          class="w-28 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
         >
-          <option *ngFor="let option of pageOptions" [value]="option">{{ option }}/page</option>
+          <option *ngFor="let option of pageOptions" [value]="option">
+            {{ option }}/page
+          </option>
         </select>
-      </div>
+      </label>
     </div>
   </div>
 
   <!-- Tableau -->
-  <div class="overflow-x-auto">
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
     <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
-      <thead class="text-xs uppercase text-sky-800 bg-sky-50 rounded-xl">
+      <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
         <tr>
           <th class="px-4 py-3 rounded-l-xl">Nom</th>
           <th class="px-4 py-3">Email</th>
@@ -68,10 +75,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of paginatedUtilisateurs"
-            [ngClass]="{ 'bg-white': user.active, 'bg-gray-50': !user.active }"
-            class="shadow-sm hover:shadow-md transition rounded-xl">
-
+        <tr
+          *ngFor="let user of paginatedUtilisateurs"
+          [ngClass]="{ 'bg-white': user.active, 'bg-gray-50': !user.active }"
+          class="shadow-sm hover:shadow-md transition rounded-xl"
+        >
           <td class="px-4 py-4 font-semibold rounded-l-xl">{{ user.nom }}</td>
           <td class="px-4 py-4">{{ user.email }}</td>
           <td class="px-4 py-4">{{ user.role }}</td>
@@ -107,26 +115,26 @@
     </table>
   </div>
 
-  <!-- Pagination centrée -->
-  <div class="mt-6 flex justify-between items-center">
+  <!-- Pagination -->
+  <div class="mt-10 flex items-center justify-between px-10">
     <button
       (click)="prevPage()"
       [disabled]="currentPage === 1"
-      class="px-4 py-2 bg-gray-200 text-gray-600 rounded hover:bg-gray-300 disabled:opacity-50"
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm"
     >
-      Précédent
+      ⬅️ Précédent
     </button>
 
-    <div class="text-sm font-semibold px-4 py-2 border border-gray-200 rounded shadow bg-white">
+    <div class="px-6 py-2 bg-white border border-gray-300 shadow rounded-xl text-[#003c61] font-bold tracking-wide">
       Page {{ currentPage }} / {{ totalPages }}
     </div>
 
     <button
       (click)="nextPage()"
       [disabled]="currentPage === totalPages"
-      class="px-4 py-2 bg-gray-200 text-gray-600 rounded hover:bg-gray-300 disabled:opacity-50"
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm"
     >
-      Suivant
+      Suivant ➡️
     </button>
   </div>
 </section>

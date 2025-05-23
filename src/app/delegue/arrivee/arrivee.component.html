@@ -1,94 +1,109 @@
-<section
-  class="p-8 bg-gradient-to-b from-sky-50 to-white rounded-3xl shadow-xl"
->
-  <h2 class="text-2xl font-bold text-sky-800 mb-6 flex items-center">
-    <i data-feather="inbox" class="w-6 h-6 mr-2 text-sky-600"></i>
-    Courriers Arrivés
-  </h2>
+<section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
 
-  <!-- Filtres + Recherche + PageSize -->
-  <div class="mb-6 flex flex-wrap gap-4 items-center">
-    <input
-      type="text"
-      [(ngModel)]="termeRecherche"
-      placeholder="Rechercher un courrier..."
-      class="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-    />
+  <!-- Titre -->
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
+  <span class="p-3 bg-blue-100 rounded-full">
+    <i data-feather="inbox" class="w-6 h-6 text-sky-600"></i>
+  </span>
+  Courriers arrivés
+</h2>
 
-    <select
-      [(ngModel)]="filtreStatut"
-      class="w-56 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-    >
-      <option value="tous">Tous les statuts</option>
-      <option value="En cours">En cours</option>
-      <option value="Traité">Traité</option>
-      <option value="Non traité">Non traité</option>
-    </select>
+  <!-- Filtres alignés comme l’image -->
+  <div class="mb-8 flex flex-wrap justify-between items-center gap-6 text-sm text-gray-700 font-medium">
+    
+    <!-- Recherche à gauche -->
+    <div class="flex-1 min-w-[250px] max-w-lg">
+      <input
+        type="text"
+        [(ngModel)]="termeRecherche"
+        placeholder="🔍 Rechercher par nom, objet, CIN..."
+        class="w-full px-5 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+      />
+    </div>
 
-    <select
-      [(ngModel)]="selectedTri"
-      (change)="trierCourriers()"
-      class="w-56 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-    >
-      <option value="urgence">Trier par Urgence</option>
-      <option value="alphabetique">Trier par Ordre alphabétique</option>
-      <option value="date">Trier par Date d’arrivée</option>
-    </select>
+    <!-- Statut, Trier, Afficher à droite -->
+    <div class="flex flex-wrap gap-4 items-center justify-end">
+      
+      <label class="flex items-center gap-2">
+        <span>Statut :</span>
+        <select
+          [(ngModel)]="filtreStatut"
+          class="w-36 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+        >
+          <option value="tous">Tous</option>
+          <option value="En cours">En cours</option>
+          <option value="Traité">Traité</option>
+          <option value="Non traité">Non traité</option>
+        </select>
+      </label>
 
-    <select
-      [(ngModel)]="pageSize"
-      (change)="onPageSizeChange(pageSize)"
-      class="w-48 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-    >
-      <option *ngFor="let option of pageOptions" [value]="option">
-        {{ option }} / page
-      </option>
-    </select>
+      <label class="flex items-center gap-2">
+        <span>Trier :</span>
+        <select
+          [(ngModel)]="selectedTri"
+          (change)="trierCourriers()"
+          class="w-44 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+        >
+          <option value="default">Par défaut</option>
+          <option value="urgence">Par urgence</option>
+          <option value="alphabetique">Par nom</option>
+          <option value="date">Par date</option>
+        </select>
+      </label>
+
+      <label class="flex items-center gap-2">
+        <span>Afficher :</span>
+        <select
+          [(ngModel)]="pageSize"
+          (change)="onPageSizeChange(pageSize)"
+          class="w-28 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+        >
+          <option *ngFor="let option of pageOptions" [value]="option">
+            {{ option }}/page
+          </option>
+        </select>
+      </label>
+
+    </div>
   </div>
 
   <!-- Tableau -->
-  <div class="overflow-x-auto">
-    <table
-      class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2"
-    >
-      <thead class="text-xs uppercase text-gray-600">
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
+      <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
         <tr>
-          <th class="bg-white px-4 py-3 rounded-l-xl">N°</th>
-          <th class="bg-white px-4 py-3">Objet</th>
-          <th class="bg-white px-4 py-3">Expéditeur</th>
-          <th class="bg-white px-4 py-3">Date arrivée</th>
-          <th class="bg-white px-4 py-3">Urgence</th>
-          <th class="bg-white px-4 py-3">Confid.</th>
-          <th class="bg-white px-4 py-3">Statut</th>
-          <th class="bg-white px-4 py-3">Service</th>
-          <th class="bg-white px-4 py-3">Réf. réponse</th>
-          <th class="bg-white px-4 py-3">Date réponse</th>
-          <th class="bg-white px-4 py-3">Description</th>
-          <th class="bg-white px-4 py-3 rounded-r-xl">Action</th>
+          <th class="px-4 py-3 rounded-l-xl">N°</th>
+          <th class="px-4 py-3">Objet</th>
+          <th class="px-4 py-3">Expéditeur</th>
+          <th class="px-4 py-3">Date arrivée</th>
+          <th class="px-4 py-3">Urgence</th>
+          <th class="px-4 py-3">Confid.</th>
+          <th class="px-4 py-3">Statut</th>
+          <th class="px-4 py-3">Service</th>
+          <th class="px-4 py-3">Réf. réponse</th>
+          <th class="px-4 py-3">Date réponse</th>
+          <th class="px-4 py-3">Description</th>
+          <th class="px-4 py-3 rounded-r-xl">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr
           *ngFor="let courrier of paginatedCourriers"
           [ngClass]="{
-  'bg-red-50': courrier.urgence === 'Élevé',
-  
-}"
-          class="shadow-sm hover:shadow-md transition rounded-xl"
+            'bg-red-100 border-l-4 border-red-500': courrier.urgence === 'Élevé',
+            'bg-white': courrier.urgence !== 'Élevé'
+          }"
+          class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800"
         >
-          <td class="px-4 py-4 font-semibold rounded-l-xl">
-            {{ courrier.numero }}
-          </td>
+          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ courrier.numero }}</td>
           <td class="px-4 py-4">{{ courrier.objet }}</td>
           <td class="px-4 py-4">{{ courrier.expediteur }}</td>
           <td class="px-4 py-4">{{ courrier.dateArrivee }}</td>
-
-          <!-- Badge couleur urgence -->
           <td class="px-4 py-4">
             <span
               class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
               [ngClass]="{
-                'bg-red-500 text-white': courrier.urgence === 'Élevé',
+                'bg-red-600 text-white': courrier.urgence === 'Élevé',
                 'bg-yellow-100 text-yellow-800': courrier.urgence === 'Moyen',
                 'bg-green-100 text-green-800': courrier.urgence === 'Faible'
               }"
@@ -96,9 +111,7 @@
               {{ courrier.urgence }}
             </span>
           </td>
-
           <td class="px-4 py-4">{{ courrier.confidentialite }}</td>
-
           <td class="px-4 py-4">
             <span
               class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
@@ -111,13 +124,10 @@
               {{ courrier.statut }}
             </span>
           </td>
-
           <td class="px-4 py-4">{{ courrier.service }}</td>
           <td class="px-4 py-4">{{ courrier.numeroReponse }}</td>
           <td class="px-4 py-4">{{ courrier.dateReponse }}</td>
           <td class="px-4 py-4">{{ courrier.description }}</td>
-
-          <!-- Action -->
           <td class="px-4 py-4 rounded-r-xl">
             <div class="flex flex-wrap gap-2">
               <a
@@ -136,7 +146,6 @@
             </div>
           </td>
         </tr>
-
         <tr *ngIf="paginatedCourriers.length === 0">
           <td colspan="12" class="text-center py-4 text-gray-500">
             Aucun courrier trouvé.
@@ -146,31 +155,26 @@
     </table>
   </div>
 
-  <!-- Pagination -->
-  <div class="mt-6 flex justify-between items-center">
+  <!-- Pagination centrée -->
+  <div class="mt-10 flex items-center justify-between px-10">
     <button
       (click)="prevPage()"
       [disabled]="currentPage === 1"
-      class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm"
     >
-      Précédent
+      ⬅️ Précédent
     </button>
-    <div class="space-x-1">
-      <button
-        *ngFor="let p of totalPagesArray"
-        (click)="changePage(p)"
-        [class.font-bold]="currentPage === p"
-        class="px-3 py-1 bg-white rounded shadow-sm hover:bg-gray-100"
-      >
-        {{ p }}
-      </button>
+
+    <div class="px-6 py-2 bg-white border border-gray-300 shadow rounded-xl text-[#003c61] font-bold tracking-wide">
+      Page {{ currentPage }} / {{ totalPages }}
     </div>
+
     <button
       (click)="nextPage()"
       [disabled]="currentPage === totalPages"
-      class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm"
     >
-      Suivant
+      Suivant ➡️
     </button>
   </div>
 </section>

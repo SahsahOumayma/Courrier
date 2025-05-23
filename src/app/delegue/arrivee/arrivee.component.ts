@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import feather from 'feather-icons';
 
 @Component({
   selector: 'app-arrivee',
@@ -11,8 +12,7 @@ import autoTable from 'jspdf-autotable';
   templateUrl: './arrivee.component.html',
   imports: [CommonModule, FormsModule, RouterModule],
 })
-export class ArriveeComponent {
-  // --- Données
+export class ArriveeComponent implements AfterViewChecked {
   courriers = [
     {
       numero: '2025-004',
@@ -55,12 +55,12 @@ export class ArriveeComponent {
     },
   ];
 
-  // --- Filtres
+  // Filtres
   termeRecherche = '';
   filtreStatut = 'tous';
   selectedTri = 'urgence';
 
-  // --- Pagination
+  // Pagination
   pageSize = 5;
   currentPage = 1;
   pageOptions = [5, 10, 15, 20];
@@ -72,15 +72,14 @@ export class ArriveeComponent {
       result = result.filter(c => c.statut === this.filtreStatut);
     }
 
-   if (this.termeRecherche.trim()) {
-  const terme = this.termeRecherche.toLowerCase();
-  result = result.filter(c =>
-    Object.values(c).some(val =>
-      val && val.toString().toLowerCase().includes(terme)
-    )
-  );
-}
-
+    if (this.termeRecherche.trim()) {
+      const terme = this.termeRecherche.toLowerCase();
+      result = result.filter(c =>
+        Object.values(c).some(val =>
+          val && val.toString().toLowerCase().includes(terme)
+        )
+      );
+    }
 
     return result;
   }
@@ -122,18 +121,17 @@ export class ArriveeComponent {
   }
 
   trierCourriers(): void {
-  if (this.selectedTri === 'urgence') {
-    const ordre: { [key: string]: number } = { Élevé: 0, Moyen: 1, Faible: 2 };
-    this.courriers.sort((a, b) => ordre[a.urgence] - ordre[b.urgence]);
-  } else if (this.selectedTri === 'alphabetique') {
-    this.courriers.sort((a, b) => a.objet.localeCompare(b.objet));
-  } else if (this.selectedTri === 'date') {
-    this.courriers.sort(
-      (a, b) => new Date(b.dateArrivee).getTime() - new Date(a.dateArrivee).getTime()
-    );
+    if (this.selectedTri === 'urgence') {
+      const ordre: { [key: string]: number } = { Élevé: 0, Moyen: 1, Faible: 2 };
+      this.courriers.sort((a, b) => ordre[a.urgence] - ordre[b.urgence]);
+    } else if (this.selectedTri === 'alphabetique') {
+      this.courriers.sort((a, b) => a.objet.localeCompare(b.objet));
+    } else if (this.selectedTri === 'date') {
+      this.courriers.sort(
+        (a, b) => new Date(b.dateArrivee).getTime() - new Date(a.dateArrivee).getTime()
+      );
+    }
   }
-}
-
 
   telechargerPDF(courrier: any) {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -143,7 +141,6 @@ export class ArriveeComponent {
     const dateStr = today.toLocaleDateString('fr-FR');
     const referenceUnique = 'REF-ARR-' + today.getTime();
 
-    // Logo
     const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png';
     doc.addImage(logoUrl, 'PNG', pageWidth / 2 - 30, 10, 60, 35);
 
@@ -201,5 +198,10 @@ export class ArriveeComponent {
     );
 
     doc.save(`${courrier.numero}-courrier-arrive.pdf`);
+  }
+
+  // --- Pour forcer l'affichage des icônes après MAJ du DOM
+  ngAfterViewChecked(): void {
+    feather.replace();
   }
 }
