@@ -30,7 +30,6 @@
               "src/styles.css"
             ],
             "scripts": [
-              "src/assets/fonts/Amiri-Regular-normal.js"
             ]
           },
           "configurations": {

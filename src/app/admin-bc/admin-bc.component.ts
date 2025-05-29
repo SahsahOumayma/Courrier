@@ -11,7 +11,7 @@ import feather from 'feather-icons';
   styleUrls: ['./admin-bc.component.css']
 })
 export class AdminBcComponent implements AfterViewInit {
-  sidebarOpen = false;
+  sidebarOpen = true;
   showEnregistrer = false;
   showConsulter = false;
 

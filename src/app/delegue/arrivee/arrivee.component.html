@@ -1,17 +1,13 @@
 <section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
-
-  <!-- Titre -->
   <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
-  <span class="p-3 bg-blue-100 rounded-full">
-    <i data-feather="inbox" class="w-6 h-6 text-sky-600"></i>
-  </span>
-  Courriers arrivés
-</h2>
+    <span class="p-3 bg-blue-100 rounded-full">
+      <i data-feather="inbox" class="w-6 h-6 text-sky-600"></i>
+    </span>
+    Courriers arrivés
+  </h2>
 
-  <!-- Filtres alignés comme l’image -->
+  <!-- Filtres -->
   <div class="mb-8 flex flex-wrap justify-between items-center gap-6 text-sm text-gray-700 font-medium">
-    
-    <!-- Recherche à gauche -->
     <div class="flex-1 min-w-[250px] max-w-lg">
       <input
         type="text"
@@ -21,49 +17,48 @@
       />
     </div>
 
-    <!-- Statut, Trier, Afficher à droite -->
     <div class="flex flex-wrap gap-4 items-center justify-end">
-      
       <label class="flex items-center gap-2">
         <span>Statut :</span>
         <select
-          [(ngModel)]="filtreStatut"
-          class="w-36 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-        >
-          <option value="tous">Tous</option>
-          <option value="En cours">En cours</option>
-          <option value="Traité">Traité</option>
-          <option value="Non traité">Non traité</option>
-        </select>
+  [(ngModel)]="filtreStatut"
+  (change)="updatePagination()"
+  class="w-36 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+>
+  <option value="tous">Tous</option>
+  <option value="En_Cours">En cours</option>
+  <option value="Traité">Traité</option>
+  <option value="Enregistré">Enregistré</option>
+  <option value="Retoure">Retourné</option>
+  <option value="Archivé">Archivé</option>
+</select>
+
       </label>
 
       <label class="flex items-center gap-2">
-        <span>Trier :</span>
+        <span>Trier par:</span>
         <select
-          [(ngModel)]="selectedTri"
-          (change)="trierCourriers()"
-          class="w-44 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-        >
-          <option value="default">Par défaut</option>
-          <option value="urgence">Par urgence</option>
-          <option value="alphabetique">Par nom</option>
-          <option value="date">Par date</option>
-        </select>
+  [(ngModel)]="selectedTri"
+  (change)="trierCourriers()"
+  class="w-44 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+>
+  <option value="default">Date d'arrivée</option>
+  <option value="alphabetique">Objet (A → Z)</option>
+  <option value="urgence">Urgence</option>
+</select>
+
       </label>
 
       <label class="flex items-center gap-2">
         <span>Afficher :</span>
         <select
           [(ngModel)]="pageSize"
-          (change)="onPageSizeChange(pageSize)"
+          (change)="onPageSizeChange()"
           class="w-28 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
         >
-          <option *ngFor="let option of pageOptions" [value]="option">
-            {{ option }}/page
-          </option>
+          <option *ngFor="let option of pageOptions" [value]="option">{{ option }}/page</option>
         </select>
       </label>
-
     </div>
   </div>
 
@@ -80,88 +75,82 @@
           <th class="px-4 py-3">Confid.</th>
           <th class="px-4 py-3">Statut</th>
           <th class="px-4 py-3">Service</th>
-          <th class="px-4 py-3">Réf. réponse</th>
           <th class="px-4 py-3">Date réponse</th>
           <th class="px-4 py-3">Description</th>
           <th class="px-4 py-3 rounded-r-xl">Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          *ngFor="let courrier of paginatedCourriers"
+        <tr *ngFor="let courrier of paginatedCourriers"
+    class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800"
+    [ngClass]="{ 'bg-red-100': courrier.urgence === 'URGENT' }">
+
+          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ courrier.numeroRegistre }}</td>
+          <td class="px-4 py-4">{{ courrier.object }}</td>
+          <td class="px-4 py-4">{{ courrier.signataire }}</td>
+          <td class="px-4 py-4">{{ courrier.dateArrive || '—' }}</td>
+          <td class="px-4 py-4">
+            <span class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
+              [ngClass]="{
+                'bg-red-600 text-white': courrier.urgence === 'URGENT',
+                'bg-green-200 text-green-800': courrier.urgence === 'NORMAL',
+                'bg-gray-200 text-gray-800': !courrier.urgence
+              }">
+              {{ courrier.urgence || '—' }}
+            </span>
+          </td>
+          <td class="px-4 py-4">{{ courrier.degreConfiden || '—' }}</td>
+          <td class="px-4 py-4 text-center">
+  <ng-container *ngIf="courrier.statutCourrier && courrier.statutCourrier.toLowerCase() !== 'null'; else noStatus">
+    <span class="inline-block px-3 py-1.5 text-xs font-semibold rounded-full"
           [ngClass]="{
-            'bg-red-100 border-l-4 border-red-500': courrier.urgence === 'Élevé',
-            'bg-white': courrier.urgence !== 'Élevé'
-          }"
-          class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800"
-        >
-          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ courrier.numero }}</td>
-          <td class="px-4 py-4">{{ courrier.objet }}</td>
-          <td class="px-4 py-4">{{ courrier.expediteur }}</td>
-          <td class="px-4 py-4">{{ courrier.dateArrivee }}</td>
-          <td class="px-4 py-4">
-            <span
-              class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
-              [ngClass]="{
-                'bg-red-600 text-white': courrier.urgence === 'Élevé',
-                'bg-yellow-100 text-yellow-800': courrier.urgence === 'Moyen',
-                'bg-green-100 text-green-800': courrier.urgence === 'Faible'
-              }"
-            >
-              {{ courrier.urgence }}
-            </span>
-          </td>
-          <td class="px-4 py-4">{{ courrier.confidentialite }}</td>
-          <td class="px-4 py-4">
-            <span
-              class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
-              [ngClass]="{
-                'bg-yellow-100 text-yellow-800': courrier.statut === 'En cours',
-                'bg-green-100 text-green-800': courrier.statut === 'Traité',
-                'bg-gray-200 text-gray-700': courrier.statut === 'Non traité'
-              }"
-            >
-              {{ courrier.statut }}
-            </span>
-          </td>
-          <td class="px-4 py-4">{{ courrier.service }}</td>
-          <td class="px-4 py-4">{{ courrier.numeroReponse }}</td>
-          <td class="px-4 py-4">{{ courrier.dateReponse }}</td>
-          <td class="px-4 py-4">{{ courrier.description }}</td>
+            'bg-blue-100 text-blue-800': courrier.statutCourrier === 'En_Cours',
+            'bg-green-100 text-green-800': courrier.statutCourrier === 'Traité',
+            'bg-yellow-100 text-yellow-800': courrier.statutCourrier === 'Enregistré',
+            'bg-purple-100 text-purple-800': courrier.statutCourrier === 'Retoure',
+            'bg-gray-300 text-gray-800': courrier.statutCourrier === 'Archivé'
+          }">
+      {{ courrier.statutCourrier.replaceAll('_', ' ') }}
+    </span>
+  </ng-container>
+  <ng-template #noStatus>
+  <span class="inline-block px-4 py-1 text-base font-semibold text-gray-500">__</span>
+</ng-template>
+
+</td>
+
+
+          <td class="px-4 py-4">{{ courrier.service || '—' }}</td>
+          <td class="px-4 py-4">{{ courrier.dateTraitement || '—' }}</td>
+          <td class="px-4 py-4">{{ courrier.description || '—' }}</td>
           <td class="px-4 py-4 rounded-r-xl">
             <div class="flex flex-wrap gap-2">
               <a
-                [routerLink]="['/arrivee/details', courrier.numero]"
+                [routerLink]="['/arrivee/details', courrier.numeroRegistre]"
                 [state]="{ courrier }"
-                class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition"
-              >
+                class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
                 Voir
               </a>
               <button
                 (click)="telechargerPDF(courrier)"
-                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition"
-              >
+                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
                 Télécharger
               </button>
             </div>
           </td>
         </tr>
         <tr *ngIf="paginatedCourriers.length === 0">
-          <td colspan="12" class="text-center py-4 text-gray-500">
-            Aucun courrier trouvé.
-          </td>
+          <td colspan="12" class="text-center py-4 text-gray-500">Aucun courrier trouvé.</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Pagination centrée -->
   <div class="mt-10 flex items-center justify-between px-10">
     <button
       (click)="prevPage()"
       [disabled]="currentPage === 1"
-      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm"
-    >
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm">
       ⬅️ Précédent
     </button>
 
@@ -172,8 +161,7 @@
     <button
       (click)="nextPage()"
       [disabled]="currentPage === totalPages"
-      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm"
-    >
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm">
       Suivant ➡️
     </button>
   </div>

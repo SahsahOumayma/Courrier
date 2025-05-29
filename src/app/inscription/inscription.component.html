@@ -1,42 +1,51 @@
 <section class="register">
-    <div class="register-container">
-      <div class="register-left">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png"
-          alt="Ministère de la Santé"
-        />
-      </div>
-  
-      <div class="register-right">
-        <h2>INSCRIPTION</h2>
-        <form class="register-form">
-          <div class="input-icon">
-            <input type="text" placeholder="Nom" required />
-          </div>
-          <div class="input-icon">
-            <input type="text" placeholder="Prénom" required />
-          </div>
-          <div class="input-icon">
-            <input type="email" placeholder="Adresse email" required />
-          </div>
-          <div class="input-icon">
-            <input type="text" placeholder="CIN" required />
-          </div>
-          <div class="input-icon">
-            <input type="date" placeholder="Date de naissance" required />
-          </div>
-  
-          <button type="submit">S'INSCRIRE</button>
-          <p class="login-link">
-            Vous avez déjà un compte ?
-            <a
-              href="/"
-              style="color: white; text-decoration: underline; cursor: pointer"
-              >Connectez-vous ici</a
-            >
-          </p>
-        </form>
-      </div>
+  <div class="register-container">
+    <div class="register-left">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png"
+        alt="Ministère de la Santé"
+      />
     </div>
-  </section>
-  
+
+    <div class="register-right">
+      <h2>INSCRIPTION</h2>
+      <form class="register-form" (ngSubmit)="onRegister()">
+        <div class="input-icon">
+          <input type="text" [(ngModel)]="user.nom" name="nom" placeholder="Nom" required />
+        </div>
+        <div class="input-icon">
+          <input type="text" [(ngModel)]="user.prenom" name="prenom" placeholder="Prénom" required />
+        </div>
+        <div class="input-icon">
+          <input type="email" [(ngModel)]="user.email" name="email" placeholder="Adresse email" required />
+        </div>
+        <div class="input-icon">
+          <input type="text" [(ngModel)]="user.cin" name="cin" placeholder="CIN" required />
+        </div>
+        <div class="input-icon">
+          <input type="date" [(ngModel)]="user.dateNaissance" name="dateNaissance" placeholder="Date de naissance" required />
+        </div>
+
+        <!-- ✅ Champ login ajouté -->
+        <div class="input-icon">
+  <input
+    type="text"
+    name="login"
+    [(ngModel)]="user.login"
+    placeholder="Nom d'utilisateur à utiliser"
+    required
+  />
+</div>
+
+
+        <button type="submit">S'INSCRIRE</button>
+        <p class="login-link">
+          Vous avez déjà un compte ?
+          <a href="/" style="color: white; text-decoration: underline; cursor: pointer">
+            Connectez-vous ici
+          </a>
+        </p>
+      </form>
+    </div>
+  </div>
+</section>

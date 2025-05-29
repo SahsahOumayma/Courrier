@@ -15,7 +15,7 @@ import * as feather from 'feather-icons';
 })
 export class DelegueComponent implements AfterViewInit {
   showConsulter = false;
-  sidebarOpen = false;
+  sidebarOpen = true;
   toggleSidebar() {
   this.sidebarOpen = !this.sidebarOpen;
 }

@@ -1,37 +1,64 @@
 <section class="hero">
-    <div class="login-page">
-      <!-- Partie gauche avec logo -->
-      <div class="login-left">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png" alt="Ministère de la Santé" />
-      </div>
-  
-      <!-- Partie droite avec formulaire -->
-      <div class="login-right">
-        <h2>CONNEXION</h2>
-        <form class="login-form">
-          <div class="input-icon">
-            <i class="ri-user-3-line"></i>
-            <input type="text" placeholder="Nom d'utilisateur" required />
-          </div>
-  
-          <div class="input-icon">
-            <i class="ri-lock-line"></i>
-            <input type="password" placeholder="Mot de passe" required />
-          </div>
-  
-          <div class="remember-me">
-            <input type="checkbox" id="remember" />
-            <label for="remember">Se souvenir de moi</label>
-          </div>
-  
-          <button type="submit">SE CONNECTER</button>
-  
-          <div class="extra-links">
-            <a href="/inscription">S'inscrire</a>
-            <a href="#">Mot de passe oublié?</a>
-          </div>
-        </form>
-      </div>
+  <div class="login-page">
+    <!-- Partie gauche avec logo -->
+    <div class="login-left">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png" alt="Ministère de la Santé" />
     </div>
-  </section>
-  
+
+    <!-- Partie droite avec formulaire -->
+    <div class="login-right">
+      <h2>CONNEXION</h2>
+
+      <!-- ✅ Déclenche la méthode onLogin() -->
+      <form class="login-form" (ngSubmit)="onLogin()">
+        <!-- Champ login -->
+        <div class="input-icon">
+          <i class="ri-user-3-line"></i>
+          <input
+            type="text"
+            [(ngModel)]="login"
+            name="login"
+            placeholder="Nom d'utilisateur"
+            required
+          />
+        </div>
+          <!-- mot de passe -->
+
+        <div class="input-icon eye-only">
+  <input
+    [type]="passwordVisible ? 'text' : 'password'"
+    [(ngModel)]="password"
+    name="password"
+    placeholder="Mot de passe"
+    required
+  />
+  <i
+    class="eye-toggle"
+    [class.ri-eye-line]="!passwordVisible"
+    [class.ri-eye-off-line]="passwordVisible"
+    (click)="togglePasswordVisibility()"
+  ></i>
+</div>
+
+
+
+
+
+        <!-- Souvenir -->
+        <div class="remember-me">
+          <input type="checkbox" id="remember" />
+          <label for="remember">Se souvenir de moi</label>
+        </div>
+
+        <!-- Bouton -->
+        <button type="submit">SE CONNECTER</button>
+
+        <!-- Liens -->
+        <div class="extra-links">
+          <a routerLink="/inscription">S'inscrire</a>
+          <a href="#">Mot de passe oublié?</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

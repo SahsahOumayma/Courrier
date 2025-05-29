@@ -25,7 +25,7 @@ interface Courrier {
 })
 export class RhArchivesComponent implements AfterViewInit {
 
- sidebarOpen = false;
+ sidebarOpen = true;
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;

@@ -1,8 +1,9 @@
 <section
-  class="p-10 max-w-7xl mx-auto space-y-12 bg-gradient-to-b from-[#eef6fc] to-white rounded-3xl shadow-xl mt-8 mb-20"
+  class="p-8 max-w-7xl mx-auto space-y-10 bg-gradient-to-b from-[#eef6fc] to-white rounded-3xl shadow-xl mt-6 mb-16"
 >
+  <!-- Titre -->
   <h2
-    class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4"
+    class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-2"
   >
     <span class="p-3 bg-blue-100 rounded-full">
       <i data-feather="bar-chart-2" class="w-6 h-6 text-sky-600"></i>
@@ -10,70 +11,95 @@
     Statistiques globales
   </h2>
 
-  <!-- Résumé -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div class="bg-white p-5 rounded-xl shadow flex items-center">
-      <div class="p-3 bg-indigo-100 rounded-full mr-4">
-        <i data-feather="users" class="w-6 h-6 text-indigo-600"></i>
+  <!-- Résumé dynamique -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="bg-white p-4 rounded-xl shadow flex items-center">
+      <div class="p-2 bg-indigo-100 rounded-full mr-3">
+        <i data-feather="users" class="w-5 h-5 text-indigo-600"></i>
       </div>
       <div>
         <p class="text-sm text-gray-600">Total employés</p>
-        <p class="text-2xl font-semibold">24</p>
+        <p class="text-xl font-semibold text-gray-800">
+          {{ stats?.totalEmployes ?? "__" }}
+        </p>
       </div>
     </div>
 
-    <div class="bg-white p-5 rounded-xl shadow flex items-center">
-      <div class="p-3 bg-purple-100 rounded-full mr-4">
-        <i data-feather="briefcase" class="w-6 h-6 text-purple-600"></i>
+    <div class="bg-white p-4 rounded-xl shadow flex items-center">
+      <div class="p-2 bg-purple-100 rounded-full mr-3">
+        <i data-feather="briefcase" class="w-5 h-5 text-purple-600"></i>
       </div>
       <div>
         <p class="text-sm text-gray-600">Services actifs</p>
-        <p class="text-2xl font-semibold">8</p>
+        <p class="text-xl font-semibold text-gray-800">
+          {{ stats?.totalServices ?? "__" }}
+        </p>
       </div>
     </div>
 
-    <div class="bg-white p-5 rounded-xl shadow flex items-center">
-      <div class="p-3 bg-red-100 rounded-full mr-4">
-        <i data-feather="alert-circle" class="w-6 h-6 text-red-600"></i>
+    <div class="bg-white p-4 rounded-xl shadow flex items-center">
+      <div class="p-2 bg-red-100 rounded-full mr-3">
+        <i data-feather="alert-circle" class="w-5 h-5 text-red-600"></i>
       </div>
       <div>
         <p class="text-sm text-gray-600">Courriers urgents</p>
-        <p class="text-2xl font-semibold">5</p>
+        <p class="text-xl font-semibold text-gray-800">
+          {{ stats?.totalUrgentCourriers ?? "__" }}
+        </p>
       </div>
     </div>
   </div>
 
   <!-- Graphiques -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow">
-      <h3 class="text-lg font-bold mb-4 text-sky-700">📈 Tendance mensuelle</h3>
-      <canvas #monthlyStatsChart height="100"></canvas>
+    <!-- Graphique Tendance mensuelle -->
+    <div class="lg:col-span-2 bg-white p-4 rounded-xl shadow">
+      <h3 class="text-base font-bold mb-2 text-sky-700 flex items-center gap-2">
+        <i data-feather="activity" class="w-4 h-4 text-sky-600"></i> Tendance
+        mensuelle
+      </h3>
+      <canvas #monthlyStatsChart class="w-full h-56"></canvas>
     </div>
+
+    <!-- Graphique Confidentialité -->
     <div
-      class="bg-white p-6 rounded-xl shadow flex flex-col items-center justify-center"
+      class="bg-white p-4 rounded-xl shadow flex flex-col items-center justify-center"
     >
-      <h3 class="text-lg font-bold mb-4 text-sky-700">🔐 Confidentialité</h3>
-      <canvas #confidentialityChart width="150" height="150"></canvas>
+      <h3 class="text-base font-bold mb-2 text-sky-700 flex items-center gap-2">
+        <i data-feather="lock" class="w-4 h-4 text-yellow-500"></i>
+        Confidentialité
+      </h3>
+      <canvas #confidentialityChart width="160" height="160"></canvas>
     </div>
   </div>
 
-  <div class="bg-white p-6 rounded-xl shadow">
-    <h3 class="text-lg font-bold mb-4 text-sky-700">
-      📊 Courriers par service
+  <!-- Courriers par service -->
+  <div class="bg-white p-4 rounded-xl shadow">
+    <h3 class="text-base font-bold mb-2 text-sky-700 flex items-center gap-2">
+      <i data-feather="bar-chart" class="w-4 h-4 text-fuchsia-500"></i>
+      Courriers par service
     </h3>
-    <canvas #byServiceChart height="100"></canvas>
+    <canvas #byServiceChart style="max-height: 350px"></canvas>
   </div>
 
-  <div class="bg-white p-6 rounded-xl shadow">
-    <h3 class="text-lg font-bold mb-4 text-sky-700">
-      👥 Courriers traités par employé
+  <!-- Courriers par employé -->
+  <div class="bg-white p-4 rounded-xl shadow">
+    <h3 class="text-base font-bold mb-2 text-sky-700 flex items-center gap-2">
+      <i data-feather="users" class="w-4 h-4 text-indigo-600"></i> Courriers
+      traités par employé
     </h3>
-    <canvas #byEmployeeChart height="80"></canvas>
+    <canvas #byEmployeeChart style="max-height: 150px"></canvas>
   </div>
 
-  <div class="bg-white p-6 rounded-xl shadow">
-    <h3 class="text-lg font-bold text-sky-700">⏱ Temps moyen de traitement</h3>
-    <p class="text-3xl font-extrabold text-gray-800 mt-2">3.5 jours</p>
+  <!-- Temps moyen -->
+  <div class="bg-white p-4 rounded-xl shadow">
+    <h3 class="text-base font-bold text-sky-700 flex items-center gap-2">
+      <i data-feather="clock" class="w-4 h-4 text-pink-600"></i> Temps moyen de
+      traitement
+    </h3>
+    <p class="text-2xl font-extrabold text-gray-800 mt-1">
+      {{ stats?.traitementMoyenJours ?? "__" }} jours
+    </p>
     <p class="text-sm text-gray-500">Basé sur les 30 derniers jours</p>
   </div>
 </section>

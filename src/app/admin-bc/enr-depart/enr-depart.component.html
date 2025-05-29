@@ -1,118 +1,104 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Enregistrement Courrier Départ</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/feather-icons"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
-</head>
-<body class="bg-[#f3faff] text-gray-800 font-poppins">
+<form
+  [formGroup]="departForm"
+  (ngSubmit)="onSubmit()"
+  class="space-y-10 text-gray-800 bg-gradient-to-br from-[#eaf6ff] via-white to-white p-10 rounded-3xl shadow-xl border border-[#c7e4f6] max-w-6xl mx-auto mt-4 mb-20"
+>
 
-  <section class="p-10 max-w-6xl mx-auto bg-gradient-to-br from-[#eaf6ff] via-white to-white rounded-3xl shadow-xl border border-[#c7e4f6] space-y-12 mt-4 mb-20">
-
-    <!-- Titre stylisé réduit -->
-    <div class="flex items-center gap-4 text-[#003b63]">
-      <div class="bg-[#0d88c6]/10 p-3 rounded-full shadow-inner">
-        <i data-feather="send" class="w-6 h-6 text-[#0d88c6]"></i>
-      </div>
-      <h2 class="text-[1.6rem] italic font-extrabold tracking-wide">Enregistrement d’un courrier de départ</h2>
+  <!-- Titre -->
+  <div class="flex items-center gap-4 text-[#003b63]">
+    <div class="bg-[#0d88c6]/10 p-3 rounded-full shadow-inner">
+      <i data-feather="send" class="w-6 h-6 text-[#0d88c6]"></i>
     </div>
+    <h2 class="text-[1.6rem] italic font-extrabold tracking-wide">Enregistrement d’un courrier de départ</h2>
+  </div>
 
-    <!-- Formulaire -->
-    <form class="space-y-10 text-gray-800">
+  <!-- Expéditeur -->
+  <div>
+    <label class="block text-[15px] font-semibold mb-2">Expéditeur</label>
+    <input type="text" formControlName="nomExpediteur" placeholder="Nom du responsable"
+           class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400 focus:outline-none transition-all" />
+  </div>
 
-      <!-- Expéditeur -->
-      <div>
-        <label class="block text-[15px] font-semibold mb-2">Expéditeur</label>
-        <input type="text" placeholder="Nom du responsable"
-               class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400 focus:outline-none transition-all"/>
+  <!-- Voie + Objet -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <label class="block text-[15px] font-semibold mb-2">Voie d’expédition</label>
+      <select formControlName="voieExpedition"
+              class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
+        <option value="">Sélectionner</option>
+        <option value="COURRIER">Courrier</option>
+        <option value="EMAIL">Email</option>
+        <option value="FAX">Fax</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-[15px] font-semibold mb-2">Objet</label>
+      <input type="text" formControlName="objet"
+             class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400" />
+    </div>
+  </div>
+
+  <!-- Description -->
+  <div>
+    <label class="block text-[15px] font-semibold mb-2">Description</label>
+    <textarea rows="3" formControlName="description"
+              class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm resize-none focus:ring-2 focus:ring-sky-400"></textarea>
+  </div>
+
+  <!-- Sélections -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+      <label class="block text-[15px] font-semibold mb-2">Confidentialité</label>
+      <select formControlName="degreConfidentialite"
+              class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
+        <option value="MOINS_SECRET">Moins secret</option>
+        <option value="ROUTINE">Routine</option>
+        <option value="SECRET">Secret</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-[15px] font-semibold mb-2">Urgence</label>
+      <select formControlName="urgence"
+              class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
+        <option value="MOINS_URGENT">Moins urgent</option>
+        <option value="NORMAL">Normal</option>
+        <option value="URGENT">Urgent</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-[15px] font-semibold mb-2">Service cible</label>
+      <select formControlName="service"
+              class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400"
+              [disabled]="services.length === 0">
+        <option value="">Sélectionner</option>
+        <option *ngFor="let s of services" [value]="s.id">{{ s.nom }}</option>
+      </select>
+      <div *ngIf="services.length === 0" class="text-sm text-red-500 mt-1">
+        Aucun service disponible. Vérifiez la connexion au serveur.
       </div>
+    </div>
+  </div>
 
-      <!-- Voie + Date -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-[15px] font-semibold mb-2">Voie d’expédition</label>
-          <select class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
-            <option value="">Sélectionner</option>
-            <option value="courrier">Courrier</option>
-            <option value="email">Email</option>
-            <option value="fax">Fax</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[15px] font-semibold mb-2">Date & heure d’expédition</label>
-          <input type="datetime-local"
-                 class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400"/>
-        </div>
-      </div>
+  <!-- Fichier joint -->
+  <div>
+    <label class="block text-[15px] font-semibold mb-2">Fichier joint</label>
+    <input type="file" (change)="onFileChange($event)"
+           class="block w-full text-sm text-gray-600 border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-white file:bg-[#0d88c6] hover:file:bg-[#0b76aa] shadow-sm" />
+  </div>
 
-      <!-- Objet / Description -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-[15px] font-semibold mb-2">Objet</label>
-          <input type="text"
-                 class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400"/>
-        </div>
-        <div>
-          <label class="block text-[15px] font-semibold mb-2">Description</label>
-          <textarea rows="3"
-                    class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm resize-none focus:ring-2 focus:ring-sky-400"></textarea>
-        </div>
-      </div>
+  <!-- Bouton -->
+  <div class="text-right">
+    <button type="submit"
+            class="inline-flex items-center gap-3 px-8 py-3 bg-[#0d88c6] text-white font-bold rounded-xl shadow-lg hover:bg-[#0b76aa] hover:scale-[1.02] transition-all duration-200">
+      <i data-feather="send" class="w-5 h-5"></i>
+      Envoyer le courrier
+    </button>
+  </div>
+</form>
 
-      <!-- Sélections -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div>
-          <label class="block text-[15px] font-semibold mb-2">Confidentialité</label>
-          <select class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
-            <option value="MOINS_SECRET">Moins secret</option>
-            <option value="ROUTINE">Routine</option>
-            <option value="SECRET">Secret</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[15px] font-semibold mb-2">Urgence</label>
-          <select class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
-            <option value="MOINS_URGENT">Moins urgent</option>
-            <option value="NORMAL">Normal</option>
-            <option value="URGENT">Urgent</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[15px] font-semibold mb-2">Service cible</label>
-          <select class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
-            <option value="">Sélectionner service</option>
-            <option value="RH">RH</option>
-            <option value="Finances">Finances</option>
-            <option value="Direction">Direction</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Fichier joint -->
-      <div>
-        <label class="block text-[15px] font-semibold mb-2">Fichier joint</label>
-        <input type="file"
-               class="block w-full text-sm text-gray-600 border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-white file:bg-[#0d88c6] hover:file:bg-[#0b76aa] shadow-sm"/>
-      </div>
-
-      <!-- Bouton -->
-      <div class="text-right">
-        <button type="submit"
-                class="inline-flex items-center gap-3 px-8 py-3 bg-[#0d88c6] text-white font-bold rounded-xl shadow-lg hover:bg-[#0b76aa] hover:scale-[1.02] transition-all duration-200">
-          <i data-feather="send" class="w-5 h-5"></i>
-          Envoyer le courrier
-        </button>
-      </div>
-    </form>
-  </section>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      feather.replace(); // Active les icônes
-    });
-  </script>
-</body>
-</html>
+<!-- Icones -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    feather.replace();
+  });
+</script>
