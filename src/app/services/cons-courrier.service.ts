@@ -5,13 +5,12 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class DashboardService {
-  private apiUrl = 'http://localhost:9090/api/delegue/dashboard';
+export class ConsCourrierService {
+  private baseUrl = 'http://localhost:9090/api/admin-bc';
 
   constructor(private http: HttpClient) {}
 
- getDashboardData(): Observable<any> {
-  return this.http.get('http://localhost:9090/api/delegue/dashboard');
-}
-
+  getCourriersArrivee(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/courriers/arrivees`);
+  }
 }

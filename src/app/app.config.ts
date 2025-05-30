@@ -6,14 +6,13 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthInterceptor } from './interceptors/auth.interceptor'; // ✅ fonction
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     importProvidersFrom(HttpClientModule),
-    provideHttpClient(withInterceptors([AuthInterceptor])), // ✅ correct maintenant
+    provideHttpClient(), // ✅ correct maintenant
     importProvidersFrom(CommonModule, FormsModule, RouterModule)
   ]
 };

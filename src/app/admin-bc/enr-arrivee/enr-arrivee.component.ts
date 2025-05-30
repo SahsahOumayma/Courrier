@@ -29,54 +29,67 @@ export class EnrArriveeComponent implements AfterViewInit {
       objet: ['', Validators.required],
       description: ['', Validators.required],
       numeroRegistre: ['', Validators.required],
-      degreConfidentialite: ['ROUTINE', Validators.required],
-      urgence: ['NORMAL', Validators.required],
+      degreConfidentialite: ['', Validators.required],
+      urgence: ['', Validators.required],
       service: ['', Validators.required],
+      nature: ['', Validators.required], // champ ajouté
     });
   }
 
   ngAfterViewInit(): void {
-    feather.replace(); // active feather-icons
+    feather.replace();
   }
 
   onFileChange(ev: Event): void {
     const input = ev.target as HTMLInputElement;
-    if (input.files && input.files.length) {
+    if (input.files && input.files.length > 0) {
       this.file = input.files[0];
     }
   }
 
   onSubmit(): void {
     if (this.courrierForm.invalid || !this.file) {
-      alert(
-        '🚨 Veuillez remplir tous les champs requis et ajouter un fichier.'
-      );
+      alert('🚨 Veuillez remplir tous les champs requis et ajouter un fichier.');
       return;
     }
 
-    const v = this.courrierForm.value;
-    const fd = new FormData();
-    fd.append('signataire', v.signataire);
-    fd.append('objet', v.objet);
-    fd.append('description', v.description);
-    fd.append('numeroRegistre', v.numeroRegistre);
-    fd.append('degreConfidentialite', v.degreConfidentialite);
-    fd.append('urgence', v.urgence);
-    fd.append('service', v.service);
-    
-    fd.append('attachment', this.file);
+    const values = this.courrierForm.value;
+    const formData = new FormData();
 
-    this.courrierService.enregistrerArrivee(fd).subscribe({
+    formData.append('signataire', values.signataire);
+    formData.append('objet', values.objet);
+    formData.append('description', values.description);
+    formData.append('numeroRegistre', values.numeroRegistre);
+    formData.append('degreConfidentialite', values.degreConfidentialite);
+    formData.append('urgence', values.urgence);
+    formData.append('service', values.service);
+    formData.append('nature', values.nature);
+    formData.append('attachment', this.file);
+
+    this.courrierService.envoyerCourrierArrivee(formData).subscribe({
       next: (res) => {
-        console.log('✅ Réponse :', res);
-        alert('✅ ' + res); 
+        console.log('✅ Réponse brute reçue :', res);
+        alert('✅ ' + res); // res est une chaîne comme "Courrier enregistré avec succès"
         this.courrierForm.reset();
         this.file = null;
       },
-
       error: (err) => {
-        console.error('❌ Erreur back :', err);
-        alert('❌ Une erreur est survenue lors de l’enregistrement.');
+        // Cas fréquent : faux "HttpErrorResponse" avec status 200
+        if (err.status === 200 && err.error === "") {
+          console.warn('ℹ️ Faux positif détecté. Statut 200 sans contenu.');
+          alert('✅ Courrier enregistré avec succès');
+          this.courrierForm.reset();
+          this.file = null;
+          return;
+        }
+
+        console.error('❌ Erreur backend :', err);
+        const message =
+          err?.error?.message ||
+          JSON.stringify(err?.error) ||
+          err?.statusText ||
+          'Une erreur inconnue est survenue.';
+        alert('❌ Erreur : ' + message);
       },
     });
   }
