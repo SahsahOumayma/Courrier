@@ -6,21 +6,38 @@
 ></div>
 
 <!-- CONTAINER GLOBAL -->
-<div class="relative min-h-screen bg-blue-50 text-gray-800 font-poppins overflow-x-hidden flex">
+<div class="relative min-h-screen flex bg-blue-50 text-gray-800 font-poppins overflow-x-hidden max-w-full">
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR (scrollable + bien stylée) -->
   <aside
-    class="fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-sky-900 to-sky-700 text-sky-100 px-6 pt-12 flex flex-col justify-between transform transition-transform duration-300 ease-in-out shadow-2xl rounded-r-2xl"
+    class="fixed top-0 left-0 z-50 h-screen w-72 overflow-y-auto
+           bg-gradient-to-b from-[#045c90] to-[#005b85] text-sky-100 px-6 pt-12
+           flex flex-col transform transition-transform duration-300 ease-in-out shadow-2xl rounded-r-2xl"
     [ngClass]="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
   >
 
-    <!-- LOGO -->
-    <div class="mb-6 flex justify-center">
+    <!-- ❌ Bouton fermer -->
+    <button
+      *ngIf="sidebarOpen"
+      (click)="toggleSidebar()"
+      class="absolute top-3 right-3 text-white hover:bg-white/20 bg-white/10 p-2 rounded-full transition duration-200 z-50"
+      aria-label="Fermer le menu"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <!-- LOGO CENTRÉ -->
+    <div class="flex justify-center mb-4">
       <img src="https://cod.sante.gov.ma/images/mus.png" alt="Logo" class="h-16 rounded shadow-md" />
     </div>
 
+    <!-- LIGNE DE SÉPARATION -->
+    <div class="border-t border-sky-300 mb-4"></div>
+
     <!-- MENU -->
-    <nav class="flex-1 space-y-4">
+    <nav class="flex-1 space-y-4 pb-6">
       <a [routerLink]="['/admin-si/dashboard']" routerLinkActive="bg-white text-sky-900"
          class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
         <i data-feather="home" class="w-5 h-5 mr-3"></i> <span>Dashboard</span>
@@ -48,29 +65,28 @@
         </li>
       </ul>
 
-      <a [routerLink]="['/services']" class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
+      <a [routerLink]="['/admin-si/services']"  class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
         <i data-feather="server" class="w-5 h-5 mr-3"></i> <span>Services</span>
       </a>
 
-      <a [routerLink]="['/roles']" class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
+      <a [routerLink]="['/admin-si/roles']" class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
         <i data-feather="lock" class="w-5 h-5 mr-3"></i> <span>Rôles</span>
       </a>
 
-      <a [routerLink]="['/confidentialite']" class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
+      <a [routerLink]="['/admin-si//confidentialites']" class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
         <i data-feather="eye-off" class="w-5 h-5 mr-3"></i> <span>Confidentialité</span>
       </a>
 
-      <a [routerLink]="['/urgence']" class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
+      <a [routerLink]="['/admin-si//urgences']" class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
         <i data-feather="clock" class="w-5 h-5 mr-3"></i> <span>Urgence</span>
       </a>
     </nav>
 
-    <!-- BAS DU MENU -->
-    <div class="mt-6 space-y-2">
+    <!-- MENU BAS -->
+    <div class="space-y-2 pb-6">
       <a [routerLink]="['/admin-si/profil']" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
-  <i data-feather="user" class="w-5 h-5 mr-3"></i> <span>Profil</span>
-</a>
-
+        <i data-feather="user" class="w-5 h-5 mr-3"></i> <span>Profil</span>
+      </a>
       <a [routerLink]="['/support']" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
         <i data-feather="help-circle" class="w-5 h-5 mr-3"></i> <span>Support</span>
       </a>
@@ -81,12 +97,14 @@
   </aside>
 
   <!-- CONTENU PRINCIPAL -->
-  <div class="flex-1 flex flex-col transition-all duration-300" [ngClass]="{ 'ml-72': sidebarOpen }">
+  <div class="flex-1 flex flex-col overflow-x-hidden max-w-full transition-all duration-300"
+       [ngClass]="{ 'ml-72': sidebarOpen }">
+
     <!-- HEADER -->
     <header class="flex items-center gap-6 h-20 px-10 bg-white border-b shadow-sm relative">
       <div class="w-1 h-10 bg-sky-600 rounded-sm"></div>
-
       <button
+        *ngIf="!sidebarOpen"
         (click)="toggleSidebar()"
         class="w-11 h-11 flex items-center justify-center bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-lg shadow transition"
         aria-label="Ouvrir le menu"
@@ -101,7 +119,7 @@
       </h1>
     </header>
 
-    <!-- CONTENU -->
+    <!-- ZONE CONTENU -->
     <main class="flex-1 overflow-y-auto p-8 bg-white rounded-tl-2xl shadow-inner">
       <router-outlet></router-outlet>
     </main>

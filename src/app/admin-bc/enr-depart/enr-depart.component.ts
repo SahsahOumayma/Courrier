@@ -26,6 +26,7 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
     this.departForm = this.fb.group({
       nomExpediteur: ['', Validators.required],
       voieExpedition: ['', Validators.required],
+      numeroRegistre: ['', Validators.required],
       objet: ['', Validators.required],
       description: ['', Validators.required],
       degreConfidentialite: ['', Validators.required],
@@ -77,7 +78,8 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
     const formData = new FormData();
 
     formData.append('nomExpediteur', v.nomExpediteur);
-    formData.append('voieExpedition', v.voieExpedition); // envoyer le nom (ex: "EMAIL")
+    formData.append('voieExpedition', v.voieExpedition); 
+    formData.append('numeroRegistre', v.numeroRegistre);// envoyer le nom (ex: "EMAIL")
     formData.append('objet', v.objet);
     formData.append('description', v.description);
     formData.append('degreConfidentialite', v.degreConfidentialite); // ex: "ROUTINE"

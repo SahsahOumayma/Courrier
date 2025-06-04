@@ -13,4 +13,8 @@ export class ConsCourrierService {
   getCourriersArrivee(): Observable<any> {
     return this.http.get(`${this.baseUrl}/courriers/arrivees`);
   }
+  getCourriersDepart(): Observable<any> {
+  return this.http.get(`${this.baseUrl}/courriers/departs`);
+}
+
 }

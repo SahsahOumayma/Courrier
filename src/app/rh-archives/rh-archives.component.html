@@ -6,12 +6,11 @@
 ></div>
 
 <!-- CONTAINER GLOBAL -->
-<div class="relative min-h-screen bg-blue-50 text-gray-800 font-poppins overflow-x-hidden">
+<div class="relative min-h-screen bg-blue-50 text-gray-800 font-poppins flex overflow-x-hidden max-w-full">
 
   <!-- SIDEBAR RH -->
   <aside
     class="fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-sky-900 to-sky-700 text-sky-100 p-6 pt-12 flex flex-col justify-between transform transition-transform duration-300 ease-in-out shadow-2xl rounded-r-2xl"
-
     [ngClass]="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
   >
     <!-- ❌ EN HAUT À DROITE -->
@@ -28,7 +27,6 @@
 
     <!-- PARTIE HAUTE -->
     <div>
-      <!-- LOGO -->
       <div class="flex justify-center mt-2 mb-6">
         <img
           src="https://cod.sante.gov.ma/images/mus.png"
@@ -36,11 +34,8 @@
           class="h-16 rounded shadow"
         />
       </div>
-
-      <!-- Ligne -->
       <div class="my-6 border-t border-sky-300"></div>
 
-      <!-- MENU PRINCIPAL -->
       <nav class="space-y-2">
         <a routerLink="dashboard" routerLinkActive="bg-white text-sky-900"
            class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
@@ -74,32 +69,29 @@
     </div>
   </aside>
 
-  <!-- CONTENU PRINCIPAL -->
-  <div class="flex-1 flex flex-col transition-all duration-300"
-       [ngClass]="{ 'ml-72': sidebarOpen }">
+  <!-- CONTENU PRINCIPAL RH AVEC LE BON STYLE -->
+  <div class="flex-1 flex flex-col transition-all duration-300 overflow-x-hidden max-w-full" [ngClass]="{ 'ml-72': sidebarOpen }">
 
-    <!-- HEADER avec bouton ☰ intégré -->
-    <header class="flex items-center gap-4 h-16 px-6 bg-white border-b shadow-sm">
-      <!-- BOUTON ☰ aligné et visible -->
+    <!-- HEADER -->
+    <header class="flex items-center gap-6 h-20 px-10 bg-white border-b shadow-sm relative">
+      <div class="w-1 h-10 bg-sky-600 rounded-sm"></div>
       <button
         *ngIf="!sidebarOpen"
         (click)="toggleSidebar()"
-        class="w-10 h-10 flex items-center justify-center bg-sky-100 text-sky-800 hover:bg-sky-200 rounded-md shadow-sm transition duration-200"
+        class="w-11 h-11 flex items-center justify-center bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-lg shadow transition"
         aria-label="Ouvrir le menu"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
-
-      <!-- TITRE -->
-       <h1 class="text-[1.65rem] tracking-wide font-bold text-gray-800 uppercase">
-    Gestion des archives
-  </h1>
+      <h1 class="text-[1.65rem] tracking-wide font-bold text-gray-800 uppercase">
+        Gestion des archives
+      </h1>
     </header>
 
     <!-- CONTENU CENTRAL -->
-    <main class="flex-1 p-8">
+    <main class="flex-1 overflow-y-auto overflow-x-hidden p-8 bg-white rounded-tl-2xl shadow-inner">
       <router-outlet></router-outlet>
     </main>
   </div>

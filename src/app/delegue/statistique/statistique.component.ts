@@ -168,7 +168,7 @@ new Chart(this.byEmployeeChart.nativeElement, {
         beginAtZero: true,
         max: 30, // ✅ Limite max à 50
         ticks: {
-          stepSize: 5 // ✅ Graduation tous les 5
+          stepSize: 1 // ✅ Graduation tous les 5
         }
       }
     },

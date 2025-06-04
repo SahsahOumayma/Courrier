@@ -1,0 +1,87 @@
+<section class="p-8 bg-gradient-to-b from-[#f0f9ff] to-white rounded-3xl shadow-2xl border border-[#cfe7f9]">
+  <!-- Titre + bouton -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3">
+      <span class="p-3 bg-blue-100 rounded-full">
+        <i data-feather="shield" class="w-6 h-6 text-sky-600"></i>
+      </span>
+      Liste des rôles disponibles
+    </h2>
+    <button (click)="showAddForm = !showAddForm"
+      class="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg shadow hover:bg-sky-700 transition">
+      <i data-feather="plus" class="w-5 h-5"></i>
+      {{ showAddForm ? 'Annuler' : 'Nouveau rôle' }}
+    </button>
+  </div>
+
+  <!-- Formulaire ajout -->
+  <div *ngIf="showAddForm" class="mb-6 flex items-center gap-4">
+    <input [(ngModel)]="newRoleName" placeholder="Nom du nouveau rôle"
+      class="w-96 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition" />
+    <button (click)="addRole()" [disabled]="!newRoleName.trim()"
+      class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+      Sauvegarder
+    </button>
+  </div>
+
+  <!-- Barre de recherche + pagination -->
+  <div class="mb-4 flex items-center justify-between">
+    <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()"
+      placeholder="🔍 Rechercher un rôle..."
+      class="w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition" />
+
+    <select [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()"
+      class="px-3 py-2 border rounded shadow-sm">
+      <option *ngFor="let option of paginationOptions" [value]="option">{{ option }}/page</option>
+    </select>
+  </div>
+
+  <!-- Tableau -->
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+      <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
+        <tr class="h-13">
+          <th class="px-4 py-3 rounded-l-xl w-[10%]">ID</th>
+          <th class="px-4 py-3 w-[60%] text-center">Nom du rôle</th>
+          <th class="px-4 py-3 text-center rounded-r-xl w-[30%]">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let role of paginatedRoles; let i = index"
+          [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
+          class="h-20 hover:shadow-md transition rounded-xl">
+          <td class="px-4 py-4 rounded-l-xl font-semibold truncate">{{ role.id }}</td>
+          <td class="px-4 py-4 truncate text-center">{{ role.nom }}</td>
+          <td class="px-4 py-4 text-center rounded-r-xl">
+            <button (click)="deleteRole(role.id)"
+              class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:bg-red-600 shadow text-sm">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="paginatedRoles.length === 0">
+          <td colspan="3" class="text-center py-4 text-gray-500">Aucun rôle trouvé</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-between items-center mt-6">
+    <button (click)="previousPage()" [disabled]="currentPage === 1"
+      class="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
+      ⬅️ Précédent
+    </button>
+    <span class="font-semibold">Page {{ currentPage }} / {{ totalPages() }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
+      class="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
+      Suivant ➡️
+    </button>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    feather.replace();
+  });
+</script>

@@ -1,0 +1,62 @@
+<section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
+  <!-- Titre -->
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
+    <span class="p-3 bg-blue-100 rounded-full">
+      <i data-feather="send" class="w-6 h-6 text-sky-600"></i>
+    </span>
+    Courriers de départ - <span class="ml-1">Archivés</span>
+  </h2>
+
+  <!-- Barre de recherche -->
+  <div class="mb-6 flex items-center gap-3">
+    <i data-feather="search" class="w-5 h-5 text-sky-600"></i>
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="filtrerCourriers()"
+      placeholder="Rechercher par objet, signataire, urgence..."
+      class="flex-1 px-4 py-2 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+    />
+  </div>
+
+  <!-- Tableau -->
+  <div class="overflow-x-auto rounded-xl shadow bg-white border border-sky-100">
+    <table class="min-w-full text-sm text-gray-800 border-separate border-spacing-y-2">
+      <thead class="text-xs uppercase font-bold text-[#005f8e] bg-sky-50">
+        <tr>
+          <th class="px-4 py-3 rounded-l-xl">#</th>
+          <th class="px-4 py-3">Objet</th>
+          <th class="px-4 py-3">Signataire</th>
+          <th class="px-4 py-3">Date d’envoi</th>
+          <th class="px-4 py-3">Urgence</th>
+          <th class="px-4 py-3">Statut</th>
+          <th class="px-4 py-3 rounded-r-xl">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let courrier of courriersFiltres; let i = index"
+            class="shadow-sm hover:shadow-md transition rounded-xl bg-white">
+          <td class="px-4 py-3 font-semibold rounded-l-xl">{{ i + 1 }}</td>
+          <td class="px-4 py-3">{{ courrier.objet }}</td>
+          <td class="px-4 py-3">{{ courrier.signataire }}</td>
+          <td class="px-4 py-3">{{ courrier.dateRegistre || '—' }}</td>
+          <td class="px-4 py-3">{{ courrier.urgence || '—' }}</td>
+          <td class="px-4 py-3">
+            <span class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+              Archivé
+            </span>
+          </td>
+          <td class="px-4 py-3 rounded-r-xl text-center">
+            <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow">
+              Voir
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="courriersFiltres.length === 0">
+          <td colspan="7" class="text-center text-gray-500 py-6">Aucun courrier trouvé.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

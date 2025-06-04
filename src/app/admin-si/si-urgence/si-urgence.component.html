@@ -1,0 +1,85 @@
+<section class="p-8 bg-gradient-to-b from-[#fff5f5] to-white rounded-3xl shadow-2xl border border-red-200">
+  <!-- Titre -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-extrabold italic text-[#9b1c1c] flex items-center gap-3">
+      <span class="p-3 bg-red-100 rounded-full">
+        <i data-feather="alert-triangle" class="w-6 h-6 text-red-600"></i>
+      </span>
+      Gestion des niveaux d’urgence
+    </h2>
+    <button (click)="showAddForm = !showAddForm"
+      class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white font-medium rounded-lg shadow hover:bg-red-700 transition">
+      <i data-feather="plus" class="w-5 h-5"></i>
+      {{ showAddForm ? 'Annuler' : 'Nouveau niveau' }}
+    </button>
+  </div>
+
+  <!-- Formulaire d'ajout -->
+  <div *ngIf="showAddForm" class="mb-6 flex flex-wrap gap-4 items-center">
+    <input [(ngModel)]="newUrgenceName" placeholder="Nom du niveau d'urgence"
+      class="px-4 py-2 border rounded-lg w-64" />
+    <button (click)="addUrgence()" [disabled]="!newUrgenceName.trim()"
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
+      Sauvegarder
+    </button>
+  </div>
+
+  <!-- Barre de recherche et pagination -->
+  <div class="flex justify-between items-center mb-4">
+    <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()"
+      placeholder="🔍 Rechercher un niveau..."
+      class="w-96 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
+
+    <select [(ngModel)]="itemsPerPage" (change)="applyFilter()"
+      class="ml-4 px-3 py-2 border rounded shadow-sm">
+      <option *ngFor="let option of paginationOptions" [value]="option">{{ option }}/page</option>
+    </select>
+  </div>
+
+  <!-- Tableau -->
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+      <thead class="bg-red-50 text-red-800 font-bold">
+        <tr>
+          <th class="px-4 py-3 w-[10%] text-left">ID</th>
+          <th class="px-4 py-3 w-[60%] text-center">Niveau d’urgence</th>
+          <th class="px-4 py-3 w-[30%] text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of paginatedUrgences; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+          <td class="px-4 py-3 font-semibold">{{ u.id }}</td>
+          <td class="px-4 py-3 text-center">{{ u.nom }}</td>
+          <td class="px-4 py-3 text-center space-x-2">
+            <button (click)="deleteUrgence(u.id)"
+              class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:bg-red-600 shadow text-sm">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="paginatedUrgences.length === 0">
+          <td colspan="3" class="text-center text-gray-500 py-4">Aucune urgence trouvée.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-between items-center mt-6">
+    <button (click)="previousPage()" [disabled]="currentPage === 1"
+      class="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
+      ⬅️ Précédent
+    </button>
+    <span class="font-semibold">Page {{ currentPage }} / {{ totalPages() }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
+      class="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
+      Suivant ➡️
+    </button>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    feather.replace();
+  });
+</script>

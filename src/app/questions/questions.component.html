@@ -1,0 +1,83 @@
+<!-- Feather Icons -->
+<script src="https://unpkg.com/feather-icons"></script>
+
+<section class="relative flex items-center justify-center min-h-screen bg-cover bg-center"
+         style="background-image: url('https://www.telos-eu.com/medias/articles/medecine.png'); font-family: 'Times New Roman', serif;">
+  <div style="position:absolute; inset:0; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px);"></div>
+
+  <div style="position: relative; z-index: 10; display: flex; flex-direction: row; width: 100%; max-width: 900px; min-height: 420px; background-color: white; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); overflow: hidden;">
+    
+    <!-- Logo -->
+    <div style="flex: 1; background-color: white; display: flex; justify-content: center; align-items: center; padding: 30px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png"
+           alt="Ministère de la Santé" style="width: 80%; object-fit: contain;">
+    </div>
+
+    <!-- Formulaire -->
+    <div style="flex: 1; background-color: #0052A5; color: white; padding: 40px 30px; display: flex; flex-direction: column; justify-content: center;">
+      
+      <!-- Étape 1 -->
+      <div [ngClass]="{'opacity-100 translate-y-0': step === 1, 'opacity-0 translate-y-4 pointer-events-none absolute inset-0': step !== 1}"
+           style="transition: all 0.5s ease-in-out;">
+        <h2 style="font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 20px;">MOT DE PASSE </h2>
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+
+          <!-- Champ mot de passe avec icône -->
+          <div style="position: relative;">
+            <i data-feather="lock" style="position: absolute; left: 12px; top: 12px; width: 16px; height: 16px; color: #666;"></i>
+            <input [(ngModel)]="password" type="password" placeholder="Nouveau mot de passe"
+                   style="width: 100%; padding: 10px 10px 10px 40px; border-radius: 6px; background-color: white; color: #003974; font-size: 16px; outline: none; border: none;">
+          </div>
+
+          <!-- Champ confirmer mot de passe avec icône -->
+          <div style="position: relative;">
+            <i data-feather="check-circle" style="position: absolute; left: 12px; top: 12px; width: 16px; height: 16px; color: #666;"></i>
+            <input [(ngModel)]="confirmPassword" type="password" placeholder="Confirmer le mot de passe"
+                   style="width: 100%; padding: 10px 10px 10px 40px; border-radius: 6px; background-color: white; color: #003974; font-size: 16px; outline: none; border: none;">
+          </div>
+
+          <p *ngIf="pwError" style="color: #f87171; font-size: 14px;">Les mots de passe ne correspondent pas.</p>
+        </div>
+
+        <button (click)="goToNextStep()" 
+                style="margin-top: 20px; width: 100%; padding: 12px; background-color:  #003974; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">
+          CONTINUER
+        </button>
+      </div>
+
+      <!-- Étapes 2 à 4 -->
+      <div [ngClass]="{'opacity-100 translate-y-0': step >= 2 && step <= 4, 'opacity-0 translate-y-4 pointer-events-none absolute inset-0': !(step >= 2 && step <= 4)}"
+           style="transition: all 0.5s ease-in-out;">
+        <h2 style="font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 20px;">Question de sécurité {{ step - 1 }}</h2>
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+          <select *ngIf="!selectedQuestions[step - 2]" [(ngModel)]="selectedQuestions[step - 2]"
+                  style="width: 100%; padding: 10px; border-radius: 6px; background-color: white; color: #003974; font-size: 16px; outline: none; border: none;">
+            <option value="">Choisissez une question</option>
+            <option *ngFor="let q of getAvailableQuestions(step - 2)" [value]="q">{{ q }}</option>
+          </select>
+
+          <div *ngIf="selectedQuestions[step - 2]"
+               style="width: 100%; padding: 10px; border-radius: 6px; background-color: white; color: #003974; font-weight: bold; text-align: center;">
+            {{ selectedQuestions[step - 2] }}
+          </div>
+
+          <input [(ngModel)]="answers[step - 2]" type="text" placeholder="Votre réponse"
+                 style="width: 100%; padding: 10px; border-radius: 6px; background-color: white; color: #003974; font-size: 16px; outline: none; border: none;">
+        </div>
+
+        <button *ngIf="step < 4" (click)="goToNextStep()"
+                style="margin-top: 20px; width: 100%; padding: 12px; background-color:  #003974; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">
+          CONTINUER
+        </button>
+        <button *ngIf="step === 4" (click)="submitForm()"
+                style="margin-top: 20px; width: 100%; padding: 12px; background-color: #16a34a; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">
+          Terminer
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  feather.replace();
+</script>

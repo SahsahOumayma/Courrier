@@ -1,17 +1,15 @@
 <div class="flex-1 flex flex-col">
   <main class="flex-1 overflow-y-auto p-8">
     <section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
-      
-      <!-- Titre -->
-      <h2 class="text-3xl font-extrabold text-[#0d4e78] mb-8 flex items-center tracking-wide">
-        <i data-feather="archive" class="w-7 h-7 mr-3 text-[#0d88c6]"></i>
-        Archives Employés
+      <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
+        <span class="p-3 bg-blue-100 rounded-full">
+          <i data-feather="archive" class="w-6 h-6 text-sky-600"></i>
+        </span>
+        Archive des employés
       </h2>
 
-      <!-- Filtres alignés -->
+      <!-- Filtres -->
       <div class="mb-8 flex flex-wrap items-center justify-between gap-6 text-sm text-gray-700 font-medium">
-        
-        <!-- Recherche -->
         <input
           type="text"
           [(ngModel)]="recherche"
@@ -19,15 +17,12 @@
           class="w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
         />
 
-        <!-- Filtres alignés à droite -->
         <div class="flex flex-wrap gap-4 items-center justify-end ml-auto">
-          
-          <!-- Statut -->
           <label class="flex items-center gap-2">
             <span>Statut :</span>
             <select
               [(ngModel)]="filtreStatut"
-              class="w-40 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+              class="w-40 px-3 py-2 rounded-md border border-gray-300 shadow-sm"
             >
               <option value="tous">Tous</option>
               <option value="En cours">En cours</option>
@@ -36,12 +31,11 @@
             </select>
           </label>
 
-          <!-- Trier -->
           <label class="flex items-center gap-2">
             <span>Trier :</span>
             <select
               [(ngModel)]="filtreTri"
-              class="w-40 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+              class="w-40 px-3 py-2 rounded-md border border-gray-300 shadow-sm"
             >
               <option value="aucun">Par défaut</option>
               <option value="alphabetique">Ordre alphabétique</option>
@@ -49,13 +43,12 @@
             </select>
           </label>
 
-          <!-- Afficher -->
           <label class="flex items-center gap-2">
             <span>Afficher :</span>
             <select
               [(ngModel)]="pageSize"
-              (change)="onPageSizeChange(pageSize)"
-              class="w-28 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+              (change)="onPageSizeChange()"
+              class="w-28 px-3 py-2 rounded-md border border-gray-300 shadow-sm"
             >
               <option *ngFor="let option of pageOptions" [value]="option">
                 {{ option }}/page
@@ -69,7 +62,7 @@
       <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
         <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
           <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
-            <tr>
+            <tr class="h-13">
               <th class="px-4 py-3 rounded-l-xl">Matricule</th>
               <th class="px-4 py-3">CIN</th>
               <th class="px-4 py-3">Objet</th>
@@ -80,11 +73,11 @@
               <th class="px-4 py-3 rounded-r-xl">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody *ngIf="paginatedEmployes.length > 0">
             <tr
               *ngFor="let e of paginatedEmployes; let i = index"
               [ngClass]="{ 'bg-gray-50': i % 2 === 0, 'bg-white': i % 2 !== 0 }"
-              class="shadow-sm hover:shadow-md transition rounded-xl"
+              class="h-20 shadow-sm hover:shadow-md transition rounded-xl"
             >
               <td class="px-4 py-4 font-semibold rounded-l-xl">{{ e.matricule }}</td>
               <td class="px-4 py-4">{{ e.cin }}</td>
@@ -121,8 +114,9 @@
                 </div>
               </td>
             </tr>
-
-            <tr *ngIf="paginatedEmployes.length === 0">
+          </tbody>
+          <tbody *ngIf="paginatedEmployes.length === 0">
+            <tr>
               <td colspan="8" class="text-center py-4 text-gray-500">
                 Aucun résultat trouvé.
               </td>
@@ -140,11 +134,9 @@
         >
           ⬅️ Précédent
         </button>
-
         <div class="px-6 py-2 bg-white border border-gray-300 shadow rounded-xl text-[#003c61] font-bold tracking-wide">
           Page {{ currentPage }} / {{ totalPages }}
         </div>
-
         <button
           (click)="nextPage()"
           [disabled]="currentPage === totalPages"

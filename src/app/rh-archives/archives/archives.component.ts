@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+// src/app/components/archives/archives.component.ts
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import feather from 'feather-icons';
+import { RhArchiveService, CourrierEmployeeDTO } from '../../services/rh-archive.service';
 
 @Component({
   selector: 'app-archives',
@@ -8,52 +11,36 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule],
   templateUrl: './archives.component.html',
 })
-export class ArchivesComponent {
+export class ArchivesComponent implements OnInit {
   recherche = '';
   filtreStatut = 'tous';
   filtreTri = 'aucun';
-
   pageSize = 5;
   currentPage = 1;
   pageOptions = [5, 10, 15, 20];
 
-  employes = [
-    {
-      objet: 'Demande de congé',
-      employe: 'Hassan El Amrani',
-      matricule: 'EMP123',
-      cin: 'AB123456',
-      service: 'RH',
-      dateArchivage: '2025-05-12',
-      statut: 'Traité'
-    },
-    {
-      objet: 'Lettre de recommandation',
-      employe: 'Fatima Zahra L.',
-      matricule: 'EMP456',
-      cin: 'CD789012',
-      service: 'RH',
-      dateArchivage: '2025-05-10',
-      statut: 'En cours'
-    },
-    {
-      objet: 'Contrat de travail',
-      employe: 'Karim Ben Ali',
-      matricule: 'EMP789',
-      cin: 'EF345678',
-      service: 'RH',
-      dateArchivage: '2025-05-08',
-      statut: 'Traité'
-    }
-    // Ajoute d'autres employés ici si tu veux tester la pagination
-  ];
+  employes: CourrierEmployeeDTO[] = [];
 
-  get employesFiltres() {
+  constructor(private rhArchiveService: RhArchiveService) {}
+
+  ngOnInit(): void {
+    this.rhArchiveService.getArchivedCourriers().subscribe({
+      next: (data) => {
+        console.log('✅ Données reçues :', data);
+        this.employes = data;
+      },
+      error: (err) => {
+        console.error('❌ Erreur API :', err);
+      }
+    });
+  }
+
+  get employesFiltres(): CourrierEmployeeDTO[] {
     let resultat = [...this.employes];
 
     if (this.recherche.trim()) {
       const terme = this.recherche.toLowerCase();
-      resultat = resultat.filter(e =>
+      resultat = resultat.filter((e) =>
         e.objet.toLowerCase().includes(terme) ||
         e.employe.toLowerCase().includes(terme) ||
         e.matricule.toLowerCase().includes(terme) ||
@@ -62,7 +49,9 @@ export class ArchivesComponent {
     }
 
     if (this.filtreStatut !== 'tous') {
-      resultat = resultat.filter(e => e.statut === this.filtreStatut);
+      resultat = resultat.filter((e) =>
+        e.statut.trim().toLowerCase() === this.filtreStatut.toLowerCase()
+      );
     }
 
     if (this.filtreTri === 'date') {
@@ -74,40 +63,35 @@ export class ArchivesComponent {
     return resultat;
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.employesFiltres.length / this.pageSize);
-  }
-
-  get totalPagesArray(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
-  }
-
-  get paginatedEmployes() {
+  get paginatedEmployes(): CourrierEmployeeDTO[] {
     const start = (this.currentPage - 1) * this.pageSize;
     return this.employesFiltres.slice(start, start + this.pageSize);
   }
 
-  changePage(page: number) {
-    this.currentPage = page;
+  get totalPages(): number {
+    return Math.ceil(this.employesFiltres.length / this.pageSize) || 1;
   }
 
-  nextPage() {
+  nextPage(): void {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
-  prevPage() {
+  prevPage(): void {
     if (this.currentPage > 1) this.currentPage--;
   }
 
-  onPageSizeChange(size: number) {
+  onPageSizeChange(): void {
     this.currentPage = 1;
   }
 
-  voirDetails(employe: any) {
-    alert(`Voir détails : ${employe.objet}`);
+  voirDetails(employe: CourrierEmployeeDTO): void {
+    window.open(`/api/courriers/${employe.courrierId}/view-pdf`, '_blank');
   }
 
-  telechargerPDF(employe: any) {
-    alert(`Téléchargement PDF : ${employe.objet}`);
+  telechargerPDF(employe: CourrierEmployeeDTO): void {
+    window.open(employe.downloadUrl, '_blank');
   }
+   ngAfterViewChecked(): void {
+      feather.replace();
+    }
 }

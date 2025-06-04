@@ -1,29 +1,42 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ConsCourrierService } from '../../services/cons-courrier.service';
 import feather from 'feather-icons';
 
 @Component({
   selector: 'app-cons-depart',
-  templateUrl: './cons-depart.component.html',
+  standalone: true,
   imports: [CommonModule],
-  styleUrls: ['./cons-depart.component.css']
+  templateUrl: './cons-depart.component.html',
+  styleUrls: ['./cons-depart.component.css'],
 })
-export class ConsDepartComponent implements AfterViewInit {
+export class ConsDepartComponent implements OnInit, AfterViewInit {
+  enCours: any[] = [];
+  archives: any[] = [];
 
-  courriersEnCours = [
-    { objet: 'Commande matériel', service: 'Logistique', date: '2025-04-30' }
-  ];
+  constructor(private courrierService: ConsCourrierService) {}
 
-  courriersArchives = [
-    { objet: 'Rapport annuel', service: 'Finance', date: '2025-05-07' }
-  ];
+  ngOnInit(): void {
+    this.courrierService.getCourriersDepart().subscribe({
+      next: (data: any) => {
+        const allCourriers = data.courriers || [];
+        this.enCours = allCourriers.filter((c: any) => !c.archiver);
+        this.archives = allCourriers.filter((c: any) => c.archiver);
+      },
+      error: (err) => {
+        console.error('Erreur de chargement des courriers départ :', err);
+      },
+    });
+  }
+
+  traiterCourrier(index: number): void {
+    const courrier = this.enCours[index];
+    courrier.archiver = true;
+    this.archives.push(courrier);
+    this.enCours.splice(index, 1);
+  }
 
   ngAfterViewInit(): void {
     feather.replace();
-  }
-
-  traiter(courrier: any) {
-    this.courriersEnCours = this.courriersEnCours.filter(c => c !== courrier);
-    this.courriersArchives.push(courrier);
   }
 }

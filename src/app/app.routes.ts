@@ -27,6 +27,20 @@ import { SiDashboardComponent } from './admin-si/si-dashboard/si-dashboard.compo
 import { SiProfilComponent } from './admin-si/si-profil/si-profil.component';
 import { SiUserGestionComponent } from './admin-si/si-user-gestion/si-user-gestion.component';
 import { SiUserActivationComponent } from './admin-si/si-user-activation/si-user-activation.component';
+import { SiServicesComponent } from './admin-si/si-services/si-services.component';
+import { SiRolesComponent } from './admin-si/si-roles/si-roles.component';
+import { SiConfidComponent } from './admin-si/si-confid/si-confid.component';
+import { SiUrgenceComponent } from './admin-si/si-urgence/si-urgence.component';
+import { QuestionsComponent } from './questions/questions.component';
+import { ResSvcComponent } from './res-svc/res-svc.component';
+import { SvcArriveeComponent } from './res-svc/svc-arrivee/svc-arrivee.component';
+import { SvcArriveeArchivComponent } from './res-svc/svc-arrivee-archiv/svc-arrivee-archiv.component';
+import { SvcDepartComponent } from './res-svc/svc-depart/svc-depart.component';
+import { SvcDepartArchivComponent } from './res-svc/svc-depart-archiv/svc-depart-archiv.component';
+import { PasswordComponent } from './password/password.component';
+
+
+
 
 
 
@@ -36,6 +50,8 @@ export const routes: Routes = [
   { path: '',            component: ConnexionComponent },
   { path: 'inscription', component: InscriptionComponent },
   { path: 'arrivee/details/:numero', component: CourrierDetailsComponent },
+  { path: 'questions', component: QuestionsComponent },
+   { path: 'password', component: PasswordComponent },
 
 {
   path: 'depart/details/:numero',
@@ -49,7 +65,11 @@ export const routes: Routes = [
       { path: 'dashboard', component: SiDashboardComponent },
        { path: 'profil', component: SiProfilComponent },
        { path: 'gestion', component: SiUserGestionComponent },
-       { path: 'activation', component: SiUserActivationComponent }
+       { path: 'activation', component: SiUserActivationComponent },
+        { path: 'services', component: SiServicesComponent } ,
+         { path: 'roles', component: SiRolesComponent },
+         { path: 'confidentialites', component: SiConfidComponent },
+  { path: 'urgences', component: SiUrgenceComponent }
     ]
   },
 
@@ -76,7 +96,6 @@ export const routes: Routes = [
     { path: 'dashboard', component: RhDashboardComponent },
     { path: 'archives', component: ArchivesComponent },
     { path: 'utilisateurs', component: RhUtilisateursComponent },
-    { path: 'profil', component: ProfilComponent},
     
   ]
 },
@@ -85,7 +104,7 @@ export const routes: Routes = [
     path: 'delegue',
     component: DelegueComponent,
     children: [
-      { path: '',        component: ArriveeComponent },    // /delegue
+      { path: '',        component: DashboardComponent },    // /delegue
       { path: 'arrivee', component: ArriveeComponent },    // /delegue/arrivee
       { path: 'depart',  component: DepartComponent   } ,
       {path: 'statistique', component: StatistiqueComponent},
@@ -95,6 +114,21 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },   // /delegue/depart
     ]
   },
+
+
+  {
+    path: 'res-svc',
+    component: ResSvcComponent,
+    children: [
+      { path: 'arrivee', component: SvcArriveeComponent }, 
+      { path: 'arrivee-archives', component: SvcArriveeArchivComponent },
+       { path: 'depart', component: SvcDepartComponent },
+       { path: 'depart-archiv', component: SvcDepartArchivComponent },
+      { path: '', redirectTo: 'arrivee', pathMatch: 'full' } 
+    ]
+  },
+
+
   { path: '**', redirectTo: '' }
 ];
 

@@ -46,8 +46,9 @@ export class BcDashboardComponent implements OnInit, AfterViewInit {
         };
         this.last3Courriers = data.last3Courriers ?? [];
 
-        if (data.monthlyTrend && Object.keys(data.monthlyTrend).length > 0) {
-          this.renderChart(data.monthlyTrend);
+        // ✔️ Adapter à la nouvelle structure
+        if (data.monthlyLabels && data.monthlyArrivees && data.monthlyDeparts) {
+          this.renderChart(data.monthlyLabels, data.monthlyArrivees, data.monthlyDeparts);
         }
       },
       error: (err) => {
@@ -60,7 +61,7 @@ export class BcDashboardComponent implements OnInit, AfterViewInit {
     feather.replace();
   }
 
-  renderChart(monthlyTrend: Record<string, number>): void {
+  renderChart(labels: string[], arrivees: number[], departs: number[]): void {
     const canvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
     if (!canvas) return;
 
@@ -69,23 +70,42 @@ export class BcDashboardComponent implements OnInit, AfterViewInit {
     this.chartInstance = new Chart(canvas, {
       type: 'line',
       data: {
-        labels: Object.keys(monthlyTrend),
-        datasets: [{
-          label: 'Courriers par mois',
-          data: Object.values(monthlyTrend),
-          borderColor: '#3B82F6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          tension: 0.4,
-          fill: true
-        }]
+        labels: labels,
+        datasets: [
+          {
+            label: 'Arrivées',
+            data: arrivees,
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: false,
+            pointRadius: 4,
+            pointBackgroundColor: '#3B82F6'
+          },
+          {
+            label: 'Départs',
+            data: departs,
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: false,
+            pointRadius: 4,
+            pointBackgroundColor: '#10B981'
+          }
+        ]
       },
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'bottom' }
+          legend: {
+            position: 'bottom'
+          }
         },
         scales: {
-          y: { beginAtZero: true }
+          y: {
+            beginAtZero: true,
+            max: 100 // ✅ Fixe la hauteur maximale à 100
+          }
         }
       }
     });

@@ -1,0 +1,119 @@
+<!-- OVERLAY POUR MOBILE -->
+<div
+  *ngIf="sidebarOpen"
+  class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 md:hidden"
+  (click)="toggleSidebar()"
+></div>
+
+<!-- CONTAINER GLOBAL -->
+<div class="relative min-h-screen bg-blue-50 text-gray-800 font-poppins overflow-x-hidden flex">
+
+  <!-- SIDEBAR -->
+  <aside
+    class="fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-sky-900 to-sky-700 text-sky-100 px-6 pt-12 flex flex-col justify-between transform transition-transform duration-300 ease-in-out shadow-2xl rounded-r-2xl"
+    [ngClass]="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
+  >
+
+    <!-- BOUTON ❌ -->
+    <button
+      *ngIf="sidebarOpen"
+      (click)="toggleSidebar()"
+      class="absolute top-3 right-3 text-white hover:bg-white/20 bg-white/10 p-2 rounded-full transition duration-200 z-50"
+      aria-label="Fermer le menu"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <!-- LOGO -->
+    <div class="mt-2 mb-6 flex justify-center">
+      <img src="https://cod.sante.gov.ma/images/mus.png" alt="Ministère Santé" class="h-16 rounded shadow-md" />
+    </div>
+
+    <!-- SÉPARATEUR -->
+    <div class="my-0 border-t border-sky-300"></div>
+
+    <!-- MENU -->
+    <nav class="flex-1 space-y-4">
+
+      <div (click)="toggleConsulter()" class="mt-4 flex items-center justify-between px-4 py-3 rounded-xl hover:bg-sky-800 cursor-pointer transition">
+        <div class="flex items-center">
+          <i data-feather="folder" class="w-5 h-5 mr-3"></i>
+          <span>Consulter Courrier</span>
+        </div>
+        <i data-feather="chevron-down" class="w-4 h-4 transition-transform duration-200"
+           [ngClass]="{ 'rotate-180': showConsulter }"></i>
+      </div>
+
+      <ul *ngIf="showConsulter" class="ml-6 mt-2 space-y-2">
+        <li>
+          <a [routerLink]="['/res-svc/arrivee']" routerLinkActive="bg-white text-sky-900"
+             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+            <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i> <span>Arrivées en cours</span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="['/res-svc/arrivee-archives']" routerLinkActive="bg-white text-sky-900"
+             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+            <i data-feather="archive" class="w-4 h-4 mr-2"></i> <span>Arrivées archivées</span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="['/res-svc/depart']" routerLinkActive="bg-white text-sky-900"
+             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+            <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départs en cours</span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="['/res-svc/depart-archiv']" routerLinkActive="bg-white text-sky-900"
+             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+            <i data-feather="archive" class="w-4 h-4 mr-2"></i> <span>Départs archivés</span>
+          </a>
+        </li>
+      </ul>
+
+    </nav>
+
+    <!-- BAS DE MENU -->
+    <div class="mt-6 space-y-2">
+      <a [routerLink]="['/res-svc/profil']" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+        <i data-feather="user" class="w-5 h-5 mr-3"></i> <span>Profil</span>
+      </a>
+      <a [routerLink]="['/support']" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+        <i data-feather="help-circle" class="w-5 h-5 mr-3"></i> <span>Support</span>
+      </a>
+      <a [routerLink]="['/logout']" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
+        <i data-feather="log-out" class="w-5 h-5 mr-3"></i> <span>Déconnexion</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- CONTENU PRINCIPAL -->
+  <div class="flex-1 flex flex-col transition-all duration-300" [ngClass]="{ 'ml-72': sidebarOpen }">
+
+    <!-- HEADER -->
+    <header class="flex items-center gap-6 h-20 px-10 bg-white border-b shadow-sm relative">
+      <div class="w-1 h-10 bg-sky-600 rounded-sm"></div>
+      <button
+        *ngIf="!sidebarOpen"
+        (click)="toggleSidebar()"
+        class="w-11 h-11 flex items-center justify-center bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-lg shadow transition"
+        aria-label="Ouvrir le menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <h1 class="text-[1.65rem] tracking-wide font-bold text-gray-800 uppercase">
+        Gestion des courriers
+      </h1>
+    </header>
+
+    <!-- CONTENU -->
+    <main class="flex-1 overflow-y-auto p-8 bg-white rounded-tl-2xl shadow-inner">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+</div>

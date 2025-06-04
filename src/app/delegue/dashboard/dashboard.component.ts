@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
@@ -49,33 +49,21 @@ export class DashboardComponent implements AfterViewInit {
         arriveeArchivee: data.totalArriveeArchives,
         departArchivee: data.totalDepartArchives
       };
+
       this.last3Courriers = data.last3Courriers;
-      this.renderChart(data.monthlyTrend);
+
+      this.renderChart(data.monthlyLabels, data.monthlyArrivees, data.monthlyDeparts);
     });
   }
 
-  renderChart(monthlyTrend: { [key: string]: { arrivees: number, departs: number } }) {
-    const ctx = document.getElementById('monthlyChart') as HTMLCanvasElement;
-    if (!ctx) return;
+  renderChart(labels: string[], arrivees: number[], departs: number[]) {
+    const canvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
+    if (!canvas) return;
 
-    if (!monthlyTrend || Object.keys(monthlyTrend).length === 0) {
-      console.warn('Aucune donnée disponible pour le graphique mensuel.');
-      return;
-    }
-
-    const mois = Object.keys(monthlyTrend).map(dateStr => {
-      const [year, month] = dateStr.split('-');
-      const moisDate = new Date(Number(year), Number(month) - 1);
-      return moisDate.toLocaleString('fr-FR', { month: 'short' }); // Ex: janv., févr.
-    });
-
-    const arrivees = Object.values(monthlyTrend).map(m => m.arrivees ?? 0);
-    const departs = Object.values(monthlyTrend).map(m => m.departs ?? 0);
-
-    new Chart(ctx, {
+    new Chart(canvas, {
       type: 'line',
       data: {
-        labels: mois,
+        labels: labels,
         datasets: [
           {
             label: 'Arrivées',
@@ -83,27 +71,52 @@ export class DashboardComponent implements AfterViewInit {
             borderColor: '#3B82F6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             tension: 0.4,
-            fill: false
+            fill: false,
+            pointRadius: 4,
+            pointBackgroundColor: '#3B82F6'
           },
           {
             label: 'Départs',
             data: departs,
-            borderColor: '#F472B6',
-            backgroundColor: 'rgba(244, 114, 182, 0.1)',
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
             tension: 0.4,
-            fill: false
+            fill: false,
+            pointRadius: 4,
+            pointBackgroundColor: '#10B981'
           }
         ]
       },
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'bottom' }
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#333',
+              font: {
+                size: 13
+              }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.dataset.label} : ${context.formattedValue}`
+            }
+          }
         },
         scales: {
           y: {
             beginAtZero: true,
-            max: 70
+            max: 100, // ✅ Valeur maximale forcée à 100
+            ticks: {
+              color: '#555'
+            }
+          },
+          x: {
+            ticks: {
+              color: '#555'
+            }
           }
         }
       }

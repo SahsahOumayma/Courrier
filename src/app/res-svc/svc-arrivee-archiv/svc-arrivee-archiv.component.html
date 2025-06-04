@@ -1,0 +1,78 @@
+<section class="p-8 bg-gradient-to-b from-[#f5faff] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-6">
+    <span class="p-3 bg-blue-100 rounded-full">
+      <i data-feather="archive" class="w-6 h-6 text-sky-600"></i>
+    </span>
+    Courriers d'arrivée - <span class="ml-1">Archivés</span>
+  </h2>
+
+  <!-- Recherche -->
+  <div class="mb-6 flex items-center gap-3">
+    <i data-feather="search" class="w-5 h-5 text-sky-500"></i>
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="filtrerCourriers()"
+      placeholder="Rechercher par objet, signataire, urgence..."
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+    />
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="text-center py-6 text-sky-600 font-semibold">
+    Chargement des courriers archivés...
+  </div>
+
+  <!-- Tableau -->
+  <div *ngIf="!loading" class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
+      <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
+        <tr>
+          <th class="px-4 py-3 rounded-l-xl">#</th>
+          <th class="px-4 py-3">Objet</th>
+          <th class="px-4 py-3">Signataire</th>
+          <th class="px-4 py-3">Date arrivée</th>
+          <th class="px-4 py-3">Urgence</th>
+          <th class="px-4 py-3">Statut</th>
+          <th class="px-4 py-3 rounded-r-xl">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let courrier of courriersFiltres; let i = index"
+            class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800"
+            [ngClass]="{ 'bg-red-100': courrier.urgence === 'URGENT' }">
+          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ i + 1 }}</td>
+          <td class="px-4 py-4">{{ courrier.objet }}</td>
+          <td class="px-4 py-4">{{ courrier.signataire || '—' }}</td>
+          <td class="px-4 py-4">{{ courrier.dateArrive | date: 'dd/MM/yyyy' }}</td>
+          <td class="px-4 py-4">
+            <span class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
+              [ngClass]="{
+                'bg-red-600 text-white': courrier.urgence === 'URGENT',
+                'bg-green-200 text-green-800': courrier.urgence === 'NORMAL',
+                'bg-gray-200 text-gray-800': !courrier.urgence
+              }">
+              {{ courrier.urgence || '—' }}
+            </span>
+          </td>
+          <td class="px-4 py-4 text-center">
+            <span class="inline-block px-3 py-1.5 text-xs font-semibold rounded-full bg-gray-300 text-gray-800 uppercase">
+              Archivé
+            </span>
+          </td>
+          <td class="px-4 py-4 flex gap-2 justify-center rounded-r-xl">
+            <button class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
+              Voir
+            </button>
+            <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
+              Télécharger
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="courriersFiltres.length === 0">
+          <td colspan="7" class="text-center py-4 text-gray-500">Aucun courrier archivé trouvé.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

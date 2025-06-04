@@ -1,0 +1,66 @@
+<section class="p-8 bg-gradient-to-b from-[#fefefe] to-[#f4f8fb] rounded-3xl shadow-2xl border border-[#dce8f1]">
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
+    <span class="p-3 bg-sky-100 rounded-full">
+      <i data-feather="send" class="w-6 h-6 text-sky-600"></i>
+    </span>
+    Courriers de départ - En cours
+  </h2>
+
+  <div class="mb-6 flex items-center gap-3">
+    <i class="text-sky-600" data-feather="search"></i>
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="filtrerCourriers()"
+      placeholder="Rechercher par objet, signataire, urgence..."
+      class="w-full px-4 py-2 rounded-xl border border-sky-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+    />
+  </div>
+
+  <div *ngIf="loading" class="text-sky-700 text-center font-medium py-4">
+    Chargement en cours...
+  </div>
+
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white" *ngIf="!loading">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
+      <thead class="text-xs uppercase font-bold text-[#005f8e] bg-sky-50">
+        <tr>
+          <th class="px-4 py-3">#</th>
+          <th class="px-4 py-3">Objet</th>
+          <th class="px-4 py-3">Signataire</th>
+          <th class="px-4 py-3">Date</th>
+          <th class="px-4 py-3">Urgence</th>
+          <th class="px-4 py-3">Statut</th>
+          <th class="px-4 py-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let courrier of courriersFiltres; let i = index"
+            class="hover:bg-sky-50 rounded-xl">
+          <td class="px-4 py-3 font-bold">{{ i + 1 }}</td>
+          <td class="px-4 py-3">{{ courrier.objet }}</td>
+          <td class="px-4 py-3">{{ courrier.signataire }}</td>
+          <td class="px-4 py-3">{{ courrier.dateArrive | date:'dd/MM/yyyy' }}</td>
+          <td class="px-4 py-3">
+            <span class="px-3 py-1 text-xs font-semibold rounded-full"
+              [ngClass]="{
+                'bg-red-600 text-white': courrier.urgence === 'URGENT',
+                'bg-green-200 text-green-800': courrier.urgence === 'NORMAL'
+              }">
+              {{ courrier.urgence }}
+            </span>
+          </td>
+          <td class="px-4 py-3">{{ courrier.statut || 'En cours' }}</td>
+          <td class="px-4 py-3 text-center space-x-2">
+            <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs">Voir</button>
+            <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs">Modifier</button>
+            <button (click)="archiver(courrier.id)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">Archiver</button>
+          </td>
+        </tr>
+        <tr *ngIf="courriersFiltres.length === 0 && !loading">
+          <td colspan="7" class="text-center py-5 text-gray-500">Aucun courrier trouvé.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

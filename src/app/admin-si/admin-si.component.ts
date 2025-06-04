@@ -20,8 +20,14 @@ export class AdminSiComponent implements AfterViewInit {
   }
 
   toggleUtilisateurs(): void {
-    this.showUtilisateurs = !this.showUtilisateurs;
-  }
+  this.showUtilisateurs = !this.showUtilisateurs;
+
+  // Relancer feather icons après apparition du sous-menu
+  setTimeout(() => {
+    feather.replace();
+  }, 0);
+}
+
 
   ngAfterViewInit(): void {
     feather.replace();

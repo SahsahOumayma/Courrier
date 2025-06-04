@@ -1,11 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewChecked } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // ✅ POUR ngModel
+import feather from 'feather-icons';
 
 @Component({
   selector: 'app-profil',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule],  // ✅ Ajout FormsModule ici
   templateUrl: './profil.component.html',
-  styleUrl: './profil.component.css'
+  styleUrls: ['./profil.component.css']
 })
-export class ProfilComponent {
+export class ProfilComponent implements AfterViewChecked {
 
+  ongletActif: string = 'info';
+user = {
+  nomComplet: '',
+  email: '',
+  telephone: '',
+  departement: '',
+  role: '' // <-- Champ pour saisir manuellement le rôle
+};
+
+  preferences = {
+    email: true,
+    sms: false,
+    push: true
+  };
+
+  changerOnglet(nom: string): void {
+    this.ongletActif = nom;
+  }
+
+  ngAfterViewChecked(): void {
+    feather.replace();
+  }
 }

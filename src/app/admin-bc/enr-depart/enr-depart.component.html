@@ -3,6 +3,7 @@
   [formGroup]="departForm"
   (ngSubmit)="onSubmit()"
 >
+  <!-- Titre -->
   <div class="flex items-center gap-4 text-[#003b63]">
     <div class="bg-[#0d88c6]/10 p-3 rounded-full shadow-inner">
       <i data-feather="send" class="w-6 h-6 text-[#0d88c6]"></i>
@@ -12,6 +13,7 @@
     </h2>
   </div>
 
+  <!-- Expéditeur -->
   <div>
     <label class="block text-[15px] font-semibold mb-2">Expéditeur</label>
     <input
@@ -22,6 +24,7 @@
     />
   </div>
 
+  <!-- Voie d’expédition + Numéro de registre -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <label class="block text-[15px] font-semibold mb-2">Voie d’expédition</label>
@@ -38,24 +41,39 @@
     </div>
 
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Objet</label>
+      <label class="block text-[15px] font-semibold mb-2">Numéro de registre</label>
       <input
-        type="text"
-        formControlName="objet"
+        type="number"
+        formControlName="numeroRegistre"
+        placeholder="Ex : 10234"
         class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400"
       />
     </div>
   </div>
 
+  <!-- Objet -->
+  <div>
+    <label class="block text-[15px] font-semibold mb-2">Objet</label>
+    <input
+      type="text"
+      formControlName="objet"
+      placeholder="Objet du courrier"
+      class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400"
+    />
+  </div>
+
+  <!-- Description -->
   <div>
     <label class="block text-[15px] font-semibold mb-2">Description</label>
     <textarea
       rows="3"
       formControlName="description"
+      placeholder="Description détaillée..."
       class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm resize-none focus:ring-2 focus:ring-sky-400"
     ></textarea>
   </div>
 
+  <!-- Confidentialité + Urgence -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <label class="block text-[15px] font-semibold mb-2">Confidentialité</label>
@@ -80,6 +98,7 @@
     </div>
   </div>
 
+  <!-- Service + Nature -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <label class="block text-[15px] font-semibold mb-2">Service cible</label>
@@ -108,6 +127,7 @@
     </div>
   </div>
 
+  <!-- Fichier joint -->
   <div>
     <label class="block text-[15px] font-semibold mb-2">Fichier joint</label>
     <input
@@ -117,6 +137,7 @@
     />
   </div>
 
+  <!-- Bouton -->
   <div class="text-right">
     <button
       type="submit"

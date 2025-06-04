@@ -1,115 +1,83 @@
 <section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
 
   <!-- Titre -->
-  <h2 class="text-3xl font-extrabold text-[#0d4e78] mb-8 flex items-center tracking-wide">
-    <i data-feather="users" class="w-7 h-7 mr-3 text-[#0d88c6]"></i>
-    Liste des Utilisateurs
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
+    <span class="p-3 bg-blue-100 rounded-full">
+      <i data-feather="users" class="w-6 h-6 text-sky-600"></i>
+    </span>
+    Liste des utilisateurs RH
   </h2>
 
-  <!-- Recherche + Filtres alignés -->
+  <!-- Filtres -->
   <div class="mb-8 flex flex-wrap items-center justify-between gap-6 text-sm text-gray-700 font-medium">
-
-    <!-- Recherche -->
     <input
       type="text"
       [(ngModel)]="recherche"
-      placeholder="🔍 Rechercher un utilisateur..."
+      placeholder="🔍 Rechercher par nom, email, login..."
       class="w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
     />
 
-    <!-- Filtres à droite -->
     <div class="flex flex-wrap gap-4 items-center justify-end ml-auto">
-
-      <!-- Filtrer par rôle -->
       <label class="flex items-center gap-2">
         <span>Rôle :</span>
-        <select
-          [(ngModel)]="filtreRole"
-          class="w-48 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-        >
+        <select [(ngModel)]="filtreRole" class="w-48 px-3 py-2 rounded-md border border-gray-300 shadow-sm">
           <option value="tous">Tous</option>
-          <option value="Responsable RH">Responsable RH</option>
-          <option value="Délégué RH">Délégué RH</option>
+          <option *ngFor="let role of rolesDisponibles" [value]="role">{{ role }}</option>
         </select>
       </label>
 
-      <!-- Filtrer par statut -->
       <label class="flex items-center gap-2">
         <span>Statut :</span>
-        <select
-          [(ngModel)]="filtreStatut"
-          class="w-40 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-        >
+        <select [(ngModel)]="filtreStatut" class="w-40 px-3 py-2 rounded-md border border-gray-300 shadow-sm">
           <option value="tous">Tous</option>
           <option value="actif">Actif</option>
           <option value="inactif">Inactif</option>
         </select>
       </label>
 
-      <!-- Page size -->
       <label class="flex items-center gap-2">
         <span>Afficher :</span>
-        <select
-          [(ngModel)]="pageSize"
-          (change)="onPageSizeChange(pageSize)"
-          class="w-28 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-        >
-          <option *ngFor="let option of pageOptions" [value]="option">
-            {{ option }}/page
-          </option>
+        <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="w-28 px-3 py-2 rounded-md border border-gray-300 shadow-sm">
+          <option *ngFor="let option of pageOptions" [value]="option">{{ option }}/page</option>
         </select>
       </label>
     </div>
   </div>
 
-  <!-- Tableau -->
+  <!-- Tableau sans colonne "Action" -->
   <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
     <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
       <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
-        <tr>
-          <th class="px-4 py-3 rounded-l-xl">Nom</th>
+        <tr class="h-13">
+          <th class="px-4 py-3 rounded-l-xl">Nom complet</th>
           <th class="px-4 py-3">Email</th>
+          <th class="px-4 py-3">Login</th>
           <th class="px-4 py-3">Rôle</th>
-          <th class="px-4 py-3">Statut</th>
-          <th class="px-4 py-3 rounded-r-xl">Actions</th>
+          <th class="px-4 py-3">Service</th>
+          <th class="px-4 py-3">Depuis</th>
+          <th class="px-4 py-3 rounded-r-xl">Statut</th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          *ngFor="let user of paginatedUtilisateurs"
-          [ngClass]="{ 'bg-white': user.active, 'bg-gray-50': !user.active }"
-          class="shadow-sm hover:shadow-md transition rounded-xl"
-        >
-          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ user.nom }}</td>
+        <tr *ngFor="let user of paginatedUtilisateurs" [ngClass]="{ 'bg-white': user.active, 'bg-gray-50': !user.active }" class="h-21 shadow-sm hover:shadow-md transition rounded-xl">
+          <td class="px-4 py-4 font-semibold rounded-l-xl">{{ user.fullName }}</td>
           <td class="px-4 py-4">{{ user.email }}</td>
+          <td class="px-4 py-4">{{ user.login }}</td>
           <td class="px-4 py-4">{{ user.role }}</td>
-          <td class="px-4 py-4">
-            <span
-              [ngClass]="{
+          <td class="px-4 py-4">{{ user.service || '—' }}</td>
+          <td class="px-4 py-4">{{ user.employeeSince || '—' }}</td>
+          <td class="px-4 py-4 rounded-r-xl">
+            <span [ngClass]="{
                 'bg-green-100 text-green-800': user.active,
                 'bg-red-100 text-red-600': !user.active
               }"
-              class="inline-block px-3 py-1 text-xs font-medium rounded-full"
-            >
+              class="inline-block px-3 py-1 text-xs font-medium rounded-full">
               {{ user.active ? 'Actif' : 'Inactif' }}
             </span>
           </td>
-          <td class="px-4 py-4 rounded-r-xl">
-            <div class="flex flex-wrap gap-2">
-              <button class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
-                Modifier
-              </button>
-              <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-full shadow text-xs font-medium transition">
-                {{ user.active ? 'Désactiver' : 'Activer' }}
-              </button>
-            </div>
-          </td>
         </tr>
-
         <tr *ngIf="paginatedUtilisateurs.length === 0">
-          <td colspan="5" class="text-center py-4 text-gray-500">
-            Aucun utilisateur trouvé.
-          </td>
+          <td colspan="7" class="text-center py-4 text-gray-500">Aucun utilisateur trouvé.</td>
         </tr>
       </tbody>
     </table>
@@ -117,23 +85,15 @@
 
   <!-- Pagination -->
   <div class="mt-10 flex items-center justify-between px-10">
-    <button
-      (click)="prevPage()"
-      [disabled]="currentPage === 1"
-      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm"
-    >
+    <button (click)="prevPage()" [disabled]="currentPage === 1"
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm">
       ⬅️ Précédent
     </button>
-
     <div class="px-6 py-2 bg-white border border-gray-300 shadow rounded-xl text-[#003c61] font-bold tracking-wide">
       Page {{ currentPage }} / {{ totalPages }}
     </div>
-
-    <button
-      (click)="nextPage()"
-      [disabled]="currentPage === totalPages"
-      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm"
-    >
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm">
       Suivant ➡️
     </button>
   </div>

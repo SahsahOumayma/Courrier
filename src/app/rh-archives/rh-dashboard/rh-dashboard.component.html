@@ -1,81 +1,96 @@
-<div class="p-8 space-y-8 bg-blue-50 min-h-full">
-  <!-- Statistiques RH -->
+<!-- ENVELOPPE PRINCIPALE AVEC STYLE HARMONISÉ -->
+<div class="bg-[#eaf6fd] p-6 rounded-3xl shadow-md space-y-6">
+
+  <!-- TITRE AVEC ICÔNE -->
+  <div class="flex items-center gap-3">
+    <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3">
+      <span class="p-3 bg-blue-100 rounded-full">
+        <i data-feather="users" class="w-6 h-6 text-sky-600"></i>
+      </span>
+      Tableau de bord RH
+    </h2>
+  </div>
+
+  <!-- BLOCS STATISTIQUES -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+    <!-- Employés -->
+    <div class="bg-white p-5 rounded-xl shadow flex items-center">
       <div class="p-3 bg-blue-100 rounded-full mr-4">
-        <i data-feather="users" class="w-6 h-6 text-blue-600"></i>
+        <i data-feather="user-check" class="w-6 h-6 text-blue-600"></i>
       </div>
       <div>
-        <p class="text-sm text-gray-600">Employés concernés</p>
-        <p class="text-2xl font-semibold">15</p>
+        <p class="text-sm text-gray-600">Employés</p>
+        <p class="text-2xl font-bold text-blue-900">{{ stats.totalEmployes || 0 }}</p>
       </div>
     </div>
 
-    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+    <!-- Archivés -->
+    <div class="bg-white p-5 rounded-xl shadow flex items-center">
       <div class="p-3 bg-yellow-100 rounded-full mr-4">
         <i data-feather="archive" class="w-6 h-6 text-yellow-600"></i>
       </div>
       <div>
-        <p class="text-sm text-gray-600">Courriers archivés</p>
-        <p class="text-2xl font-semibold">42</p>
+        <p class="text-sm text-gray-600">Archivés</p>
+        <p class="text-2xl font-bold text-blue-900">{{ stats.totalCourriersArchives || 0 }}</p>
       </div>
     </div>
 
-    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+    <!-- Traités -->
+    <div class="bg-white p-5 rounded-xl shadow flex items-center">
       <div class="p-3 bg-green-100 rounded-full mr-4">
-        <i data-feather="check" class="w-6 h-6 text-green-600"></i>
+        <i data-feather="check-circle" class="w-6 h-6 text-green-600"></i>
       </div>
       <div>
-        <p class="text-sm text-gray-600">Courriers traités</p>
-        <p class="text-2xl font-semibold">28</p>
+        <p class="text-sm text-gray-600">Traités</p>
+        <p class="text-2xl font-bold text-blue-900">{{ stats.totalCourriersTraites || 0 }}</p>
       </div>
     </div>
 
-    <div class="bg-white p-4 rounded-lg shadow flex items-center">
+    <!-- Non traités -->
+    <div class="bg-white p-5 rounded-xl shadow flex items-center">
       <div class="p-3 bg-red-100 rounded-full mr-4">
         <i data-feather="x-circle" class="w-6 h-6 text-red-600"></i>
       </div>
       <div>
         <p class="text-sm text-gray-600">Non traités</p>
-        <p class="text-2xl font-semibold">14</p>
+        <p class="text-2xl font-bold text-blue-900">{{ stats.totalNonTraites || 0 }}</p>
       </div>
     </div>
   </div>
 
-  <!-- Derniers employés concernés -->
-  <div class="bg-white p-6 rounded-lg shadow">
-    <h2 class="text-lg font-semibold mb-4">Derniers courriers archivés</h2>
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-sky-50">
+  <!-- TABLEAU DES COURRIERS ARCHIVÉS -->
+  <div class="bg-white p-6 rounded-2xl shadow">
+    <h3 class="text-lg font-bold mb-4 text-sky-700">Derniers courriers archivés</h3>
+    <div class="overflow-x-auto rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-blue-50 text-blue-800">
           <tr>
-            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Employé</th>
-            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Objet</th>
-            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Service</th>
-            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Date archivage</th>
+            <th class="px-4 py-3 text-left font-semibold">Objet</th>
+            <th class="px-4 py-3 text-left font-semibold">Type</th>
+            <th class="px-4 py-3 text-left font-semibold">Service</th>
+            <th class="px-4 py-3 text-left font-semibold">Employé</th>
+            <th class="px-4 py-3 text-left font-semibold">Date</th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr class="hover:bg-sky-100">
-            <td class="px-4 py-3">Zahra H.</td>
-            <td class="px-4 py-3">Demande de congé</td>
-            <td class="px-4 py-3">RH</td>
-            <td class="px-4 py-3">2025-05-08</td>
+        <tbody class="bg-white divide-y divide-gray-100">
+          <tr *ngFor="let courrier of last3Courriers" class="hover:bg-blue-50 transition">
+            <td class="px-4 py-3">{{ courrier.objet }}</td>
+            <td class="px-4 py-3">{{ courrier.type }}</td>
+            <td class="px-4 py-3">{{ courrier.service }}</td>
+            <td class="px-4 py-3">{{ courrier.employe }}</td>
+            <td class="px-4 py-3">{{ courrier.dateRegistre | date: 'yyyy-MM-dd' }}</td>
           </tr>
-          <tr class="hover:bg-sky-100">
-            <td class="px-4 py-3">Sami K.</td>
-            <td class="px-4 py-3">Rapport d’évaluation</td>
-            <td class="px-4 py-3">RH</td>
-            <td class="px-4 py-3">2025-05-06</td>
+          <tr *ngIf="last3Courriers?.length === 0">
+            <td colspan="5" class="text-center text-gray-500 py-4">Aucun courrier récent</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Tendance -->
-  <div class="bg-white p-6 rounded-lg shadow">
-    <h2 class="text-lg font-semibold mb-4">Évolution mensuelle des archives</h2>
-    <canvas id="archiveChart" height="100"></canvas>
+  <!-- GRAPHIQUE -->
+  <div class="bg-white p-6 rounded-2xl shadow">
+    <h3 class="text-lg font-bold mb-4 text-sky-700">Tendance mensuelle</h3>
+    <canvas id="monthlyChart" height="100"></canvas>
   </div>
 </div>

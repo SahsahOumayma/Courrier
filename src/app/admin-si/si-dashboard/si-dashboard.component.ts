@@ -1,53 +1,58 @@
 import { Component, AfterViewInit } from '@angular/core';
 import feather from 'feather-icons';
-import Chart from 'chart.js/auto';
+import { SiDashService } from '../../services/si-dash.service';
+import { Chart } from 'chart.js/auto';
 
 @Component({
   selector: 'app-si-dashboard',
-  standalone: true,
   templateUrl: './si-dashboard.component.html',
   styleUrls: ['./si-dashboard.component.css'],
+  standalone: true,
   imports: []
 })
 export class SiDashboardComponent implements AfterViewInit {
+  dashboardData: any;
+
+  constructor(private dashService: SiDashService) {}
 
   ngAfterViewInit(): void {
-    feather.replace(); // active les icônes Feather
-
-    this.initChart(); // crée un graphique d'exemple
+    feather.replace();
+    this.dashService.getDashboard().subscribe((data) => {
+      this.dashboardData = data;
+      this.initChart(data.employeesPerRole);
+    });
   }
 
-  initChart(): void {
+  initChart(roleData: { [key: string]: number }) {
     const ctx = document.getElementById('regChart') as HTMLCanvasElement;
-    if (ctx) {
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
-          datasets: [{
-            label: 'Utilisateurs',
-            data: [5, 12, 8, 15, 10, 18, 14],
-            borderColor: '#0ea5e9',
-            backgroundColor: 'rgba(14, 165, 233, 0.1)',
-            fill: true,
-            tension: 0.4
-          }]
+    if (!ctx || !roleData) return;
+
+    const labels = Object.keys(roleData);
+    const values = Object.values(roleData);
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Employés par rôle',
+          data: values,
+          backgroundColor: '#0ea5e9',
+          borderRadius: 8,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
         },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
           }
         }
-      });
-    }
+      }
+    });
   }
-
 }

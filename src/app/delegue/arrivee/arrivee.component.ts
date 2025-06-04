@@ -37,7 +37,6 @@ export class ArriveeComponent implements OnInit {
   updatePagination(): void {
     let filtered = this.courriers;
 
-    // --- Filtrage par statut ---
     if (this.filtreStatut !== 'tous') {
       filtered = filtered.filter(
         (c) =>
@@ -45,7 +44,6 @@ export class ArriveeComponent implements OnInit {
       );
     }
 
-    // --- Recherche ---
     if (this.termeRecherche.trim() !== '') {
       const term = this.termeRecherche.toLowerCase();
       filtered = filtered.filter(
@@ -57,21 +55,14 @@ export class ArriveeComponent implements OnInit {
       );
     }
 
-    // --- Tri par défaut = date d'arrivée ---
     if (this.selectedTri === 'date' || this.selectedTri === 'default') {
       filtered.sort(
         (a, b) =>
           new Date(b.dateArrive).getTime() - new Date(a.dateArrive).getTime()
       );
-    }
-
-    // --- Tri alphabétique (par objet) ---
-    else if (this.selectedTri === 'alphabetique') {
+    } else if (this.selectedTri === 'alphabetique') {
       filtered.sort((a, b) => (a.object || '').localeCompare(b.object || ''));
-    }
-
-    // --- Tri par urgence ---
-    else if (this.selectedTri === 'urgence') {
+    } else if (this.selectedTri === 'urgence') {
       const ordreUrgence: Record<string, number> = {
         URGENT: 1,
         NORMAL: 2,
@@ -85,7 +76,6 @@ export class ArriveeComponent implements OnInit {
       );
     }
 
-    // --- Pagination ---
     this.totalPages = Math.max(Math.ceil(filtered.length / this.pageSize), 1);
     const start = (this.currentPage - 1) * this.pageSize;
     this.paginatedCourriers = filtered.slice(start, start + this.pageSize);
@@ -114,15 +104,19 @@ export class ArriveeComponent implements OnInit {
     this.updatePagination();
   }
 
-  telechargerPDF(courrier: any): void {
-    if (courrier.attachment_path) {
-      const a = document.createElement('a');
-      a.href = `http://localhost:9090${courrier.attachment_path}`;
-      a.download = courrier.attachment_path.split('/').pop();
-      a.click();
-    } else {
-      alert('Aucun fichier attaché à ce courrier.');
-    }
+  voirPDF(courrierId: number): void {
+    const url = `http://localhost:9090/api/delegue/api/courriers/${courrierId}/view-pdf`;
+    window.open(url, '_blank');
+  }
+
+  telechargerPDF(courrierId: number): void {
+    const url = `http://localhost:9090/api/delegue/api/courriers/${courrierId}/download`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   ngAfterViewChecked(): void {

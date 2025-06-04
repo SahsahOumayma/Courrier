@@ -1,56 +1,59 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // ← Import requis
-import { CommonModule } from '@angular/common'; // Pour *ngIf, *ngFor
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import feather from 'feather-icons';
-
-interface Utilisateur {
-  nom: string;
-  email: string;
-  role: string;
-  service: string;
-  actif: boolean;
-}
+import { SiGestionService, UtilisateurDTO } from '../../services/si-gestion.service';
 
 @Component({
   selector: 'app-si-user-gestion',
   standalone: true,
-  imports: [CommonModule, FormsModule], // ← AJOUT OBLIGATOIRE
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './si-user-gestion.component.html',
   styleUrls: ['./si-user-gestion.component.css']
 })
 export class SiUserGestionComponent implements OnInit, AfterViewInit {
-  utilisateurs: Utilisateur[] = [
-    { nom: 'Karim Benali', email: 'karim.b@example.local', role: 'RH', service: 'Ressources Humaines', actif: true },
-    { nom: 'Imane El Idrissi', email: 'imane.e@example.local', role: 'Finance', service: 'Comptabilité', actif: false },
-  ];
-
+  utilisateurs: UtilisateurDTO[] = [];
   recherche: string = '';
   modalOuvert: boolean = false;
   enEdition: boolean = false;
 
-  utilisateurActif: Utilisateur = this.nouvelUtilisateur();
+  utilisateurActif: UtilisateurDTO = this.nouvelUtilisateur();
 
-  ngOnInit(): void {}
+  roles: string[] = [];
+  services: { id: number, nom: string }[] = [];
+
+  constructor(private siService: SiGestionService) {}
+
+  ngOnInit(): void {
+    this.chargerUtilisateurs();
+    this.siService.getRoles().subscribe(data => {
+      this.roles = data.map(r => r.nom);
+    });
+    this.siService.getServices().subscribe(data => {
+      this.services = data;
+    });
+  }
 
   ngAfterViewInit(): void {
     feather.replace();
   }
 
-  utilisateursFiltres(): Utilisateur[] {
+  chargerUtilisateurs(): void {
+    this.siService.getUtilisateursActifs().subscribe(data => {
+      this.utilisateurs = data;
+    });
+  }
+
+  utilisateursFiltres(): UtilisateurDTO[] {
     const filtre = this.recherche.toLowerCase().trim();
     return this.utilisateurs.filter(u =>
-      u.nom.toLowerCase().includes(filtre) ||
+      u.fullName.toLowerCase().includes(filtre) ||
       u.email.toLowerCase().includes(filtre)
     );
   }
 
-  ouvrirModalAjout(): void {
-    this.utilisateurActif = this.nouvelUtilisateur();
-    this.enEdition = false;
-    this.modalOuvert = true;
-  }
-
-  ouvrirModalEdition(utilisateur: Utilisateur): void {
+  ouvrirModalEdition(utilisateur: UtilisateurDTO): void {
     this.utilisateurActif = { ...utilisateur };
     this.enEdition = true;
     this.modalOuvert = true;
@@ -61,20 +64,39 @@ export class SiUserGestionComponent implements OnInit, AfterViewInit {
   }
 
   enregistrerUtilisateur(): void {
-    if (this.enEdition) {
-      const index = this.utilisateurs.findIndex(u => u.email === this.utilisateurActif.email);
-      if (index !== -1) this.utilisateurs[index] = { ...this.utilisateurActif };
-    } else {
-      this.utilisateurs.push({ ...this.utilisateurActif });
-    }
-    this.fermerModal();
+    const selectedService = this.services.find(s => s.nom === this.utilisateurActif.service);
+
+    const dto = {
+      id: this.utilisateurActif.id,
+      role: this.utilisateurActif.role,
+      serviceId: selectedService?.id,
+      active: this.utilisateurActif.active
+    };
+
+    this.siService.modifierUtilisateur(dto).subscribe({
+      next: () => {
+        this.chargerUtilisateurs();
+        this.fermerModal();
+      },
+      error: err => console.error('Erreur modification :', err)
+    });
   }
 
-  supprimerUtilisateur(email: string): void {
-    this.utilisateurs = this.utilisateurs.filter(u => u.email !== email);
+  supprimerUtilisateur(id: number): void {
+    this.siService.supprimerUtilisateur(id).subscribe(() => {
+      this.utilisateurs = this.utilisateurs.filter(u => u.id !== id);
+    });
   }
 
-  nouvelUtilisateur(): Utilisateur {
-    return { nom: '', email: '', role: '', service: '', actif: true };
+  nouvelUtilisateur(): UtilisateurDTO {
+    return {
+      id: 0,
+      fullName: '',
+      email: '',
+      role: '',
+      service: '',
+      active: true,
+      checkEmail: false
+    };
   }
 }
