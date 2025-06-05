@@ -79,15 +79,26 @@ export class StatistiqueComponent implements OnInit, AfterViewInit {
       }
     });
 
-    // 🔐 Confidentialité
+    // 🔐 Confidentialité (Donut)
     const conf = this.stats.confidentialiteCounts || {};
+    const labels = Object.keys(conf);
+    const values = Object.values(conf);
+
+    // Couleurs mappées par label (ordre important)
+    const colorMap: Record<string, string> = {
+      CONFIDENTIEL: '#3b82f6', // bleu
+      SECRET: '#1e40af',      
+      ROUTINE: '#ec4899'       // rose
+    };
+    const backgroundColor = labels.map(label => colorMap[label.toUpperCase()] || '#d1d5db');
+
     new Chart(this.confidentialityChart.nativeElement, {
       type: 'pie',
       data: {
-        labels: Object.keys(conf),
+        labels,
         datasets: [{
-          data: Object.values(conf),
-          backgroundColor: ['#60a5fa', '#f472b6', '#facc15']
+          data: values,
+          backgroundColor
         }]
       },
       options: {
@@ -95,7 +106,10 @@ export class StatistiqueComponent implements OnInit, AfterViewInit {
         plugins: {
           legend: {
             position: 'bottom',
-            labels: { boxWidth: 12 }
+            labels: {
+              boxWidth: 12,
+              font: { size: 12 }
+            }
           }
         }
       }
@@ -105,9 +119,7 @@ export class StatistiqueComponent implements OnInit, AfterViewInit {
     const serviceData = this.stats.courriersByService || {};
     const serviceLabels = Object.keys(serviceData);
     const arrivees = serviceLabels.map(label => serviceData[label]?.arrivee || 0);
-const departs = serviceLabels.map(label => serviceData[label]?.depart || 0);
-
-
+    const departs = serviceLabels.map(label => serviceData[label]?.depart || 0);
 
     new Chart(this.byServiceChart.nativeElement, {
       type: 'bar',
@@ -147,38 +159,36 @@ const departs = serviceLabels.map(label => serviceData[label]?.depart || 0);
     });
 
     // 👥 Courriers par employé
-    // 👥 Courriers traités par employé
-const employeeData = this.stats.courriersByEmploye || {};
-new Chart(this.byEmployeeChart.nativeElement, {
-  type: 'bar',
-  data: {
-    labels: Object.keys(employeeData),
-    datasets: [{
-      label: 'Courriers traités',
-      data: Object.values(employeeData),
-      backgroundColor: '#93c5fd'
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        beginAtZero: true,
-        max: 30, // ✅ Limite max à 50
-        ticks: {
-          stepSize: 1 // ✅ Graduation tous les 5
+    const employeeData = this.stats.courriersByEmploye || {};
+    new Chart(this.byEmployeeChart.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(employeeData),
+        datasets: [{
+          label: 'Courriers traités',
+          data: Object.values(employeeData),
+          backgroundColor: '#93c5fd'
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 30,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top'
+          }
         }
       }
-    },
-    plugins: {
-      legend: {
-        position: 'top'
-      }
-    }
-  }
-});
-
+    });
   }
 }

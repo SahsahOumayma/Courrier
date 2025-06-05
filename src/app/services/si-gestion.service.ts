@@ -12,6 +12,15 @@ export interface UtilisateurDTO {
   checkEmail: boolean;
 }
 
+export interface RoleDTO {
+  nom: string;
+}
+
+export interface ServiceDTO {
+  id: number;
+  nom: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SiGestionService {
   private readonly apiUrl = 'http://localhost:9090/api/admin-si';
@@ -22,15 +31,20 @@ export class SiGestionService {
     return this.http.get<UtilisateurDTO[]>(`${this.apiUrl}/users/active`);
   }
 
-  getRoles(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/roles`);
+  getRoles(): Observable<RoleDTO[]> {
+    return this.http.get<RoleDTO[]>(`${this.apiUrl}/roles`);
   }
 
-  getServices(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/services`);
+  getServices(): Observable<ServiceDTO[]> {
+    return this.http.get<ServiceDTO[]>(`${this.apiUrl}/services`);
   }
 
-  modifierUtilisateur(dto: any): Observable<any> {
+  modifierUtilisateur(dto: {
+    id: number;
+    role: string;
+    serviceId: number;
+    active: boolean;
+  }): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/modify`, dto, { responseType: 'text' });
   }
 

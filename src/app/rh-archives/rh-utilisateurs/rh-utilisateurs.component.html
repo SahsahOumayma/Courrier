@@ -63,7 +63,7 @@
           <td class="px-4 py-4 font-semibold rounded-l-xl">{{ user.fullName }}</td>
           <td class="px-4 py-4">{{ user.email }}</td>
           <td class="px-4 py-4">{{ user.login }}</td>
-          <td class="px-4 py-4">{{ user.role }}</td>
+          <td class="px-4 py-4">{{ user.role || '—' }}</td>
           <td class="px-4 py-4">{{ user.service || '—' }}</td>
           <td class="px-4 py-4">{{ user.employeeSince || '—' }}</td>
           <td class="px-4 py-4 rounded-r-xl">

@@ -1,35 +1,129 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import feather from 'feather-icons';
+import { SiProfilService } from '../../services/si-profil.service';
 
 @Component({
   selector: 'app-si-profil',
-  imports: [CommonModule],
+  standalone: true,
   templateUrl: './si-profil.component.html',
-  styleUrl: './si-profil.component.css'
+  styleUrls: ['./si-profil.component.css'],
+  imports: [CommonModule, RouterModule, FormsModule],
 })
-export class SiProfilComponent implements AfterViewInit {
+export class SiProfilComponent implements OnInit, AfterViewInit {
   ongletActif: 'info' | 'securite' | 'preferences' = 'info';
-  showCourrier = false;
 
-  changerOnglet(onglet: 'info' | 'securite' | 'preferences') {
-    this.ongletActif = onglet;
+  fullName = '';
+  email = '';
+  phone = '';
+  department = '';
 
-    // Important : attendre que le DOM soit mis à jour avant de remplacer les icônes
-    setTimeout(() => {
-      feather.replace();
-    }, 0);
+  formFullName = '';
+  formEmail = '';
+  formPhone = '';
+
+  changePasswordDTO = {
+    currentPassword: '',
+    newPassword: '',
+  };
+
+  preferences = {
+    emailNotifications: false,
+    smsNotifications: false,
+    pushNotifications: false,
+  };
+
+  profilService = inject(SiProfilService) as SiProfilService;
+
+  ngOnInit(): void {
+    this.fetchPersonalInfo();
+    this.fetchPreferences();
   }
 
-  toggleMenu(menu: string) {
-    if (menu === 'courrier') {
-      this.showCourrier = !this.showCourrier;
-    }
-  }
-
-  // Lors du premier affichage
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     feather.replace();
+  }
+
+  changerOnglet(o: 'info' | 'securite' | 'preferences') {
+    this.ongletActif = o;
+    setTimeout(() => feather.replace(), 0);
+  }
+
+  fetchPersonalInfo(): void {
+    this.profilService.getPersonalInfo().subscribe({
+      next: (data) => {
+        this.fullName = data.fullName;
+        this.email = data.email;
+        this.phone = data.phone;
+        this.department = data.department;
+
+        this.formFullName = data.fullName;
+        this.formEmail = data.email;
+        this.formPhone = data.phone;
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur chargement profil :', err);
+        alert('Erreur lors du chargement des informations personnelles.');
+      },
+    });
+  }
+
+  updatePersonalInfo(): void {
+    const dto = {
+      fullName: this.formFullName,
+      email: this.formEmail,
+      phone: this.formPhone,
+    };
+
+    this.profilService.updatePersonalInfo(dto).subscribe({
+      next: () => {
+        alert('✅ Informations mises à jour.');
+        this.fetchPersonalInfo();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur mise à jour profil :', err);
+        alert('Erreur : ' + (err.error?.message || 'Échec de la mise à jour.'));
+      },
+    });
+  }
+
+  changePassword(): void {
+    this.profilService.changePassword(this.changePasswordDTO).subscribe({
+      next: () => {
+        alert('✅ Mot de passe modifié.');
+        this.changePasswordDTO = { currentPassword: '', newPassword: '' };
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur changement mot de passe :', err);
+        alert('Erreur : ' + (err.error?.message || 'Échec du changement.'));
+      },
+    });
+  }
+
+  fetchPreferences(): void {
+    this.profilService.getPreferences().subscribe({
+      next: (data) => {
+        this.preferences = data;
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur chargement préférences :', err);
+        alert('Erreur lors du chargement des préférences.');
+      },
+    });
+  }
+
+  updatePreferences(): void {
+    this.profilService.updatePreferences(this.preferences).subscribe({
+      next: () => {
+        alert('✅ Préférences mises à jour.');
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur mise à jour préférences :', err);
+        alert('Erreur : ' + (err.error?.message || 'Échec de la mise à jour des préférences.'));
+      },
+    });
   }
 }

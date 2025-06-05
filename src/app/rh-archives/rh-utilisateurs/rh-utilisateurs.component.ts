@@ -19,7 +19,7 @@ export class RhUtilisateursComponent implements OnInit {
   currentPage: number = 1;
   pageOptions: number[] = [5, 10, 15];
 
-  rolesDisponibles: string[] = ['ADMINBC', 'ADMINISI', 'DELEGUE', 'RH', 'RESPONSABLESVC'];
+  rolesDisponibles: string[] = [];
 
   constructor(private rhService: RhArchiveService) {}
 

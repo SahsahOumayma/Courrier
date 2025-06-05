@@ -2,17 +2,18 @@ import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import feather from 'feather-icons';
-import { ProfilService } from '../../services/profil.service';
+import { SvcProfilService } from '../../services/svc-profil.service'; // ajuste si besoin
 
 @Component({
-  selector: 'app-profil',
+  selector: 'app-svc-profil',
   standalone: true,
-  templateUrl: './profil.component.html',
-  styleUrls: ['./profil.component.css'],
+  templateUrl: './svc-profil.component.html',
+  styleUrls: ['./svc-profil.component.css'],
   imports: [CommonModule, RouterModule, FormsModule],
 })
-export class ProfilComponent implements OnInit, AfterViewInit {
+export class SvcProfilComponent implements OnInit, AfterViewInit {
   ongletActif: 'info' | 'securite' | 'preferences' = 'info';
 
   fullName = '';
@@ -35,7 +36,7 @@ export class ProfilComponent implements OnInit, AfterViewInit {
     pushNotifications: false,
   };
 
-  profilService = inject(ProfilService);
+  profilService = inject(SvcProfilService) as SvcProfilService;
 
   ngOnInit(): void {
     this.fetchPersonalInfo();
@@ -51,7 +52,6 @@ export class ProfilComponent implements OnInit, AfterViewInit {
     setTimeout(() => feather.replace(), 0);
   }
 
-  // Charger infos personnelles depuis le backend
   fetchPersonalInfo(): void {
     this.profilService.getPersonalInfo().subscribe({
       next: (data) => {
@@ -64,14 +64,13 @@ export class ProfilComponent implements OnInit, AfterViewInit {
         this.formEmail = data.email;
         this.formPhone = data.phone;
       },
-      error: (err) => {
-        console.error('Erreur chargement infos personnelles :', err);
-        alert('Erreur chargement profil.');
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur chargement profil :', err);
+        alert('Erreur lors du chargement des informations personnelles.');
       },
     });
   }
 
-  // Soumettre les modifications d'infos personnelles
   updatePersonalInfo(): void {
     const dto = {
       fullName: this.formFullName,
@@ -80,54 +79,50 @@ export class ProfilComponent implements OnInit, AfterViewInit {
     };
 
     this.profilService.updatePersonalInfo(dto).subscribe({
-      next: (res) => {
+      next: () => {
         alert('✅ Informations mises à jour.');
         this.fetchPersonalInfo();
       },
-      error: (err) => {
-        console.error('Erreur modification profil :', err);
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur mise à jour profil :', err);
         alert('Erreur : ' + (err.error?.message || 'Échec de la mise à jour.'));
       },
     });
   }
 
-  // Soumettre changement de mot de passe
   changePassword(): void {
     this.profilService.changePassword(this.changePasswordDTO).subscribe({
       next: () => {
-        alert('✅ Mot de passe modifié avec succès.');
-        this.changePasswordDTO.currentPassword = '';
-        this.changePasswordDTO.newPassword = '';
+        alert('✅ Mot de passe modifié.');
+        this.changePasswordDTO = { currentPassword: '', newPassword: '' };
       },
-      error: (err) => {
-        console.error('Erreur changement mot de passe :', err);
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur changement mot de passe :', err);
         alert('Erreur : ' + (err.error?.message || 'Échec du changement.'));
       },
     });
   }
 
-  // Charger préférences depuis le backend
   fetchPreferences(): void {
     this.profilService.getPreferences().subscribe({
       next: (data) => {
         this.preferences = data;
       },
-      error: (err) => {
-        console.error('Erreur chargement préférences :', err);
-        alert('Erreur de chargement des préférences.');
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur chargement préférences :', err);
+        alert('Erreur lors du chargement des préférences.');
       },
     });
   }
 
-  // Soumettre préférences modifiées
   updatePreferences(): void {
     this.profilService.updatePreferences(this.preferences).subscribe({
       next: () => {
         alert('✅ Préférences mises à jour.');
       },
-      error: (err) => {
-        console.error('Erreur mise à jour préférences :', err);
-        alert('Erreur : ' + (err.error?.message || 'Échec mise à jour préférences.'));
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur mise à jour préférences :', err);
+        alert('Erreur : ' + (err.error?.message || 'Échec de la mise à jour.'));
       },
     });
   }

@@ -66,4 +66,17 @@ export class AuthService {
       responseType: 'text'
     });
   }
+
+ resetPassword(token: string, newPassword: string): Observable<string> {
+  const body = {
+    token,
+    newPassword
+  };
+
+  return this.http.post(`${this.baseUrl}/reset-password`, body, {
+    responseType: 'text' as const
+  });
 }
+
+}
+

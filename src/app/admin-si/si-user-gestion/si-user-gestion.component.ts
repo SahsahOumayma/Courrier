@@ -3,7 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import feather from 'feather-icons';
-import { SiGestionService, UtilisateurDTO } from '../../services/si-gestion.service';
+import {
+  SiGestionService,
+  UtilisateurDTO,
+  RoleDTO,
+  ServiceDTO
+} from '../../services/si-gestion.service';
 
 @Component({
   selector: 'app-si-user-gestion',
@@ -20,18 +25,26 @@ export class SiUserGestionComponent implements OnInit, AfterViewInit {
 
   utilisateurActif: UtilisateurDTO = this.nouvelUtilisateur();
 
-  roles: string[] = [];
-  services: { id: number, nom: string }[] = [];
+  roles: { label: string; value: string }[] = [];
+  services: { label: string; value: number }[] = [];
 
   constructor(private siService: SiGestionService) {}
 
   ngOnInit(): void {
     this.chargerUtilisateurs();
-    this.siService.getRoles().subscribe(data => {
-      this.roles = data.map(r => r.nom);
+
+    this.siService.getRoles().subscribe((data: RoleDTO[]) => {
+      this.roles = data.map(r => ({
+        label: this.formatLabel(r.nom),
+        value: r.nom.toUpperCase()
+      }));
     });
-    this.siService.getServices().subscribe(data => {
-      this.services = data;
+
+    this.siService.getServices().subscribe((data: ServiceDTO[]) => {
+      this.services = data.map(s => ({
+        label: s.nom,
+        value: s.id
+      }));
     });
   }
 
@@ -64,21 +77,31 @@ export class SiUserGestionComponent implements OnInit, AfterViewInit {
   }
 
   enregistrerUtilisateur(): void {
-    const selectedService = this.services.find(s => s.nom === this.utilisateurActif.service);
+    const selectedService = this.services.find(s => s.label === this.utilisateurActif.service);
+    if (!selectedService) {
+      console.error('Service non trouvé pour:', this.utilisateurActif.service);
+      return;
+    }
 
     const dto = {
       id: this.utilisateurActif.id,
-      role: this.utilisateurActif.role,
-      serviceId: selectedService?.id,
+      role: this.utilisateurActif.role?.toUpperCase(),
+      serviceId: selectedService.value,
       active: this.utilisateurActif.active
     };
 
+    console.log('DTO envoyé au backend :', dto);
+
     this.siService.modifierUtilisateur(dto).subscribe({
-      next: () => {
+      next: res => {
+        console.log('Réponse backend :', res);
         this.chargerUtilisateurs();
         this.fermerModal();
       },
-      error: err => console.error('Erreur modification :', err)
+      error: err => {
+        console.error('Erreur modification :', err);
+        alert("Erreur lors de la modification de l'utilisateur");
+      }
     });
   }
 
@@ -98,5 +121,12 @@ export class SiUserGestionComponent implements OnInit, AfterViewInit {
       active: true,
       checkEmail: false
     };
+  }
+
+  private formatLabel(enumValue: string): string {
+    return enumValue
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/(^\w|\s\w)/g, m => m.toUpperCase());
   }
 }

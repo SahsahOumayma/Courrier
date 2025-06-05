@@ -24,7 +24,11 @@ export class SiServiceService {
     return this.http.post(this.apiUrl, service, { responseType: 'text' });
   }
 
-  deleteService(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
-  }
+ deleteService(id: number): Observable<any> {
+  return this.http.delete(`http://localhost:9090/api/admin-si/service/${id}`, {
+    responseType: 'text'
+  });
+}
+
+
 }

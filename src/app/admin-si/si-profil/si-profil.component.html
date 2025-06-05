@@ -1,116 +1,101 @@
-<div class="max-w-5xl mx-auto rounded-3xl shadow-xl bg-gradient-to-br from-[#eef6fc] to-white overflow-hidden mt-10 mb-20">
+<div class="max-w-5xl mx-auto bg-white shadow-xl rounded-3xl overflow-hidden mt-10 mb-20 border border-[#dbeafe]">
+  <!-- Header -->
+  <div class="bg-[#e8f4fb] px-8 py-6 flex items-center justify-between rounded-t-3xl">
+    <div class="flex items-center space-x-4">
+      <img
+        src="https://img.freepik.com/vecteurs-libre/cercle-bleu-utilisateur-blanc_78370-4707.jpg"
+        alt="Profil"
+        class="w-24 h-24 rounded-full border-4 border-white shadow object-cover"
+      />
+      <div>
+        <h1 class="text-xl font-bold text-[#004b74]">{{ fullName }}</h1>
+        <p class="text-sm text-gray-500">Administrateur SI - {{ department }}</p>
+      </div>
+    </div>
+  </div>
 
-  <!-- Onglets stylisés -->
-  <div class="border-b bg-[#e8f4fb] px-6">
-    <nav class="flex space-x-1">
+  <!-- Onglets -->
+  <div class="border-b bg-[#eef6fc] px-4">
+    <nav class="flex space-x-2 text-sm">
       <button (click)="changerOnglet('info')"
               [ngClass]="{ 'border-b-4 border-sky-600 text-sky-700 bg-white': ongletActif === 'info' }"
-              class="px-6 py-3 font-semibold text-gray-600 hover:bg-sky-100 transition rounded-t-lg text-sm sm:text-base">
+              class="px-4 py-3 font-semibold text-gray-600 hover:bg-sky-100 rounded-t-md transition">
         Infos personnelles
       </button>
       <button (click)="changerOnglet('securite')"
               [ngClass]="{ 'border-b-4 border-sky-600 text-sky-700 bg-white': ongletActif === 'securite' }"
-              class="px-6 py-3 font-semibold text-gray-600 hover:bg-sky-100 transition rounded-t-lg text-sm sm:text-base">
+              class="px-4 py-3 font-semibold text-gray-600 hover:bg-sky-100 rounded-t-md transition">
         Sécurité
       </button>
       <button (click)="changerOnglet('preferences')"
               [ngClass]="{ 'border-b-4 border-sky-600 text-sky-700 bg-white': ongletActif === 'preferences' }"
-              class="px-6 py-3 font-semibold text-gray-600 hover:bg-sky-100 transition rounded-t-lg text-sm sm:text-base">
+              class="px-4 py-3 font-semibold text-gray-600 hover:bg-sky-100 rounded-t-md transition">
         Préférences
       </button>
     </nav>
   </div>
 
-  <!-- Onglet : Infos personnelles -->
-  <div class="p-8" *ngIf="ongletActif === 'info'">
-    <h2 class="text-xl sm:text-2xl text-[#004b74] font-extrabold italic flex items-center gap-3 mb-6">
-      <span class="p-2 bg-sky-100 rounded-full">
-        <i data-feather="user" class="w-5 h-5 text-sky-600"></i>
-      </span>
-      Informations personnelles
-    </h2>
-    <form class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+  <!-- Onglet Infos personnelles -->
+  <div class="bg-[#f9fbfd] p-8" *ngIf="ongletActif === 'info'">
+    <form class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm" (ngSubmit)="updatePersonalInfo()">
       <div>
-        <label class="block text-gray-600 mb-1">Nom complet</label>
-        <input type="text" value="Jean Dupont" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 shadow-sm" />
+        <label class="block mb-1 text-gray-700">Nom complet</label>
+        <input type="text" [(ngModel)]="formFullName" name="fullName"
+               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500" required />
       </div>
       <div>
-        <label class="block text-gray-600 mb-1">Email</label>
-        <input type="email" value="user@example.com" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 shadow-sm" />
+        <label class="block mb-1 text-gray-700">Email</label>
+        <input type="email" [(ngModel)]="formEmail" name="email"
+               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500" required />
       </div>
       <div>
-        <label class="block text-gray-600 mb-1">Téléphone</label>
-        <input type="tel" value="+212600000000" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 shadow-sm" />
+        <label class="block mb-1 text-gray-700">Téléphone</label>
+        <input type="tel" [(ngModel)]="formPhone" name="phone"
+               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500" />
       </div>
-      <div>
-        <label class="block text-gray-600 mb-1">Département</label>
-        <input type="text" value="Informatique" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 shadow-sm" />
+      <div class="flex items-end">
+        <button type="submit" class="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700 shadow">Enregistrer</button>
       </div>
     </form>
-    <div class="text-right mt-6">
-      <button type="submit" class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow-md transition text-sm">
-        Sauvegarder
+  </div>
+
+  <!-- Onglet Sécurité -->
+  <div class="bg-[#fefefe] p-8" *ngIf="ongletActif === 'securite'">
+    <form class="space-y-6 text-sm max-w-lg" (ngSubmit)="changePassword()">
+      <div>
+        <label class="block mb-1 text-gray-700">Mot de passe actuel</label>
+        <input type="password" [(ngModel)]="changePasswordDTO.currentPassword" name="currentPassword"
+               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-400" required />
+      </div>
+      <div>
+        <label class="block mb-1 text-gray-700">Nouveau mot de passe</label>
+        <input type="password" [(ngModel)]="changePasswordDTO.newPassword" name="newPassword"
+               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-green-400" required />
+      </div>
+      <button type="submit" class="bg-sky-600 text-white px-5 py-2 rounded hover:bg-sky-700 shadow">
+        Modifier le mot de passe
       </button>
-    </div>
-  </div>
-
-  <!-- Onglet : Sécurité -->
-  <div class="p-8" *ngIf="ongletActif === 'securite'">
-    <h2 class="text-xl sm:text-2xl text-[#004b74] font-extrabold italic flex items-center gap-3 mb-6">
-      <span class="p-2 bg-sky-100 rounded-full">
-        <i data-feather="lock" class="w-5 h-5 text-sky-600"></i>
-      </span>
-      Sécurité
-    </h2>
-    <form class="space-y-6 text-sm">
-      <div>
-        <label class="block text-gray-600 mb-1">Mot de passe actuel</label>
-        <input type="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 shadow-sm" />
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-gray-600 mb-1">Nouveau mot de passe</label>
-          <input type="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 shadow-sm" />
-        </div>
-        <div>
-          <label class="block text-gray-600 mb-1">Confirmer le mot de passe</label>
-          <input type="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 shadow-sm" />
-        </div>
-      </div>
-      <div class="text-right mt-4">
-        <button type="submit" class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow-md transition text-sm">
-          Mettre à jour
-        </button>
-      </div>
     </form>
   </div>
 
-  <!-- Onglet : Préférences -->
-  <div class="p-8" *ngIf="ongletActif === 'preferences'">
-    <h2 class="text-xl sm:text-2xl text-[#004b74] font-extrabold italic flex items-center gap-3 mb-6">
-      <span class="p-2 bg-sky-100 rounded-full">
-        <i data-feather="settings" class="w-5 h-5 text-sky-600"></i>
-      </span>
-      Préférences
-    </h2>
-    <form class="space-y-4 text-sm">
-      <div class="flex items-center">
-        <input type="checkbox" checked class="h-5 w-5 text-sky-600 border-gray-300 rounded" />
-        <label class="ml-3 text-gray-600">Notifications par email</label>
-      </div>
-      <div class="flex items-center">
-        <input type="checkbox" class="h-5 w-5 text-sky-600 border-gray-300 rounded" />
-        <label class="ml-3 text-gray-600">Notifications par SMS</label>
-      </div>
-      <div class="flex items-center">
-        <input type="checkbox" checked class="h-5 w-5 text-sky-600 border-gray-300 rounded" />
-        <label class="ml-3 text-gray-600">Notifications push</label>
-      </div>
-      <div class="text-right mt-4">
-        <button type="submit" class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow-md transition text-sm">
-          Sauvegarder
-        </button>
-      </div>
+  <!-- Onglet Préférences -->
+  <div class="bg-[#f6fbff] p-8" *ngIf="ongletActif === 'preferences'">
+    <form class="space-y-4 text-sm max-w-lg" (ngSubmit)="updatePreferences()">
+      <label class="flex items-center gap-3">
+        <input type="checkbox" [(ngModel)]="preferences.emailNotifications" name="emailNotifications" class="accent-sky-600" />
+        Notifications par email
+      </label>
+      <label class="flex items-center gap-3">
+        <input type="checkbox" [(ngModel)]="preferences.smsNotifications" name="smsNotifications" class="accent-sky-600" />
+        Notifications par SMS
+      </label>
+      <label class="flex items-center gap-3">
+        <input type="checkbox" [(ngModel)]="preferences.pushNotifications" name="pushNotifications" class="accent-sky-600" />
+        Notifications push
+      </label>
+      <button type="submit" class="bg-sky-600 text-white px-5 py-2 rounded shadow hover:bg-sky-700">
+        Sauvegarder les préférences
+      </button>
     </form>
   </div>
 </div>

@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
-export class ProfilService {
-  private baseUrl = 'http://localhost:9090/api/delegue/profil';
+export class BcProfilService {
+  private baseUrl = 'http://localhost:9090/api/admin-bc/profil';
 
   constructor(private http: HttpClient) {}
 

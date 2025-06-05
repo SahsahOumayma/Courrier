@@ -84,13 +84,26 @@ export class ArchivesComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  voirDetails(employe: CourrierEmployeeDTO): void {
-    window.open(`/api/courriers/${employe.courrierId}/view-pdf`, '_blank');
+  voirDetails(courrier: any): void {
+  const id = courrier.courrierId || courrier.id;
+  if (id) {
+    window.open(`http://localhost:9090/api/admin-bc/api/courriers/${id}/view-pdf`, '_blank');
+  } else {
+    console.error('ID du courrier non trouvé', courrier);
   }
+}
 
-  telechargerPDF(employe: CourrierEmployeeDTO): void {
-    window.open(employe.downloadUrl, '_blank');
+telechargerPDF(courrier: any): void {
+  const id = courrier.courrierId || courrier.id;
+  if (id) {
+    window.open(`http://localhost:9090/api/admin-bc/api/courriers/${id}/download`, '_blank');
+  } else {
+    console.error('ID du courrier non trouvé', courrier);
   }
+}
+
+
+
    ngAfterViewChecked(): void {
       feather.replace();
     }

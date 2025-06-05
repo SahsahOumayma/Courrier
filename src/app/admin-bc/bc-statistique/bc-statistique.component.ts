@@ -81,7 +81,7 @@ export class BcStatistiqueComponent implements OnInit, AfterViewInit {
         labels: confLabels,
         datasets: [{
           data: confData,
-          backgroundColor: ['#60a5fa', '#f472b6', '#facc15']
+          backgroundColor: ['#60a5fa', '#f472b6', '#1e40af']
         }]
       },
       options: {

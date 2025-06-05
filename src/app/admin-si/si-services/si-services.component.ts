@@ -61,13 +61,22 @@ export class SiServicesComponent implements OnInit, AfterViewInit {
 
 
   deleteService(id: number): void {
-    if (confirm('Confirmer la suppression ?')) {
-      this.siService.deleteService(id).subscribe({
-        next: () => this.fetchServices(),
-        error: err => console.error('Erreur suppression', err)
-      });
-    }
+  if (confirm('Êtes-vous sûr de vouloir supprimer ce service ?')) {
+    this.siService.deleteService(id).subscribe({
+      next: () => {
+        alert('✅ Service supprimé avec succès.');
+        this.fetchServices();
+      },
+      error: (err) => {
+        console.error('❌ Erreur suppression service :', err);
+        alert('Erreur lors de la suppression.');
+      }
+    });
   }
+
+
+}
+
 
   filterServices(): void {
     this.filteredServices = this.services.filter(service =>

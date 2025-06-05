@@ -44,8 +44,11 @@ togglePasswordVisibility() {
           case 'DELEGUE':
             this.router.navigate(['/delegue']);
             break;
-          case 'SI':
+          case 'ADMINSI': 
             this.router.navigate(['/admin-si']);
+            break;
+            case 'RESPONSABLESVC': 
+            this.router.navigate(['/res-svc']);
             break;
           default:
             alert("Rôle inconnu. Contactez l'administrateur.");

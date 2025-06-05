@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SiActivationService } from '../../services/si-activation.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import feather from 'feather-icons';
 
 @Component({
   selector: 'app-si-user-activation',
@@ -13,84 +12,92 @@ import feather from 'feather-icons';
   styleUrls: ['./si-user-activation.component.css'],
 })
 export class SiUserActivationComponent implements OnInit {
-  utilisateurs: any[] = [];
+  comptes: any[] = [];
   recherche: string = '';
+  roles: any[] = [];
+  services: any[] = [];
+
   modalVisible: boolean = false;
   selectedUser: any = null;
+  selectedRole: string | null = null;
+  selectedService: any = null;
 
-  constructor(private siActivationService: SiActivationService) {}
+  constructor(private service: SiActivationService) {}
 
   ngOnInit(): void {
-    this.chargerUtilisateurs();
+    this.chargerComptes();
+    this.chargerRoles();
+    this.chargerServices();
   }
 
-  chargerUtilisateurs(): void {
-    this.siActivationService.getToActivateUsers().subscribe({
-      next: (data) => (this.utilisateurs = data),
-      error: (err) => console.error('Erreur chargement utilisateurs:', err),
+  chargerComptes() {
+    this.service.getComptesInactifs().subscribe({
+      next: (data) => (this.comptes = data),
+      error: (err) => console.error('❌ Erreur chargement comptes :', err),
+    });
+  }
+
+  chargerRoles() {
+    this.service.getRoles().subscribe({
+      next: (data) => (this.roles = data),
+      error: (err) => console.error('❌ Erreur chargement rôles :', err),
+    });
+  }
+
+  chargerServices() {
+    this.service.getServices().subscribe({
+      next: (data) => (this.services = data),
+      error: (err) => console.error('❌ Erreur chargement services :', err),
     });
   }
 
   comptesFiltres(): any[] {
-    const r = this.recherche.toLowerCase();
-    return this.utilisateurs.filter(
-      (u) =>
-        u.fullName.toLowerCase().includes(r) ||
-        u.email.toLowerCase().includes(r) ||
-        u.login.toLowerCase().includes(r)
+    if (!this.recherche) return this.comptes;
+    const terme = this.recherche.toLowerCase();
+    return this.comptes.filter((u) =>
+      u.fullName.toLowerCase().includes(terme) ||
+      u.email.toLowerCase().includes(terme) ||
+      u.login.toLowerCase().includes(terme)
     );
   }
 
-  ouvrirModal(user: any): void {
+  ouvrirModal(user: any) {
     this.selectedUser = user;
+    this.selectedRole = user.role || null;
+    this.selectedService = user.service || null;
     this.modalVisible = true;
   }
 
-  fermerModal(): void {
-    this.selectedUser = null;
+  fermerModal() {
     this.modalVisible = false;
+    this.selectedUser = null;
+    this.selectedRole = null;
+    this.selectedService = null;
   }
 
-  activerUtilisateur(): void {
-    if (!this.selectedUser) return;
-
-    const payload = {
-      id: this.selectedUser.id,
-      role: this.selectedUser.role || 'USER', // Si le rôle est vide
-      serviceId: this.selectedUser.serviceId || 1, // Par défaut, ou à adapter
-      active: true,
-    };
-
-    this.siActivationService.activerUtilisateur(payload).subscribe({
-      next: () => {
-        this.utilisateurs = this.utilisateurs.filter(
-          (u) => u.id !== this.selectedUser.id
-        );
-        this.fermerModal();
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error('Erreur activation', err);
-        alert('Erreur lors de l’activation de l’utilisateur.');
-      },
-    });
+ activerUtilisateur(): void {
+  if (!this.selectedUser || !this.selectedRole || !this.selectedService) {
+    console.error("Tous les champs doivent être remplis.");
+    return;
   }
 
-  supprimerUtilisateur(user: any): void {
-  if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
-    this.siActivationService.deleteUser(user.id).subscribe({
-      next: () => {
-        this.utilisateurs = this.utilisateurs.filter(u => u.id !== user.id);
-        alert("Utilisateur supprimé avec succès ✅");
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error("Erreur suppression utilisateur", err);
-        alert("Erreur lors de la suppression de l'utilisateur.");
-      }
-    });
-  }
+  const payload = {
+    id: this.selectedUser.id,
+    role: this.selectedRole,
+    serviceId: this.selectedService.id,
+    active: true
+  };
+
+  this.service.activateUser(payload).subscribe({
+    next: (res) => {
+      console.log("✅ Utilisateur activé :", res);
+      this.modalVisible = false;
+      this.chargerComptes(); // recharge liste
+    },
+    error: (err) => {
+      console.error("❌ Erreur d’activation :", err);
+    }
+  });
 }
 
-  ngAfterViewInit(): void {
-      feather.replace();
-    }
 }
