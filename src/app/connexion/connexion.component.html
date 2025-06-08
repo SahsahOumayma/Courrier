@@ -2,7 +2,10 @@
   <div class="login-page">
     <!-- Partie gauche avec logo -->
     <div class="login-left">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png" alt="Ministère de la Santé" />
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/5/56/MS-Maroc.png"
+        alt="Ministère de la Santé"
+      />
     </div>
 
     <!-- Partie droite avec formulaire -->
@@ -22,27 +25,23 @@
             required
           />
         </div>
-          <!-- mot de passe -->
+        <!-- mot de passe -->
 
         <div class="input-icon eye-only">
-  <input
-    [type]="passwordVisible ? 'text' : 'password'"
-    [(ngModel)]="password"
-    name="password"
-    placeholder="Mot de passe"
-    required
-  />
-  <i
-    class="eye-toggle"
-    [class.ri-eye-line]="!passwordVisible"
-    [class.ri-eye-off-line]="passwordVisible"
-    (click)="togglePasswordVisibility()"
-  ></i>
-</div>
-
-
-
-
+          <input
+            [type]="passwordVisible ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Mot de passe"
+            required
+          />
+          <i
+            class="eye-toggle"
+            [class.ri-eye-line]="!passwordVisible"
+            [class.ri-eye-off-line]="passwordVisible"
+            (click)="togglePasswordVisibility()"
+          ></i>
+        </div>
 
         <!-- Souvenir -->
         <div class="remember-me">

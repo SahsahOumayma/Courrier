@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // ✅ import pour ngModel
+import { FormsModule } from '@angular/forms'; 
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -7,10 +7,10 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-connexion',
-  standalone: true, // ✅ pour standalone Angular 15+
+  standalone: true, 
   templateUrl: './connexion.component.html',
   styleUrls: ['./connexion.component.css'],
-  imports: [CommonModule, FormsModule, RouterModule] // ✅ FormsModule ici !
+  imports: [CommonModule, FormsModule, RouterModule]
 })
 export class ConnexionComponent {
   login: string = '';
@@ -38,7 +38,7 @@ togglePasswordVisibility() {
           case 'ADMINBC':
             this.router.navigate(['/admin-bc']);
             break;
-          case 'RESPONSABLERH':
+          case 'RH':
             this.router.navigate(['/rh']);
             break;
           case 'DELEGUE':

@@ -42,6 +42,12 @@ import { SvcProfilComponent } from './res-svc/svc-profil/svc-profil.component';
 import { RhProfilComponent } from './rh-archives/rh-profil/rh-profil.component';
 import { SvcDashComponent } from './res-svc/svc-dash/svc-dash.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { ArrivArchiveComponent } from './delegue/arriv-archive/arriv-archive.component';
+import { DepartArchiveComponent } from './delegue/depart-archive/depart-archive.component';
+import { EnrEmployeComponent } from './admin-bc/enr-employe/enr-employe.component';
+
+
+
 
 
 
@@ -85,6 +91,7 @@ export const routes: Routes = [
       { path: 'enregistrer-depart', component: EnrDepartComponent },
       { path: 'consulter-arrivee', component: ConsArriveeComponent },
       { path: 'consulter-depart', component: ConsDepartComponent },
+      { path: 'enregistrer-employe', component: EnrEmployeComponent },
       { path: 'statistiques', component: BcStatistiqueComponent },
       { path: 'profil', component: BcProfilComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -113,6 +120,8 @@ export const routes: Routes = [
       { path: 'statistique', component: StatistiqueComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profil', component: ProfilComponent },
+       { path: 'archive-arrivee', component: ArrivArchiveComponent },
+  { path: 'archive-depart', component: DepartArchiveComponent },
 
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // /delegue/depart
     ],

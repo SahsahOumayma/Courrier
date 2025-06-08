@@ -48,19 +48,27 @@
            [ngClass]="{ 'rotate-180': showEnregistrer }"></i>
       </div>
       <ul *ngIf="showEnregistrer" class="ml-6 mt-2 space-y-2">
-        <li>
-          <a routerLink="/admin-bc/enregistrer-arrivee" routerLinkActive="bg-white text-sky-900"
-             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
-            <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i> <span>Arrivée</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/admin-bc/enregistrer-depart" routerLinkActive="bg-white text-sky-900"
-             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
-            <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départ</span>
-          </a>
-        </li>
-      </ul>
+  <li>
+    <a routerLink="/admin-bc/enregistrer-arrivee" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i> <span>Arrivée</span>
+    </a>
+  </li>
+  <li>
+    <a routerLink="/admin-bc/enregistrer-depart" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départ</span>
+    </a>
+  </li>
+  <!-- 👇 Nouveau lien ajouté ici -->
+  <li>
+    <a routerLink="/admin-bc/enregistrer-employe" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="user-check" class="w-4 h-4 mr-2"></i> <span>Employé</span>
+    </a>
+  </li>
+</ul>
+
 
       <!-- Consulter Courrier -->
       <div (click)="toggleConsulter()" class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-sky-800 cursor-pointer transition">

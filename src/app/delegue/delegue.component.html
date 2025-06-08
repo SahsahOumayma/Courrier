@@ -53,20 +53,33 @@
            [ngClass]="{ 'rotate-180': showConsulter }"></i>
       </div>
 
-      <ul *ngIf="showConsulter" class="ml-6 mt-2 space-y-2">
-        <li>
-          <a [routerLink]="['/delegue/arrivee']" routerLinkActive="bg-white text-sky-900" [routerLinkActiveOptions]="{ exact: true }"
-             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
-            <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i> <span>Arrivée</span>
-          </a>
-        </li>
-        <li>
-          <a [routerLink]="['/delegue','depart']" routerLinkActive="bg-white text-sky-900"
-             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
-            <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départ</span>
-          </a>
-        </li>
-      </ul>
+     <ul *ngIf="showConsulter" class="ml-6 mt-2 space-y-2">
+  <li>
+    <a [routerLink]="['/delegue/arrivee']" routerLinkActive="bg-white text-sky-900" [routerLinkActiveOptions]="{ exact: true }"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i> <span>Arrivée</span>
+    </a>
+  </li>
+  <li>
+    <a [routerLink]="['/delegue/depart']" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départ</span>
+    </a>
+  </li>
+  <li>
+    <a [routerLink]="['/delegue/archive-arrivee']" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="archive" class="w-4 h-4 mr-2"></i> <span>Archive Arrivée</span>
+    </a>
+  </li>
+  <li>
+    <a [routerLink]="['/delegue/archive-depart']" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="archive" class="w-4 h-4 mr-2"></i> <span>Archive Départ</span>
+    </a>
+  </li>
+</ul>
+
 
       <a [routerLink]="['/delegue','statistique']" routerLinkActive="bg-white text-sky-900"
          class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">

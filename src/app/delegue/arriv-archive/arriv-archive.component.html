@@ -3,7 +3,7 @@
     <span class="p-3 bg-blue-100 rounded-full">
       <i data-feather="inbox" class="w-6 h-6 text-sky-600"></i>
     </span>
-    Courriers arrivés
+    Courriers arrivés (archivés)
   </h2>
 
   <!-- Filtres -->
@@ -49,7 +49,7 @@
         </select>
       </label>
 
-      <!-- Pagination - taille -->
+      <!-- Pagination -->
       <label class="flex items-center gap-2">
         <span>Afficher :</span>
         <select
@@ -82,9 +82,8 @@
       </thead>
       <tbody>
         <tr *ngFor="let courrier of paginatedCourriers"
-            class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800"
-            [ngClass]="{ 'bg-red-100 border-l-4 border-red-600': courrier.urgence === 'FLASH' }">
-
+            class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800">
+          <!-- ✅ Ligne normale (plus de fond rouge pour FLASH) -->
           <td class="px-4 py-4 font-semibold rounded-l-xl">{{ courrier.numeroRegistre }}</td>
           <td class="px-4 py-4">{{ courrier.object }}</td>
           <td class="px-4 py-4">{{ courrier.signataire }}</td>

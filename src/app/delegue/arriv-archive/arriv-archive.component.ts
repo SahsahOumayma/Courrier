@@ -6,13 +6,13 @@ import { ArriveeDelService } from '../../services/arrivee-del.service';
 import feather from 'feather-icons';
 
 @Component({
-  selector: 'app-arrivee',
+  selector: 'app-arriv-archive',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './arrivee.component.html',
-  styleUrls: ['./arrivee.component.css'],
+  templateUrl: './arriv-archive.component.html',
+  styleUrls: ['./arriv-archive.component.css'],
 })
-export class ArriveeComponent implements OnInit, AfterViewChecked {
+export class ArrivArchiveComponent implements OnInit, AfterViewChecked {
   courriers: any[] = [];
   paginatedCourriers: any[] = [];
 
@@ -35,8 +35,10 @@ export class ArriveeComponent implements OnInit, AfterViewChecked {
   }
 
   updatePagination(): void {
-    let filtered = this.courriers.filter(c => !c.archiver);
+    // ✅ Filtrer uniquement les courriers archivés
+    let filtered = this.courriers.filter(c => c.archiver === true);
 
+    // ✅ Filtrer par statut si nécessaire
     if (this.filtreStatut !== 'tous') {
       filtered = filtered.filter(c =>
         c.statutCourrier &&
@@ -44,16 +46,18 @@ export class ArriveeComponent implements OnInit, AfterViewChecked {
       );
     }
 
+    // ✅ Recherche texte
     if (this.termeRecherche.trim() !== '') {
       const term = this.termeRecherche.toLowerCase();
       filtered = filtered.filter(c =>
         (c.object && c.object.toLowerCase().includes(term)) ||
         (c.description && c.description.toLowerCase().includes(term)) ||
-        (c.numeroRegistre && c.numeroRegistre.toString().toLowerCase().includes(term)) ||
+        (c.numeroRegistre && c.numeroRegistre.toString().includes(term)) ||
         (c.signataire && c.signataire.toLowerCase().includes(term))
       );
     }
 
+    // ✅ Tri
     if (this.selectedTri === 'alphabetique') {
       filtered.sort((a, b) => (a.object || '').localeCompare(b.object || ''));
     } else if (this.selectedTri === 'urgence') {
@@ -73,6 +77,7 @@ export class ArriveeComponent implements OnInit, AfterViewChecked {
       );
     }
 
+    // ✅ Pagination
     this.totalPages = Math.max(Math.ceil(filtered.length / this.pageSize), 1);
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;

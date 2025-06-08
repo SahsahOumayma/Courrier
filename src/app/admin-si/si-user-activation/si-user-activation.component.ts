@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SiActivationService } from '../../services/si-activation.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import feather from 'feather-icons';
 
 @Component({
   selector: 'app-si-user-activation',
@@ -99,5 +100,8 @@ export class SiUserActivationComponent implements OnInit {
     }
   });
 }
+ ngAfterViewInit(): void {
+    feather.replace();
+  }
 
 }

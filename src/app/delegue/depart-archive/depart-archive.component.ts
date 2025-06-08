@@ -6,19 +6,18 @@ import { DepartDelService } from '../../services/depart-del.service';
 import feather from 'feather-icons';
 
 @Component({
-  selector: 'app-depart',
+  selector: 'app-depart-archive',
   standalone: true,
-  templateUrl: './depart.component.html',
-  styleUrls: ['./depart.component.css'],
+  templateUrl: './depart-archive.component.html',
+  styleUrls: ['./depart-archive.component.css'],
   imports: [CommonModule, FormsModule, RouterModule]
 })
-export class DepartComponent implements OnInit, AfterViewChecked {
+export class DepartArchiveComponent implements OnInit, AfterViewChecked {
   courriers: any[] = [];
   paginatedCourriers: any[] = [];
 
   // Filtres
   filterText: string = '';
-  filtreVoie: string = ''; // ✅ Nouveau filtre par voie
   selectedTri: string = 'default';
 
   // Pagination
@@ -27,20 +26,12 @@ export class DepartComponent implements OnInit, AfterViewChecked {
   pageOptions: number[] = [5, 10, 20];
   totalPages: number = 1;
 
-  // ✅ Liste des voies disponibles (remplie dynamiquement)
-  voiesDisponibles: string[] = [];
-
   constructor(private departService: DepartDelService) {}
 
   ngOnInit(): void {
     this.departService.getDepartCourriers().subscribe(data => {
-      this.courriers = data.filter(c => !c.archiver); // Non archivés uniquement
-
-      // ✅ Extraire les voies disponibles uniques
-      this.voiesDisponibles = [...new Set(this.courriers
-        .map(c => c.voieExpedition)
-        .filter(v => !!v))];
-
+      // Afficher uniquement les courriers archivés
+      this.courriers = data.filter(c => c.archiver === true);
       this.updatePagination();
     });
   }
@@ -48,14 +39,7 @@ export class DepartComponent implements OnInit, AfterViewChecked {
   updatePagination(): void {
     let filtered = [...this.courriers];
 
-    // ✅ Filtrer par voie
-    if (this.filtreVoie !== '') {
-      filtered = filtered.filter(c =>
-        c.voieExpedition?.toLowerCase() === this.filtreVoie.toLowerCase()
-      );
-    }
-
-    // 🔍 Filtrer par texte
+    // Filtrer par texte
     const txt = this.filterText.toLowerCase().trim();
     if (txt) {
       filtered = filtered.filter(c =>
@@ -64,17 +48,18 @@ export class DepartComponent implements OnInit, AfterViewChecked {
       );
     }
 
-    // 🔃 Tri
+    // Tri
     if (this.selectedTri === 'alphabetique') {
       filtered.sort((a, b) => (a.object || '').localeCompare(b.object || ''));
     } else if (this.selectedTri === 'urgence') {
-      const ordre: { [key: string]: number } = { FLASH: 1, URGENT: 2, NORMAL: 3 };
+      const ordre: { [key: string]: number } = { FLASH: 1, URGENT: 2, ROUTINE: 3 };
       filtered.sort((a, b) => (ordre[a.urgence] ?? 99) - (ordre[b.urgence] ?? 99));
     } else {
+      // Tri par dateDepart (descendant)
       filtered.sort((a, b) => new Date(b.dateDepart).getTime() - new Date(a.dateDepart).getTime());
     }
 
-    // 📄 Pagination
+    // Pagination
     this.totalPages = Math.max(Math.ceil(filtered.length / this.pageSize), 1);
     const start = (this.currentPage - 1) * this.pageSize;
     this.paginatedCourriers = filtered.slice(start, start + this.pageSize);
