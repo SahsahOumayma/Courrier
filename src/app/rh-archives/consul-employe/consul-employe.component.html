@@ -1,0 +1,88 @@
+<section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
+  <!-- Titre -->
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-6">
+    <span class="p-3 bg-blue-100 rounded-full">
+      <i data-feather="file-text" class="w-6 h-6 text-sky-600"></i>
+    </span>
+    Courriers des employés
+  </h2>
+
+  <!-- Recherche + affichage -->
+  <div class="mb-8 flex flex-wrap items-center justify-between gap-6 text-sm text-gray-700 font-medium">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="updatePagination()"
+      placeholder="🔍 Rechercher par nom ou objet"
+      class="w-full md:w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
+    />
+
+    <label class="flex items-center gap-2">
+      <span>Afficher :</span>
+      <select [(ngModel)]="itemsPerPage" (change)="setPage(1)"
+        class="w-32 px-3 py-2 rounded-md border border-gray-300 shadow-sm">
+        <option [value]="5">5 / page</option>
+        <option [value]="10">10 / page</option>
+        <option [value]="20">20 / page</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- Tableau -->
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
+      <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
+        <tr>
+          <th class="px-4 py-3 rounded-l-xl">Objet</th>
+          <th class="px-4 py-3">Employé</th>
+          <th class="px-4 py-3">CIN</th>
+          <th class="px-4 py-3">Date</th>
+          <th class="py-3 pr-4 rounded-r-xl text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of paginated" class="h-14 shadow-sm hover:shadow-md transition bg-white rounded-xl">
+          <td class="px-4 py-3 font-semibold rounded-l-xl">{{ c.object }}</td>
+          <td class="px-4 py-3">{{ c.employeNom }}</td>
+          <td class="px-4 py-3">{{ c.employeCIN || '—' }}</td>
+          <td class="px-4 py-3">{{ c.dateRegistre }}</td>
+          <td class="py-3 pr-4 rounded-r-xl">
+            <div class="flex gap-2 items-center justify-center">
+              <button (click)="voirPdf(c.id)"
+                class="px-4 py-1 bg-[#0288D1] text-white font-semibold text-sm rounded-full shadow hover:bg-[#0277BD] transition">
+                Voir
+              </button>
+              <button (click)="telechargerPdf(c.id)"
+                class="px-4 py-1 bg-[#00C853] text-white font-semibold text-sm rounded-full shadow hover:bg-[#00B74A] transition">
+                Télécharger
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="paginated.length === 0">
+          <td colspan="5" class="text-center py-4 text-gray-500 italic">
+            Aucun courrier trouvé.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="mt-10 flex items-center justify-between px-10">
+    <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm">
+      ⬅️ Précédent
+    </button>
+
+    <div class="px-6 py-2 bg-white border border-gray-300 shadow rounded-xl text-[#003c61] font-bold tracking-wide">
+      Page {{ currentPage }} / {{ totalPages() }}
+    </div>
+
+    <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages()"
+      class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition font-semibold shadow-sm">
+      Suivant ➡️
+    </button>
+  </div>
+</section>

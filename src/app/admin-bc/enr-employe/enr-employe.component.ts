@@ -1,19 +1,23 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core'; // ← Ajout de AfterViewInit
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EnrCourrierBcService } from '../../services/enr-courrier-bc.service';
-import * as feather from 'feather-icons'; // ← Import Feather
+import * as feather from 'feather-icons';
 
 @Component({
   selector: 'app-enr-employe',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './enr-employe.component.html',
-  styleUrls: ['./enr-employe.component.css']
+  styleUrls: ['./enr-employe.component.css'],
 })
-export class EnrEmployeComponent implements OnInit, AfterViewInit {  // ← Implémente AfterViewInit
+export class EnrEmployeComponent implements OnInit, AfterViewInit {
   courrierForm!: FormGroup;
-  services: any[] = [];
   employes: any[] = [];
   successMessage = '';
   errorMessage = '';
@@ -29,29 +33,30 @@ export class EnrEmployeComponent implements OnInit, AfterViewInit {  // ← Impl
   }
 
   ngAfterViewInit(): void {
-    feather.replace(); // ← Active les icônes feather après le chargement du DOM
+    feather.replace();
   }
 
   initForm() {
     this.courrierForm = this.fb.group({
       objet: ['', Validators.required],
       description: ['', Validators.required],
-      numeroRegistre: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
+      numeroRegistre: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]+$/)],
+      ],
       employeId: ['', Validators.required],
-      serviceId: ['', Validators.required],
-      attachment: [null, Validators.required]
+      attachment: [null, Validators.required],
     });
   }
 
   loadOptions() {
     this.courrierService.getStaticOptions().subscribe({
       next: (data) => {
-        this.services = data.services || [];
         this.employes = data.employes || [];
       },
       error: () => {
         this.errorMessage = 'Erreur lors du chargement des données.';
-      }
+      },
     });
   }
 
@@ -73,7 +78,6 @@ export class EnrEmployeComponent implements OnInit, AfterViewInit {  // ← Impl
     formData.append('description', value.description);
     formData.append('numeroRegistre', value.numeroRegistre.toString());
     formData.append('employeId', value.employeId.toString());
-    formData.append('serviceId', value.serviceId.toString());
     formData.append('attachment', value.attachment);
 
     this.courrierService.envoyerCourrierEmploye(formData).subscribe({
@@ -81,13 +85,13 @@ export class EnrEmployeComponent implements OnInit, AfterViewInit {  // ← Impl
         this.successMessage = res;
         this.errorMessage = '';
         this.courrierForm.reset();
-        setTimeout(() => this.successMessage = '', 5000);
-        feather.replace(); // ← recharge les icônes si elles sont dans le template
+        setTimeout(() => (this.successMessage = ''), 5000);
+        feather.replace();
       },
       error: (err) => {
         this.errorMessage = err.error || 'Erreur lors de l’envoi.';
         this.successMessage = '';
-      }
+      },
     });
   }
 }

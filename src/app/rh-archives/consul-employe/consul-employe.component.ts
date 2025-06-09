@@ -5,47 +5,42 @@ import { FormsModule } from '@angular/forms';
 import * as feather from 'feather-icons';
 
 @Component({
-  selector: 'app-cons-employe',
+  selector: 'app-consul-employe',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './cons-employe.component.html',
-  styleUrls: ['./cons-employe.component.css']
+  templateUrl: './consul-employe.component.html',
+  styleUrls: ['./consul-employe.component.css'],
+  imports: [CommonModule, FormsModule]
 })
-export class ConsEmployeComponent implements OnInit, AfterViewInit {
+export class ConsulEmployeComponent implements OnInit, AfterViewInit {
   courriers: any[] = [];
   paginated: any[] = [];
   searchTerm: string = '';
   itemsPerPage: number = 5;
   currentPage: number = 1;
 
-  isLoading: boolean = true;
-  hasError: boolean = false;
-
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.http.get<any[]>('http://localhost:9090/api/admin-bc/consulter-courrier/employe').subscribe({
+    this.http.get<any[]>('http://localhost:9090/api/RH/consulter-courrier/employe').subscribe({
       next: data => {
         this.courriers = data;
         this.updatePagination();
-        this.isLoading = false;
-        feather.replace(); // met à jour les icônes après chargement
       },
       error: err => {
-        console.error('Erreur lors de la récupération des courriers employés:', err);
-        this.hasError = true;
-        this.isLoading = false;
+        console.error('Erreur lors de la récupération :', err);
       }
     });
   }
 
   ngAfterViewInit(): void {
-    feather.replace();
+    feather.replace(); // recharge les icônes à l'initialisation
   }
 
   filterCourriers() {
     return this.courriers.filter(c =>
-      (!this.searchTerm || c.object?.toLowerCase().includes(this.searchTerm.toLowerCase()) || c.employeNom?.toLowerCase().includes(this.searchTerm.toLowerCase()))
+      (!this.searchTerm ||
+        c.object?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        c.employeNom?.toLowerCase().includes(this.searchTerm.toLowerCase()))
     );
   }
 
@@ -53,7 +48,9 @@ export class ConsEmployeComponent implements OnInit, AfterViewInit {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     this.paginated = this.filterCourriers().slice(start, end);
-    feather.replace(); // re-render icons if table content changes
+
+    // Ajout pour mettre à jour les icônes après affichage
+    setTimeout(() => feather.replace(), 0);
   }
 
   totalPages(): number {
@@ -67,12 +64,10 @@ export class ConsEmployeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // ✅ Voir le PDF
   voirPdf(id: number): void {
     window.open(`http://localhost:9090/api/admin-bc/api/courriers/${id}/view-pdf`, '_blank');
   }
 
-  // ✅ Télécharger le PDF
   telechargerPdf(id: number): void {
     const url = `http://localhost:9090/api/admin-bc/api/courriers/${id}/download`;
     const link = document.createElement('a');

@@ -3,80 +3,66 @@
   <!-- 🧾 Titre -->
   <div class="flex items-center gap-4 text-blue-900 mb-4">
     <div class="bg-blue-100 p-3 rounded-full shadow-inner">
-      <i data-feather="users" class="w-7 h-7 text-blue-600"></i>
+      <i data-feather="inbox" class="w-7 h-7 text-blue-600"></i>
     </div>
-    <h2 class="text-2xl font-extrabold italic tracking-wide">Données des employés</h2>
+    <h2 class="text-2xl font-extrabold italic tracking-wide">Courriers employés</h2>
   </div>
 
-  <!-- 🔄 État de chargement ou erreur -->
-  <div *ngIf="isLoading" class="text-center text-gray-500 italic text-lg">
-    ⏳ Chargement des données...
+  <!-- 🔍 Barre de recherche et pagination -->
+  <div class="flex flex-col md:flex-row flex-wrap justify-between items-center gap-4 text-sm text-blue-900 mb-6">
+    <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="updatePagination()"
+      placeholder="🔍 Rechercher par objet ou employé..."
+      class="flex-grow min-w-[250px] px-4 py-2 rounded-lg border border-blue-300 focus:ring outline-none" />
+
+    <select [(ngModel)]="itemsPerPage" (ngModelChange)="setPage(1)"
+      class="px-4 py-2 rounded-lg border border-blue-300">
+      <option value="5">5/page</option>
+      <option value="10">10/page</option>
+      <option value="20">20/page</option>
+    </select>
   </div>
 
-  <div *ngIf="hasError" class="text-center text-red-600 font-bold text-lg">
-    ❌ Erreur lors du chargement.
+  <!-- 📄 Tableau -->
+  <div class="overflow-x-auto rounded-xl border border-sky-200 shadow bg-sky-50">
+    <table class="min-w-full text-sm text-gray-800 divide-y divide-gray-200">
+      <thead class="bg-sky-100 text-sky-700 font-semibold text-xs uppercase tracking-wide">
+        <tr>
+          <th class="px-6 py-3 text-left">Objet</th>
+          <th class="px-6 py-3 text-left">Employé</th>
+          <th class="px-6 py-3 text-left">CIN</th>
+          <th class="px-6 py-3 text-left">Date</th>
+          <th class="px-6 py-3 text-left">Action</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let c of paginated" class="hover:bg-blue-50 transition-all">
+          <td class="px-6 py-4 font-medium">{{ c.object }}</td>
+          <td class="px-6 py-4">{{ c.employeNom }}</td>
+          <td class="px-6 py-4">{{ c.employeCIN || 'N/A' }}</td>
+          <td class="px-6 py-4">{{ c.dateRegistre }}</td>
+          <td class="px-6 py-4 space-x-2">
+            <button (click)="voirPdf(c.id)"
+              class="bg-[#0288D1] text-white font-semibold px-4 py-1 rounded-full shadow hover:bg-[#0277BD] transition">
+              Voir
+            </button>
+            <button (click)="telechargerPdf(c.id)"
+              class="bg-green-500 text-white font-semibold px-4 py-1 rounded-full shadow hover:bg-green-600 transition">
+              Télécharger
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <!-- ✅ Affichage après chargement -->
-  <div *ngIf="!isLoading && !hasError" class="space-y-10">
-
-    <!-- 👨‍💼 Employés -->
-    <div>
-      <div class="flex items-center gap-3 text-blue-800 text-lg font-semibold mb-2">
-        <div class="bg-blue-100 p-2 rounded-full">
-          <i data-feather="user" class="w-5 h-5 text-blue-600"></i>
-        </div>
-        <h3 class="text-xl font-bold">👨‍💼 Liste des employés</h3>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-gray-800">
-        <div *ngFor="let emp of employes" class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-          <p><strong>Nom :</strong> {{ emp.prenom }} {{ emp.nom }}</p>
-          <p><strong>ID :</strong> {{ emp.id }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⚠️ Urgences -->
-    <div>
-      <div class="flex items-center gap-3 text-sky-700 text-lg font-semibold mb-2">
-        <div class="bg-sky-100 p-2 rounded-full">
-          <i data-feather="alert-circle" class="w-5 h-5 text-sky-600"></i>
-        </div>
-        <h3 class="text-xl font-bold">⚠️ Niveaux d'urgence</h3>
-      </div>
-      <ul class="list-disc list-inside text-gray-800 text-sm ml-6">
-        <li *ngFor="let u of urgences">{{ u.nom }}</li>
-      </ul>
-    </div>
-
-    <!-- 🔒 Confidentialités -->
-    <div>
-      <div class="flex items-center gap-3 text-purple-700 text-lg font-semibold mb-2">
-        <div class="bg-purple-100 p-2 rounded-full">
-          <i data-feather="lock" class="w-5 h-5 text-purple-600"></i>
-        </div>
-        <h3 class="text-xl font-bold">🔒 Confidentialités</h3>
-      </div>
-      <ul class="list-disc list-inside text-gray-800 text-sm ml-6">
-        <li *ngFor="let c of confidentialites">{{ c.nom }}</li>
-      </ul>
-    </div>
-
-    <!-- 🏢 Services -->
-    <div>
-      <div class="flex items-center gap-3 text-emerald-700 text-lg font-semibold mb-2">
-        <div class="bg-emerald-100 p-2 rounded-full">
-          <i data-feather="briefcase" class="w-5 h-5 text-emerald-600"></i>
-        </div>
-        <h3 class="text-xl font-bold">🏢 Liste des services</h3>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-gray-800">
-        <div *ngFor="let s of services" class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-          <p><strong>Service :</strong> {{ s.nom }}</p>
-          <p><strong>Créé le :</strong> {{ s.dateCreation | date:'dd/MM/yyyy' }}</p>
-        </div>
-      </div>
-    </div>
-
+  <!-- 🔁 Pagination -->
+  <div class="flex justify-end items-center gap-4 mt-4 text-sm">
+    <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
+      class="px-3 py-1 bg-gray-200 text-gray-600 rounded disabled:opacity-50">⬅ Précédent</button>
+    <span class="font-semibold px-4 py-1 border rounded bg-white shadow">
+      Page {{ currentPage }} / {{ totalPages() }}
+    </span>
+    <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages()"
+      class="px-3 py-1 bg-gray-200 text-gray-600 rounded disabled:opacity-50">Suivant ➡</button>
   </div>
 </section>

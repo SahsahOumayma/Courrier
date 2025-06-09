@@ -46,6 +46,7 @@ import { ArrivArchiveComponent } from './delegue/arriv-archive/arriv-archive.com
 import { DepartArchiveComponent } from './delegue/depart-archive/depart-archive.component';
 import { EnrEmployeComponent } from './admin-bc/enr-employe/enr-employe.component';
 import { ConsEmployeComponent } from './admin-bc/cons-employe/cons-employe.component';
+import { ConsulEmployeComponent } from './rh-archives/consul-employe/consul-employe.component';
 
 
 
@@ -111,6 +112,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: RhDashboardComponent },
       { path: 'archives', component: ArchivesComponent },
       { path: 'utilisateurs', component: RhUtilisateursComponent },
+        { path: 'courriers-employes', component: ConsulEmployeComponent },
       { path: 'profil', component: RhProfilComponent },
     ],
   },
