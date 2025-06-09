@@ -1,6 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as feather from 'feather-icons';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,6 +14,7 @@ export class AdminSiComponent implements AfterViewInit {
 
   sidebarOpen: boolean = true;
   showUtilisateurs: boolean = false;
+  constructor(private router: Router) {}
 
   toggleSidebar(): void {
     this.sidebarOpen = !this.sidebarOpen;
@@ -31,5 +32,9 @@ export class AdminSiComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     feather.replace();
+  }
+  deconnexion(): void {
+    localStorage.clear(); // ✅ Supprime les données de session
+    this.router.navigateByUrl('/'); // ✅ Redirige vers login
   }
 }

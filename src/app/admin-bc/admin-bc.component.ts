@@ -1,6 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import feather from 'feather-icons';
 
 @Component({
@@ -14,6 +14,7 @@ export class AdminBcComponent implements AfterViewInit {
   sidebarOpen = true;
   showEnregistrer = false;
   showConsulter = false;
+    constructor(private router: Router) {}
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -34,5 +35,9 @@ export class AdminBcComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     feather.replace(); // première initialisation
+  }
+  deconnexion(): void {
+    localStorage.clear();
+    this.router.navigateByUrl('/');
   }
 }

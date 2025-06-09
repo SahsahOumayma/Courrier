@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SvcArrivService } from '../../services/svc-arriv.service';
+import feather from 'feather-icons';
 
 @Component({
   selector: 'app-svc-depart-archiv',
@@ -44,5 +45,25 @@ export class SvcDepartArchivComponent implements OnInit {
       (c.signataire && c.signataire.toLowerCase().includes(query)) ||
       (c.urgence && c.urgence.toLowerCase().includes(query))
     );
+  }
+  voirPDF(id: number): void {
+  const url = `http://localhost:9090/api/delegue/api/courriers/${id}/view-pdf`;
+  window.open(url, '_blank');
+}
+
+telechargerPDF(id: number): void {
+  const url = `http://localhost:9090/api/delegue/api/courriers/${id}/download`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+
+   ngAfterViewInit(): void {
+        feather.replace();
+    
   }
 }

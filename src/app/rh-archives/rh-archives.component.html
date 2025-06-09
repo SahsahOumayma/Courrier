@@ -62,10 +62,11 @@
          class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
         <i data-feather="help-circle" class="w-5 h-5 mr-3"></i> Support
       </a>
-      <a routerLink="/logout"
-         class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
-        <i data-feather="log-out" class="w-5 h-5 mr-3"></i> Déconnexion
-      </a>
+      <a (click)="deconnexion()"
+   class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition cursor-pointer">
+  <i data-feather="log-out" class="w-5 h-5 mr-3"></i> Déconnexion
+</a>
+
     </div>
   </aside>
 

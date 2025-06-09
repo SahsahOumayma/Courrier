@@ -36,13 +36,14 @@
           <th class="px-4 py-3">Date registre</th>
           <th class="px-4 py-3">Archivé ?</th>
           <th class="px-4 py-3">Signataire</th>
-          <th class="px-4 py-3 rounded-r-xl">Urgence</th>
+          <th class="px-4 py-3">Urgence</th>
+          <th class="px-4 py-3 rounded-r-xl text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let courrier of courriersFiltres; let i = index"
             class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800"
-            [ngClass]="{ 'bg-red-100': courrier.urgence === 'URGENT' }">
+            [ngClass]="{ 'bg-red-100': courrier.urgence === 'FLASH' }">
           <td class="px-4 py-4 font-semibold rounded-l-xl">{{ i + 1 }}</td>
           <td class="px-4 py-4">{{ courrier.objet }}</td>
           <td class="px-4 py-4">{{ courrier.description }}</td>
@@ -55,19 +56,45 @@
             </span>
           </td>
           <td class="px-4 py-4">{{ courrier.signataire || '—' }}</td>
+
+          <!-- Badge urgence avec animation et couleur -->
           <td class="px-4 py-4">
-            <span class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full"
+            <span
+              class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full"
               [ngClass]="{
-                'bg-red-600 text-white': courrier.urgence === 'URGENT',
-                'bg-green-200 text-green-800': courrier.urgence === 'NORMAL',
+                'bg-red-600 text-white animate-pulse': courrier.urgence === 'FLASH',
+                'bg-yellow-300 text-yellow-900': courrier.urgence === 'URGENT',
+                'bg-green-200 text-green-800': courrier.urgence === 'ROUTINE',
                 'bg-gray-200 text-gray-800': !courrier.urgence
               }">
               {{ courrier.urgence || '—' }}
             </span>
           </td>
+
+          <!-- Boutons -->
+          <td class="px-4 py-4 rounded-r-xl text-center">
+            <div class="flex justify-center gap-2">
+              <button
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition"
+                (click)="voirPDF(courrier.id)">
+                Voir
+              </button>
+              <button
+                class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition"
+                (click)="telechargerPDF(courrier.id)">
+                Télécharger
+              </button>
+              <button
+                class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition"
+                (click)="archiver(courrier.id)">
+                Archiver
+              </button>
+            </div>
+          </td>
         </tr>
+
         <tr *ngIf="courriersFiltres.length === 0">
-          <td colspan="9" class="text-center py-4 text-gray-500">Aucun courrier trouvé.</td>
+          <td colspan="10" class="text-center py-4 text-gray-500">Aucun courrier trouvé.</td>
         </tr>
       </tbody>
     </table>

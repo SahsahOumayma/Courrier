@@ -98,10 +98,16 @@ export class SvcDashComponent implements AfterViewInit {
         scales: {
           y: {
             beginAtZero: true,
-            ticks: { color: '#555' }
+            max: 100,                      // ✅ Valeur maximale de l'axe Y
+            ticks: {
+              color: '#555',
+              stepSize: 10                // ✅ Pas de graduation
+            }
           },
           x: {
-            ticks: { color: '#555' }
+            ticks: {
+              color: '#555'
+            }
           }
         }
       }

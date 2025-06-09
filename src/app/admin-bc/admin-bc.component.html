@@ -92,6 +92,12 @@
             <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départ</span>
           </a>
         </li>
+        <li>
+    <a routerLink="/admin-bc/consulter-employe" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="user-check" class="w-4 h-4 mr-2"></i> <span>Employé</span>
+    </a>
+  </li>
       </ul>
 
       <a routerLink="/admin-bc/statistiques" routerLinkActive="bg-white text-sky-900"
@@ -108,9 +114,10 @@
       <a routerLink="/admin-bc/support" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
         <i data-feather="help-circle" class="w-5 h-5 mr-3"></i> <span>Support</span>
       </a>
-      <a routerLink="/logout" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition">
-        <i data-feather="log-out" class="w-5 h-5 mr-3"></i> <span>Déconnexion</span>
-      </a>
+      <a (click)="deconnexion()" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition cursor-pointer">
+  <i data-feather="log-out" class="w-5 h-5 mr-3"></i> <span>Déconnexion</span>
+</a>
+
     </div>
   </aside>
 

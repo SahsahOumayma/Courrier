@@ -1,6 +1,9 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+
+
 import * as feather from 'feather-icons';
 
 @Component({
@@ -16,6 +19,8 @@ import * as feather from 'feather-icons';
 export class DelegueComponent implements AfterViewInit {
   showConsulter = false;
   sidebarOpen = true;
+  constructor(private router: Router) {}
+
   toggleSidebar() {
   this.sidebarOpen = !this.sidebarOpen;
 }
@@ -28,5 +33,9 @@ export class DelegueComponent implements AfterViewInit {
     this.showConsulter = !this.showConsulter;
     // un petit délai pour laisser Angular injecter le <ul> dans le DOM…
     setTimeout(() => feather.replace(), 0);
+  }
+  deconnexion(): void {
+    localStorage.clear(); // ou localStorage.removeItem('token');
+    this.router.navigateByUrl('/'); // redirection vers la page de login
   }
 }

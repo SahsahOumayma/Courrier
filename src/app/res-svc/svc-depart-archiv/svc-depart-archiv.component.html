@@ -1,6 +1,6 @@
 <section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
   <!-- Titre -->
-  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-6">
     <span class="p-3 bg-blue-100 rounded-full">
       <i data-feather="send" class="w-6 h-6 text-sky-600"></i>
     </span>
@@ -24,37 +24,51 @@
     <table class="min-w-full text-sm text-gray-800 border-separate border-spacing-y-2">
       <thead class="text-xs uppercase font-bold text-[#005f8e] bg-sky-50">
         <tr>
-          <th class="px-4 py-3 rounded-l-xl">#</th>
-          <th class="px-4 py-3">Objet</th>
-          <th class="px-4 py-3">Signataire</th>
-          <th class="px-4 py-3">Date d’envoi</th>
-          <th class="px-4 py-3">Urgence</th>
-          <th class="px-4 py-3">Statut</th>
-          <th class="px-4 py-3 rounded-r-xl">Action</th>
+          <th class="px-4 py-5 rounded-l-xl text-left">#</th>
+          <th class="px-4 py-5 text-left">Objet</th>
+          <th class="px-4 py-5 text-left">Signataire</th>
+          <th class="px-4 py-5 text-left">Date d’envoi</th>
+          <th class="px-4 py-5 text-left">Urgence</th>
+          <th class="px-4 py-5 rounded-r-xl text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let courrier of courriersFiltres; let i = index"
-            class="shadow-sm hover:shadow-md transition rounded-xl bg-white">
-          <td class="px-4 py-3 font-semibold rounded-l-xl">{{ i + 1 }}</td>
-          <td class="px-4 py-3">{{ courrier.objet }}</td>
-          <td class="px-4 py-3">{{ courrier.signataire }}</td>
-          <td class="px-4 py-3">{{ courrier.dateRegistre || '—' }}</td>
-          <td class="px-4 py-3">{{ courrier.urgence || '—' }}</td>
-          <td class="px-4 py-3">
-            <span class="inline-block px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-              Archivé
+            class="bg-white shadow-sm hover:shadow-md transition rounded-xl align-middle">
+          <td class="px-4 py-5 font-semibold rounded-l-xl align-middle">{{ i + 1 }}</td>
+          <td class="px-4 py-5 align-middle">{{ courrier.objet || '—' }}</td>
+          <td class="px-4 py-5 align-middle">{{ courrier.signataire || '—' }}</td>
+          <td class="px-4 py-5 align-middle">
+            {{ courrier.dateRegistre ? (courrier.dateRegistre | date:'dd/MM/yyyy') : '—' }}
+          </td>
+          <td class="px-4 py-5 align-middle">
+            <span class="inline-block px-3 py-1.5 text-xs font-semibold rounded-full border"
+              [ngClass]="{
+                'bg-red-600 text-white border-red-600': courrier.urgence === 'URGENT',
+                'bg-yellow-100 text-yellow-800 border-yellow-300': courrier.urgence === 'FLASH',
+                'bg-green-200 text-green-800 border-green-200': courrier.urgence === 'ROUTINE',
+                'bg-gray-200 text-gray-800 border-gray-300': !courrier.urgence
+              }">
+              {{ courrier.urgence || '—' }}
             </span>
           </td>
-          <td class="px-4 py-3 rounded-r-xl text-center">
-            <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow">
-              Voir
-            </button>
+          <td class="px-4 py-5 rounded-r-xl text-center align-middle">
+            <div class="flex justify-center items-center gap-2">
+              <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-medium shadow"
+                (click)="voirPDF(courrier.id)">
+                Voir
+              </button>
+              <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-full text-xs font-medium shadow"
+                (click)="telechargerPDF(courrier.id)">
+                Télécharger
+              </button>
+            </div>
           </td>
         </tr>
 
+        <!-- Aucun résultat -->
         <tr *ngIf="courriersFiltres.length === 0">
-          <td colspan="7" class="text-center text-gray-500 py-6">Aucun courrier trouvé.</td>
+          <td colspan="6" class="text-center text-gray-500 py-6">Aucun courrier trouvé.</td>
         </tr>
       </tbody>
     </table>

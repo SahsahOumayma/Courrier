@@ -1,4 +1,5 @@
 <section class="p-8 bg-gradient-to-b from-[#fefefe] to-[#f4f8fb] rounded-3xl shadow-2xl border border-[#dce8f1]">
+  <!-- Titre -->
   <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
     <span class="p-3 bg-sky-100 rounded-full">
       <i data-feather="send" class="w-6 h-6 text-sky-600"></i>
@@ -6,6 +7,7 @@
     Courriers de départ - En cours
   </h2>
 
+  <!-- Barre de recherche -->
   <div class="mb-6 flex items-center gap-3">
     <i class="text-sky-600" data-feather="search"></i>
     <input
@@ -17,48 +19,65 @@
     />
   </div>
 
+  <!-- Chargement -->
   <div *ngIf="loading" class="text-sky-700 text-center font-medium py-4">
     Chargement en cours...
   </div>
 
+  <!-- Tableau -->
   <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white" *ngIf="!loading">
     <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
       <thead class="text-xs uppercase font-bold text-[#005f8e] bg-sky-50">
         <tr>
-          <th class="px-4 py-3">#</th>
-          <th class="px-4 py-3">Objet</th>
-          <th class="px-4 py-3">Signataire</th>
-          <th class="px-4 py-3">Date</th>
-          <th class="px-4 py-3">Urgence</th>
-          <th class="px-4 py-3">Statut</th>
-          <th class="px-4 py-3 text-center">Actions</th>
+          <th class="px-4 py-6 rounded-l-xl">#</th>
+          <th class="px-4 py-6">Objet</th>
+          <th class="px-4 py-6">Signataire</th>
+          <th class="px-4 py-6">Date d'envoi</th>
+          <th class="px-4 py-6">Urgence</th>
+          <th class="px-4 py-6 rounded-r-xl text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let courrier of courriersFiltres; let i = index"
-            class="hover:bg-sky-50 rounded-xl">
-          <td class="px-4 py-3 font-bold">{{ i + 1 }}</td>
-          <td class="px-4 py-3">{{ courrier.objet }}</td>
-          <td class="px-4 py-3">{{ courrier.signataire }}</td>
-          <td class="px-4 py-3">{{ courrier.dateArrive | date:'dd/MM/yyyy' }}</td>
-          <td class="px-4 py-3">
-            <span class="px-3 py-1 text-xs font-semibold rounded-full"
+        <tr *ngFor="let courrier of courriersFiltres; let i = index" class="hover:bg-sky-50 rounded-xl">
+          <td class="px-4 py-6 align-middle font-bold rounded-l-xl">{{ i + 1 }}</td>
+          <td class="px-4 py-6 align-middle">{{ courrier.objet || '—' }}</td>
+          <td class="px-4 py-6 align-middle">{{ courrier.signataire || '—' }}</td>
+          <td class="px-4 py-6 align-middle">
+            {{ courrier.dateRegistre ? (courrier.dateRegistre | date: 'dd/MM/yyyy') : '—' }}
+          </td>
+          <td class="px-4 py-6 align-middle">
+            <span class="px-3 py-1.5 text-xs font-semibold rounded-full border"
               [ngClass]="{
-                'bg-red-600 text-white': courrier.urgence === 'URGENT',
-                'bg-green-200 text-green-800': courrier.urgence === 'NORMAL'
+                'bg-red-600 text-white border-red-600': courrier.urgence === 'URGENT',
+                'bg-yellow-100 text-yellow-800 border-yellow-300': courrier.urgence === 'FLASH',
+                'bg-green-200 text-green-800 border-green-200': courrier.urgence === 'ROUTINE',
+                'bg-gray-200 text-gray-800 border-gray-300': !courrier.urgence
               }">
-              {{ courrier.urgence }}
+              {{ courrier.urgence || '—' }}
             </span>
           </td>
-          <td class="px-4 py-3">{{ courrier.statut || 'En cours' }}</td>
-          <td class="px-4 py-3 text-center space-x-2">
-            <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs">Voir</button>
-            <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs">Modifier</button>
-            <button (click)="archiver(courrier.id)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">Archiver</button>
+          <td class="px-4 py-6 align-middle flex gap-2 justify-center rounded-r-xl">
+            <button
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition"
+              (click)="voirPDF(courrier.id)">
+              Voir
+            </button>
+            <button
+              class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition"
+              (click)="telechargerPDF(courrier.id)">
+              Télécharger
+            </button>
+            <button
+              class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition"
+              (click)="archiver(courrier.id)">
+              Archiver
+            </button>
           </td>
         </tr>
+
+        <!-- Aucun résultat -->
         <tr *ngIf="courriersFiltres.length === 0 && !loading">
-          <td colspan="7" class="text-center py-5 text-gray-500">Aucun courrier trouvé.</td>
+          <td colspan="6" class="text-center py-6 text-gray-500">Aucun courrier trouvé.</td>
         </tr>
       </tbody>
     </table>

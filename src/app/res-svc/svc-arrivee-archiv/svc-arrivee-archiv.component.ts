@@ -49,6 +49,21 @@ export class SvcArriveeArchivComponent implements OnInit {
       (c.urgence && c.urgence.toLowerCase().includes(query))
     );
   }
+  voirPDF(id: number): void {
+  const url = `http://localhost:9090/api/delegue/api/courriers/${id}/view-pdf`;
+  window.open(url, '_blank');
+}
+
+telechargerPDF(id: number): void {
+  const url = `http://localhost:9090/api/delegue/api/courriers/${id}/download`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
    ngAfterViewChecked(): void {
       feather.replace();
     }

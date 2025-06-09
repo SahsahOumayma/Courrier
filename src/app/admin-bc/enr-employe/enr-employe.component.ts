@@ -1,83 +1,92 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core'; // ← Ajout de AfterViewInit
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { EnrCourrierBcService } from '../../services/enr-courrier-bc.service';
+import * as feather from 'feather-icons'; // ← Import Feather
 
 @Component({
   selector: 'app-enr-employe',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './enr-employe.component.html',
   styleUrls: ['./enr-employe.component.css']
 })
-export class EnrEmployeComponent implements OnInit {
+export class EnrEmployeComponent implements OnInit, AfterViewInit {  // ← Implémente AfterViewInit
   courrierForm!: FormGroup;
-  employes: any[] = [];
   services: any[] = [];
-  selectedFile!: File;
+  employes: any[] = [];
+  successMessage = '';
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient
+    private courrierService: EnrCourrierBcService
   ) {}
 
   ngOnInit(): void {
+    this.initForm();
+    this.loadOptions();
+  }
+
+  ngAfterViewInit(): void {
+    feather.replace(); // ← Active les icônes feather après le chargement du DOM
+  }
+
+  initForm() {
     this.courrierForm = this.fb.group({
       objet: ['', Validators.required],
       description: ['', Validators.required],
-      numeroRegistre: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      numeroRegistre: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
       employeId: ['', Validators.required],
-      serviceId: ['', Validators.required]
+      serviceId: ['', Validators.required],
+      attachment: [null, Validators.required]
     });
-
-    this.loadDropdownData();
   }
 
-  loadDropdownData(): void {
-    this.http.get<any>('/api/admin-bc/courrier/employe').subscribe({
-      next: data => {
-        this.employes = data.employes;
-        this.services = data.services;
+  loadOptions() {
+    this.courrierService.getStaticOptions().subscribe({
+      next: (data) => {
+        this.services = data.services || [];
+        this.employes = data.employes || [];
       },
-      error: err => {
-        console.error('Erreur lors du chargement des données :', err);
+      error: () => {
+        this.errorMessage = 'Erreur lors du chargement des données.';
       }
     });
   }
 
-  onFileChange(event: Event): void {
+  onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input?.files?.length) {
-      this.selectedFile = input.files[0];
+    const file = input?.files?.[0];
+    if (file) {
+      this.courrierForm.patchValue({ attachment: file });
+      this.courrierForm.get('attachment')?.updateValueAndValidity();
     }
   }
 
-  onSubmit(): void {
-    if (this.courrierForm.invalid || !this.selectedFile) {
-      alert('Veuillez remplir tous les champs requis et ajouter un fichier.');
-      return;
-    }
+  onSubmit() {
+    if (this.courrierForm.invalid) return;
 
     const formData = new FormData();
-    formData.append('objet', this.courrierForm.value.objet);
-    formData.append('description', this.courrierForm.value.description);
-    formData.append('numeroRegistre', this.courrierForm.value.numeroRegistre);
-    formData.append('employeId', this.courrierForm.value.employeId);
-    formData.append('serviceId', this.courrierForm.value.serviceId);
-    formData.append('attachment', this.selectedFile);
+    const value = this.courrierForm.value;
+    formData.append('objet', value.objet);
+    formData.append('description', value.description);
+    formData.append('numeroRegistre', value.numeroRegistre.toString());
+    formData.append('employeId', value.employeId.toString());
+    formData.append('serviceId', value.serviceId.toString());
+    formData.append('attachment', value.attachment);
 
-    this.http.post('/api/admin-bc/courrier/employe', formData).subscribe({
-      next: () => {
-        alert('✅ Courrier enregistré avec succès.');
+    this.courrierService.envoyerCourrierEmploye(formData).subscribe({
+      next: (res) => {
+        this.successMessage = res;
+        this.errorMessage = '';
         this.courrierForm.reset();
-        this.selectedFile = undefined!;
+        setTimeout(() => this.successMessage = '', 5000);
+        feather.replace(); // ← recharge les icônes si elles sont dans le template
       },
-      error: (error: HttpErrorResponse) => {
-        console.error('Erreur :', error);
-        alert(`❌ Échec : ${error.error || 'Erreur inconnue'}`);
+      error: (err) => {
+        this.errorMessage = err.error || 'Erreur lors de l’envoi.';
+        this.successMessage = '';
       }
     });
   }

@@ -45,6 +45,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { ArrivArchiveComponent } from './delegue/arriv-archive/arriv-archive.component';
 import { DepartArchiveComponent } from './delegue/depart-archive/depart-archive.component';
 import { EnrEmployeComponent } from './admin-bc/enr-employe/enr-employe.component';
+import { ConsEmployeComponent } from './admin-bc/cons-employe/cons-employe.component';
 
 
 
@@ -93,6 +94,10 @@ export const routes: Routes = [
       { path: 'consulter-depart', component: ConsDepartComponent },
       { path: 'enregistrer-employe', component: EnrEmployeComponent },
       { path: 'statistiques', component: BcStatistiqueComponent },
+      {
+    path: 'consulter-employe',
+    component: ConsEmployeComponent
+  },
       { path: 'profil', component: BcProfilComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],

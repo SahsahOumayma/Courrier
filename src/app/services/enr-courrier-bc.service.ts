@@ -39,10 +39,15 @@ export class EnrCourrierBcService {
   }>('http://localhost:9090/api/admin-bc/admin/courriers/arrivee');
 }
 
-envoyerCourrierEmploye(formData: FormData): Observable<string> {
-  return this.http.post(`${this.apiUrl}/employe`, formData, {
+ envoyerCourrierEmploye(formData: FormData): Observable<string> {
+  return this.http.post('http://localhost:9090/api/admin-bc/courrier/employe', formData, {
     responseType: 'text' as const
   });
 }
 
+getStaticOptions(): Observable<{ services: any[], employes: any[] }> {
+  return this.http.get<{ services: any[], employes: any[] }>('http://localhost:9090/api/admin-bc/courrier/employe');
 }
+
+}
+

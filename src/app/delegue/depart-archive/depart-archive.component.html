@@ -1,10 +1,6 @@
-<section
-  class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]"
->
+<section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-[#d0e6f9]">
   <!-- Titre -->
-  <h2
-    class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4"
-  >
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-4">
     <span class="p-3 bg-blue-100 rounded-full">
       <i data-feather="archive" class="w-6 h-6 text-sky-600"></i>
     </span>
@@ -12,9 +8,7 @@
   </h2>
 
   <!-- Filtres -->
-  <div
-    class="mb-8 flex flex-wrap justify-between items-center gap-6 text-sm text-gray-700 font-medium"
-  >
+  <div class="mb-8 flex flex-wrap justify-between items-center gap-6 text-sm text-gray-700 font-medium">
     <div class="flex-1 min-w-[250px] max-w-lg">
       <input
         type="text"
@@ -32,46 +26,33 @@
         (change)="onPageSizeChange()"
         class="w-28 px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
       >
-        <option *ngFor="let option of pageOptions" [value]="option">
-          {{ option }}/page
-        </option>
+        <option *ngFor="let option of pageOptions" [value]="option">{{ option }}/page</option>
       </select>
     </label>
   </div>
 
   <!-- Tableau -->
-  <div
-    class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white"
-  >
-    <table
-      class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2"
-    >
-      <thead
-        class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50"
-      >
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2">
+      <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
         <tr>
           <th class="px-4 py-3 rounded-l-xl">N°</th>
-          <th class="px-4 py-3">Objet</th>
-          <th class="px-4 py-3">Expéditeur</th>
+          <th class="px-4 py-3 min-w-[200px] w-[250px]">Objet</th>
+          <th class="px-4 py-3 min-w-[180px] w-[220px]">Expéditeur</th>
           <th class="px-4 py-3">Date départ</th>
           <th class="px-4 py-3">Urgence</th>
           <th class="px-4 py-3">Confid.</th>
-          <th class="px-4 py-3">Service</th>
+          <th class="px-4 py-3 min-w-[160px] w-[200px]">Service</th>
           <th class="px-4 py-3">Voie</th>
           <th class="px-4 py-3">Nature</th>
           <th class="px-4 py-3 rounded-r-xl">Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          *ngFor="let courrier of paginatedCourriers"
-          class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800"
-        >
-          <td class="px-4 py-3 font-semibold rounded-l-xl">
-            {{ courrier.numeroRegistre || "__" }}
-          </td>
-          <td class="px-4 py-3">{{ courrier.object || "__" }}</td>
-          <td class="px-4 py-3">{{ courrier.nomExpediteur || "__" }}</td>
+        <tr *ngFor="let courrier of paginatedCourriers" class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800">
+          <td class="px-4 py-3 font-semibold rounded-l-xl">{{ courrier.numeroRegistre || "__" }}</td>
+          <td class="px-4 py-3 min-w-[200px] w-[250px]">{{ courrier.object || "__" }}</td>
+          <td class="px-4 py-3 min-w-[180px] w-[220px]">{{ courrier.nomExpediteur || "__" }}</td>
           <td class="px-4 py-3">{{ courrier.dateDepart || "__" }}</td>
 
           <!-- URGENCE -->
@@ -79,8 +60,7 @@
             <span
               class="inline-block px-4 py-1 text-xs font-semibold rounded-full uppercase tracking-wide text-center"
               [ngClass]="{
-                'bg-[#ff0000] text-white':
-                  courrier.urgence === 'URGENT' || courrier.urgence === 'FLASH',
+                'bg-[#ff0000] text-white': courrier.urgence === 'URGENT' || courrier.urgence === 'FLASH',
                 'bg-green-200 text-green-800': courrier.urgence === 'ROUTINE',
                 'bg-gray-200 text-gray-800': !courrier.urgence
               }"
@@ -90,7 +70,7 @@
           </td>
 
           <td class="px-4 py-3">{{ courrier.degreConfiden || "__" }}</td>
-          <td class="px-4 py-3">{{ courrier.service || "__" }}</td>
+          <td class="px-4 py-3 min-w-[160px] w-[200px]">{{ courrier.service || "__" }}</td>
           <td class="px-4 py-3">{{ courrier.voieExpedition || "__" }}</td>
           <td class="px-4 py-3">{{ courrier.nature || "__" }}</td>
 
@@ -114,9 +94,7 @@
         </tr>
 
         <tr *ngIf="paginatedCourriers.length === 0">
-          <td colspan="10" class="text-center py-4 text-gray-500">
-            Aucun courrier trouvé.
-          </td>
+          <td colspan="10" class="text-center py-4 text-gray-500">Aucun courrier trouvé.</td>
         </tr>
       </tbody>
     </table>
@@ -132,9 +110,7 @@
       ⬅️ Précédent
     </button>
 
-    <div
-      class="px-6 py-2 bg-white border border-gray-300 shadow rounded-xl text-[#003c61] font-bold tracking-wide"
-    >
+    <div class="px-6 py-2 bg-white border border-gray-300 shadow rounded-xl text-[#003c61] font-bold tracking-wide">
       Page {{ currentPage }} / {{ totalPages }}
     </div>
 
