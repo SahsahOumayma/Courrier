@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.css']
+  styleUrls: ['./change-password.component.css'],
 })
 export class ChangePasswordComponent implements OnInit {
   password: string = '';
@@ -35,31 +35,32 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
 
-    this.authService.resetPassword(this.token, this.password)
-      .subscribe({
-        next: (res) => {
-          console.log('✅ Réponse brute reçue :', res);
-          alert('✅ ' + res);
+    this.authService.resetPassword(this.token, this.password).subscribe({
+      next: (res) => {
+        console.log('✅ Réponse brute reçue :', res);
+        alert('✅ ' + res);
+        window.location.href = '/'; // 🔁 Redirection vers la page de connexion
+        this.password = '';
+        this.confirmPassword = '';
+      },
+      error: (err) => {
+        if (err.status === 200 && err.error === '') {
+          console.warn('ℹ️ Faux positif détecté. Statut 200 sans contenu.');
+          alert('✅ Mot de passe réinitialisé avec succès');
+          window.location.href = '/'; // 🔁 Redirection même dans ce cas
           this.password = '';
           this.confirmPassword = '';
-        },
-        error: (err) => {
-          if (err.status === 200 && err.error === "") {
-            console.warn('ℹ️ Faux positif détecté. Statut 200 sans contenu.');
-            alert('✅ Mot de passe réinitialisé avec succès');
-            this.password = '';
-            this.confirmPassword = '';
-            return;
-          }
+          return;
+        }
 
-          console.error('❌ Erreur backend :', err);
-          const message =
-            err?.error?.message ||
-            JSON.stringify(err?.error) ||
-            err?.statusText ||
-            'Une erreur inconnue est survenue.';
-          alert('❌ Erreur : ' + message);
-        },
-      });
+        console.error('❌ Erreur backend :', err);
+        const message =
+          err?.error?.message ||
+          JSON.stringify(err?.error) ||
+          err?.statusText ||
+          'Une erreur inconnue est survenue.';
+        alert('❌ Erreur : ' + message);
+      },
+    });
   }
 }

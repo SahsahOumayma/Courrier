@@ -1,0 +1,28 @@
+<section class="p-10 max-w-7xl mx-auto bg-gradient-to-b from-[#eef6fc] to-white rounded-3xl shadow-xl space-y-12 mt-8 mb-20">
+  
+  <!-- TITRE -->
+  <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3 mb-6">
+    <span class="p-3 bg-blue-100 rounded-full">
+      <i data-feather="book-open" class="w-6 h-6 text-sky-600"></i>
+    </span>
+    Support – Admin BC
+  </h2>
+
+  <!-- Bloc PDF -->
+  <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center justify-center min-h-[400px]">
+
+    <!-- Chargement -->
+    <div *ngIf="!pdfUrl" class="text-gray-500 italic text-center">
+      Chargement du fichier PDF en cours...
+    </div>
+
+    <!-- Affichage PDF -->
+    <iframe
+      *ngIf="pdfUrl"
+      [src]="pdfUrl"
+      width="100%"
+      height="700px"
+      class="rounded-lg border border-gray-300 shadow-md"
+    ></iframe>
+  </div>
+</section>

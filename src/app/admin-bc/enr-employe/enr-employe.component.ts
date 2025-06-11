@@ -81,16 +81,14 @@ export class EnrEmployeComponent implements OnInit, AfterViewInit {
     formData.append('attachment', value.attachment);
 
     this.courrierService.envoyerCourrierEmploye(formData).subscribe({
-      next: (res) => {
-        this.successMessage = res;
-        this.errorMessage = '';
+      next: () => {
+        alert('✅ Courrier envoyé avec succès.');
         this.courrierForm.reset();
-        setTimeout(() => (this.successMessage = ''), 5000);
-        feather.replace();
+        feather.replace(); // pour recharger les icônes si besoin
       },
       error: (err) => {
-        this.errorMessage = err.error || 'Erreur lors de l’envoi.';
-        this.successMessage = '';
+        console.error('Erreur lors de l’envoi :', err);
+        alert("❌ Erreur lors de l'envoi du courrier.");
       },
     });
   }

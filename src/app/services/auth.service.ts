@@ -86,4 +86,12 @@ export class AuthService {
       responseType: 'text' as const,
     });
   }
+  isLoggedIn(): boolean {
+  return !!localStorage.getItem('token');
+}
+
+getUserRole(): string {
+  return localStorage.getItem('role') || '';
+}
+
 }

@@ -73,12 +73,13 @@ export class QuestionsComponent implements AfterViewChecked {
         next: (res) => {
           console.log('✅ Réponse reçue :', res);
           alert('✅ Questions de sécurité enregistrées avec succès.');
+          window.location.href = '/'; // 🔁 Redirection vers la page de connexion
         },
         error: (err) => {
-          // Cas spécial : Angular considère les réponses textuelles 200 comme erreurs
           if (err.status === 200 && err.error === '') {
             console.warn('ℹ️ Faux positif détecté (200 avec corps vide)');
             alert('✅ Questions de sécurité enregistrées avec succès.');
+            window.location.href = '/'; // 🔁 Redirection même dans ce cas
             return;
           }
 
