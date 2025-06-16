@@ -67,8 +67,9 @@ export class PasswordComponent {
       alert("Veuillez saisir un nouveau mot de passe.");
       return;
     }
-
+  
     const payload = {
+      email: this.email.trim(),
       question1: this.selectedQuestions[0],
       answer1: this.answers[0],
       question2: this.selectedQuestions[1],
@@ -76,12 +77,21 @@ export class PasswordComponent {
       question3: this.selectedQuestions[2],
       answer3: this.answers[2]
     };
-
-    this.authService.resetPasswordByQuestions(this.email.trim(), payload, this.password.trim()).subscribe({
-      next: () => alert('Mot de passe réinitialisé avec succès'),
-      error: () => alert("Erreur : réponses incorrectes ou problème serveur.")
+  
+    this.authService.verifySecurityQuestions(payload).subscribe({
+      next: () => {
+        // Si vérification réussie, alors changement mot de passe
+        this.authService.resetPasswordByQuestions(this.email.trim(), this.password.trim()).subscribe({
+          next: () => alert('Mot de passe réinitialisé avec succès'),
+          error: () => alert("Erreur lors de la réinitialisation du mot de passe.")
+        });
+      },
+      error: () => {
+        alert("Les réponses ne correspondent pas.");
+      }
     });
   }
+  
 
   getRemainingQuestions(index: number): string[] {
     return this.questions.filter(q =>
