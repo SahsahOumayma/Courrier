@@ -54,19 +54,8 @@ import { SupportSvcComponent } from './res-svc/support-svc/support-svc.component
 import { SupportRhComponent } from './rh-archives/support-rh/support-rh.component';
 import { AuthGuard } from './guards/auth.guard';
 
-
-
-
-
-
-
-
-
-
-
-
 export const routes: Routes = [
-  { path: '', component: ConnexionComponent, canActivate: [AuthGuard] },
+  { path: '', component: ConnexionComponent }, //canActivate: [AuthGuard]  },
   { path: 'inscription', component: InscriptionComponent },
   { path: 'arrivee/details/:numero', component: CourrierDetailsComponent },
   { path: 'questions', component: QuestionsComponent },
@@ -80,8 +69,8 @@ export const routes: Routes = [
   {
     path: 'admin-si',
     component: AdminSiComponent,
-    canActivate: [AuthGuard],
-  data: { role: 'ADMINSI' },
+    //canActivate: [AuthGuard],
+    // data: { role: 'ADMINSI' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: SiDashboardComponent },
@@ -93,16 +82,15 @@ export const routes: Routes = [
       { path: 'confidentialites', component: SiConfidComponent },
       { path: 'urgences', component: SiUrgenceComponent },
       { path: 'profil', component: SiProfilComponent },
-       { path: 'support', component: SupportSiComponent }
-
+      { path: 'support', component: SupportSiComponent },
     ],
   },
 
   {
     path: 'admin-bc',
     component: AdminBcComponent,
-    canActivate: [AuthGuard],
-  data: { role: 'ADMINBC' },
+    //canActivate: [AuthGuard],
+    // data: { role: 'ADMINBC' },
     children: [
       { path: 'dashboard', component: BcDashboardComponent },
       { path: 'enregistrer-arrivee', component: EnrArriveeComponent },
@@ -112,11 +100,11 @@ export const routes: Routes = [
       { path: 'enregistrer-employe', component: EnrEmployeComponent },
       { path: 'statistiques', component: BcStatistiqueComponent },
       { path: 'support', component: SupportBcComponent },
-      
+
       {
-    path: 'consulter-employe',
-    component: ConsEmployeComponent
-  },
+        path: 'consulter-employe',
+        component: ConsEmployeComponent,
+      },
       { path: 'profil', component: BcProfilComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
@@ -125,24 +113,24 @@ export const routes: Routes = [
   {
     path: 'rh',
     component: RhArchivesComponent,
-    canActivate: [AuthGuard],
-  data: { role: 'RH' },
+    //canActivate: [AuthGuard],
+    //data: { role: 'RH' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: RhDashboardComponent },
       { path: 'archives', component: ArchivesComponent },
       { path: 'utilisateurs', component: RhUtilisateursComponent },
-        { path: 'courriers-employes', component: ConsulEmployeComponent },
+      { path: 'courriers-employes', component: ConsulEmployeComponent },
       { path: 'profil', component: RhProfilComponent },
-       { path: 'support', component: SupportRhComponent },
+      { path: 'support', component: SupportRhComponent },
     ],
   },
 
   {
     path: 'delegue',
     component: DelegueComponent,
-     canActivate: [AuthGuard],
-  data: { role: 'DELEGUE' },
+    //canActivate: [AuthGuard],
+    //data: { role: 'DELEGUE' },
     children: [
       { path: '', component: DashboardComponent }, // /delegue
       { path: 'arrivee', component: ArriveeComponent }, // /delegue/arrivee
@@ -150,9 +138,9 @@ export const routes: Routes = [
       { path: 'statistique', component: StatistiqueComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profil', component: ProfilComponent },
-       { path: 'archive-arrivee', component: ArrivArchiveComponent },
-  { path: 'archive-depart', component: DepartArchiveComponent },
-  { path: 'support', component: SupportDelComponent },
+      { path: 'archive-arrivee', component: ArrivArchiveComponent },
+      { path: 'archive-depart', component: DepartArchiveComponent },
+      { path: 'support', component: SupportDelComponent },
 
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // /delegue/depart
     ],
@@ -161,8 +149,8 @@ export const routes: Routes = [
   {
     path: 'res-svc',
     component: ResSvcComponent,
-    canActivate: [AuthGuard],
-  data: { role: 'RESPONSABLESVC' },
+    // canActivate: [AuthGuard],
+    // data: { role: 'RESPONSABLESVC' },
     children: [
       { path: 'arrivee', component: SvcArriveeComponent },
       { path: 'arrivee-archives', component: SvcArriveeArchivComponent },
@@ -170,9 +158,8 @@ export const routes: Routes = [
       { path: 'depart-archiv', component: SvcDepartArchivComponent },
       { path: 'profil', component: SvcProfilComponent },
       { path: 'dashboard', component: SvcDashComponent },
-       { path: 'support', component: SupportSvcComponent },
-     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-
+      { path: 'support', component: SupportSvcComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
 

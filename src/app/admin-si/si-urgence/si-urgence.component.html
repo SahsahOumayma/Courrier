@@ -1,3 +1,4 @@
+<!-- Gestion des niveaux d’urgence avec pagination rouge foncé -->
 <section class="p-8 bg-gradient-to-b from-[#fff5f5] to-white rounded-3xl shadow-2xl border border-red-200">
   <!-- Titre -->
   <div class="flex items-center justify-between mb-6">
@@ -30,19 +31,20 @@
       placeholder="🔍 Rechercher un niveau..."
       class="w-96 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
 
-    <select [(ngModel)]="itemsPerPage" (change)="applyFilter()"
+    <select [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()"
       class="ml-4 px-3 py-2 border rounded shadow-sm">
       <option *ngFor="let option of paginationOptions" [value]="option">{{ option }}/page</option>
     </select>
   </div>
 
-  <!-- Tableau -->
+  <!-- Tableau urgences actives -->
   <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
     <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
       <thead class="bg-red-50 text-red-800 font-bold">
         <tr>
-          <th class="px-4 py-3 w-[10%] text-left">ID</th>
-          <th class="px-4 py-3 w-[60%] text-center">Niveau d’urgence</th>
+          <th class="px-4 py-3 w-[10%]">ID</th>
+          <th class="px-4 py-3 w-[30%] text-center">Nom</th>
+          <th class="px-4 py-3 w-[30%] text-center">Date de création</th>
           <th class="px-4 py-3 w-[30%] text-center">Actions</th>
         </tr>
       </thead>
@@ -50,15 +52,20 @@
         <tr *ngFor="let u of paginatedUrgences; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
           <td class="px-4 py-3 font-semibold">{{ u.id }}</td>
           <td class="px-4 py-3 text-center">{{ u.nom }}</td>
-          <td class="px-4 py-3 text-center space-x-2">
+          <td class="px-4 py-3 text-center">{{ u.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td class="px-4 py-3 text-center flex justify-center gap-2">
+            <button (click)="openEditModal(u)"
+              class="bg-sky-600 text-white px-3 py-1 rounded-full font-semibold hover:bg-sky-700 shadow text-sm">
+              Modifier
+            </button>
             <button (click)="deleteUrgence(u.id)"
-              class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:bg-red-600 shadow text-sm">
+              class="bg-red-500 text-white px-3 py-1 rounded-full font-semibold hover:bg-red-600 shadow text-sm">
               Supprimer
             </button>
           </td>
         </tr>
         <tr *ngIf="paginatedUrgences.length === 0">
-          <td colspan="3" class="text-center text-gray-500 py-4">Aucune urgence trouvée.</td>
+          <td colspan="4" class="text-center text-gray-400 py-4">Aucune urgence trouvée.</td>
         </tr>
       </tbody>
     </table>
@@ -67,19 +74,116 @@
   <!-- Pagination -->
   <div class="flex justify-between items-center mt-6">
     <button (click)="previousPage()" [disabled]="currentPage === 1"
-      class="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
-      ⬅️ Précédent
+      class="px-4 py-2 bg-red-300 text-white rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+      <i data-feather="arrow-left"></i> Précédent
     </button>
-    <span class="font-semibold">Page {{ currentPage }} / {{ totalPages() }}</span>
+    <span class="font-semibold text-red-700">Page {{ currentPage }} / {{ totalPages() }}</span>
     <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
-      class="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
-      Suivant ➡️
+      class="px-4 py-2 bg-red-300 text-white rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+      Suivant <i data-feather="arrow-right"></i>
     </button>
+  </div>
+
+  <!-- Séparateur -->
+  <div class="my-16 h-6 rounded-3xl bg-[#9b1c1c] opacity-50 shadow-md"></div>
+
+  <!-- Historique -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-extrabold italic text-red-800 flex items-center gap-3">
+        <span class="p-3 bg-red-100 rounded-full">
+          <i data-feather="clock" class="w-6 h-6 text-red-600"></i>
+        </span>
+        Historique des urgences supprimées
+      </h2>
+      <select [(ngModel)]="itemsPerPageSupp" (change)="changeItemsPerPageSupp()"
+        class="px-3 py-2 border rounded shadow-sm">
+        <option *ngFor="let opt of paginationOptions" [value]="opt">{{ opt }}/page</option>
+      </select>
+    </div>
+
+    <input type="text" [(ngModel)]="searchSupp" (input)="applyFilterSupp()"
+      placeholder="🔍 Rechercher dans l’historique..."
+      class="mb-4 w-96 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" />
+
+    <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+      <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+        <thead class="bg-pink-50 text-red-800 font-bold">
+          <tr>
+            <th class="px-4 py-3 w-[10%]">ID</th>
+            <th class="px-4 py-3 w-[30%] text-center">Nom</th>
+            <th class="px-4 py-3 w-[30%] text-center">Date de suppression</th>
+            <th class="px-4 py-3 w-[30%] text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of paginatedUrgencesSupp; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-pink-50'">
+            <td class="px-4 py-3">{{ u.id }}</td>
+            <td class="px-4 py-3 text-center">{{ u.nom }}</td>
+            <td class="px-4 py-3 text-center">{{ u.dateSuppression | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="px-4 py-3 text-center">
+              <button (click)="restoreUrgence(u.id)"
+                class="bg-green-600 text-white px-4 py-1 rounded-full font-semibold hover:bg-green-700 text-sm">
+                Restaurer
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedUrgencesSupp.length === 0">
+            <td colspan="4" class="text-center text-gray-400 py-4">Aucune urgence supprimée.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination historique -->
+    <div class="flex justify-between items-center mt-4">
+      <button (click)="previousPageSupp()" [disabled]="currentPageSupp === 1"
+        class="px-4 py-2 bg-red-300 text-white rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+        <i data-feather="arrow-left"></i> Précédent
+      </button>
+      <span class="font-semibold text-red-700">Page {{ currentPageSupp }} / {{ totalPagesSupp() }}</span>
+      <button (click)="nextPageSupp()" [disabled]="currentPageSupp === totalPagesSupp()"
+        class="px-4 py-2 bg-red-300 text-white rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+        Suivant <i data-feather="arrow-right"></i>
+      </button>
+    </div>
   </div>
 </section>
 
+<!-- MODAL ÉDITION -->
+<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 border border-gray-200 space-y-6">
+    <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+      <i data-feather="edit" class="w-5 h-5 text-sky-600"></i>
+      Modifier le niveau d'urgence
+    </h2>
+
+    <form (ngSubmit)="saveEditUrgence()" class="space-y-4">
+      <div>
+        <label class="text-sm text-gray-700 block mb-1">Nom du niveau</label>
+        <input [(ngModel)]="editedUrgenceName" name="nom" required
+               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400" />
+      </div>
+
+      <div class="flex justify-end gap-4 pt-4 border-t">
+        <button type="button" (click)="cancelEdit()"
+                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+          Annuler
+        </button>
+        <button type="submit" [disabled]="!editedUrgenceName.trim()"
+                class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow disabled:opacity-50">
+          Enregistrer
+        </button>
+      </div>
+    </form>
+    <button (click)="cancelEdit()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+      <i data-feather="x" class="w-5 h-5"></i>
+    </button>
+  </div>
+</div>
+
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener("DOMContentLoaded", () => {
     feather.replace();
   });
 </script>

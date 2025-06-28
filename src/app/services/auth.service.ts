@@ -39,30 +39,15 @@ export class AuthService {
   }
 
   // Vérification des questions de sécurité et reset
-  resetPasswordByQuestions(
-    email: string,
-    data: any,
-    newPassword: string
-  ): Observable<any> {
-    const params = new HttpParams()
-      .set('email', email)
-      .set('question1', data.question1)
-      .set('answer1', data.answer1)
-      .set('question2', data.question2)
-      .set('answer2', data.answer2)
-      .set('question3', data.question3)
-      .set('answer3', data.answer3);
-
-    return this.http
-      .post(`${this.baseUrl}/recover/questions`, null, {
-        params,
-        responseType: 'text',
-      })
-      .pipe
-      // Si OK, envoyer ensuite le nouveau mot de passe
-      // mais ici tu peux le chaîner à part ou manuellement appeler `resetPasswordFinal`
-      ();
+  resetPasswordByQuestions(email: string, newPassword: string) {
+    const params = new URLSearchParams({
+      email: email,
+      newPassword: newPassword
+    });
+  
+    return this.http.post(`/recover/reset-password-question?${params.toString()}`, {});
   }
+  
 
   resetPasswordFinal(email: string, newPassword: string): Observable<any> {
     const params = new HttpParams()
@@ -93,5 +78,19 @@ export class AuthService {
 getUserRole(): string {
   return localStorage.getItem('role') || '';
 }
+verifySecurityQuestions(payload: any) {
+  const params = new URLSearchParams({
+    email: payload.email,
+    question1: payload.question1,
+    answer1: payload.answer1,
+    question2: payload.question2,
+    answer2: payload.answer2,
+    question3: payload.question3,
+    answer3: payload.answer3
+  });
+
+  return this.http.post(`/recover/questions?${params.toString()}`, {});
+}
+
 
 }

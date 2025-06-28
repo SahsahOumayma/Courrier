@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SiActivationService } from '../../services/si-activation.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import feather from 'feather-icons';
+import Swal from 'sweetalert2'; // ✅ Import SweetAlert2
 
 @Component({
   selector: 'app-si-user-activation',
@@ -12,7 +13,7 @@ import feather from 'feather-icons';
   templateUrl: './si-user-activation.component.html',
   styleUrls: ['./si-user-activation.component.css'],
 })
-export class SiUserActivationComponent implements OnInit {
+export class SiUserActivationComponent implements OnInit, AfterViewInit {
   comptes: any[] = [];
   recherche: string = '';
   roles: any[] = [];
@@ -31,41 +32,48 @@ export class SiUserActivationComponent implements OnInit {
     this.chargerServices();
   }
 
+  ngAfterViewInit(): void {
+    feather.replace();
+  }
+
   chargerComptes() {
     this.service.getComptesInactifs().subscribe({
       next: (data) => (this.comptes = data),
-      error: (err) => console.error('❌ Erreur chargement comptes :', err),
+      error: (err) =>
+        Swal.fire('Erreur', 'Erreur lors du chargement des comptes', 'error')
     });
   }
 
   chargerRoles() {
     this.service.getRoles().subscribe({
       next: (data) => (this.roles = data),
-      error: (err) => console.error('❌ Erreur chargement rôles :', err),
+      error: () =>
+        Swal.fire('Erreur', 'Erreur lors du chargement des rôles', 'error')
     });
   }
 
   chargerServices() {
     this.service.getServices().subscribe({
       next: (data) => (this.services = data),
-      error: (err) => console.error('❌ Erreur chargement services :', err),
+      error: () =>
+        Swal.fire('Erreur', 'Erreur lors du chargement des services', 'error')
     });
   }
 
   comptesFiltres(): any[] {
-    if (!this.recherche) return this.comptes;
-    const terme = this.recherche.toLowerCase();
-    return this.comptes.filter((u) =>
-      u.fullName.toLowerCase().includes(terme) ||
-      u.email.toLowerCase().includes(terme) ||
-      u.login.toLowerCase().includes(terme)
+    const terme = this.recherche.toLowerCase().trim();
+    return this.comptes.filter(
+      (u) =>
+        u.fullName.toLowerCase().includes(terme) ||
+        u.email.toLowerCase().includes(terme) ||
+        u.login.toLowerCase().includes(terme)
     );
   }
 
   ouvrirModal(user: any) {
     this.selectedUser = user;
     this.selectedRole = user.role || null;
-    this.selectedService = user.service || null;
+    this.selectedService = this.services.find((s) => s.nom === user.service) || null;
     this.modalVisible = true;
   }
 
@@ -76,32 +84,29 @@ export class SiUserActivationComponent implements OnInit {
     this.selectedService = null;
   }
 
- activerUtilisateur(): void {
-  if (!this.selectedUser || !this.selectedRole || !this.selectedService) {
-    console.error("Tous les champs doivent être remplis.");
-    return;
-  }
-
-  const payload = {
-    id: this.selectedUser.id,
-    role: this.selectedRole,
-    serviceId: this.selectedService.id,
-    active: true
-  };
-
-  this.service.activateUser(payload).subscribe({
-    next: (res) => {
-      console.log("✅ Utilisateur activé :", res);
-      this.modalVisible = false;
-      this.chargerComptes(); // recharge liste
-    },
-    error: (err) => {
-      console.error("❌ Erreur d’activation :", err);
+  activerUtilisateur(): void {
+    if (!this.selectedUser || !this.selectedRole || !this.selectedService?.id) {
+      Swal.fire('Champs manquants', 'Veuillez remplir tous les champs.', 'warning');
+      return;
     }
-  });
-}
- ngAfterViewInit(): void {
-    feather.replace();
-  }
 
+    const payload = {
+      id: this.selectedUser.id,
+      role: this.selectedRole,
+      serviceId: this.selectedService.id,
+      active: true,
+    };
+
+    this.service.activateUser(payload).subscribe({
+      next: (res) => {
+        Swal.fire('Succès', 'Utilisateur activé avec succès.', 'success');
+        this.modalVisible = false;
+        this.chargerComptes();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('❌ Erreur d’activation :', err);
+        Swal.fire('Erreur', 'L’activation a échoué. Veuillez réessayer.', 'error');
+      },
+    });
+  }
 }

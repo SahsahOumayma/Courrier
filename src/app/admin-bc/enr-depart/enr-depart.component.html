@@ -24,7 +24,7 @@
     />
   </div>
 
-  <!-- Voie d’expédition + Numéro de registre -->
+  <!-- Voie + Numéro registre -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <label class="block text-[15px] font-semibold mb-2">Voie d’expédition</label>
@@ -82,8 +82,11 @@
         class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400"
       >
         <option value="">Sélectionner</option>
-        <option *ngFor="let c of confidentialites" [value]="c.nom">{{ c.nom }}</option>
+        <option *ngFor="let c of confidentialites" [value]="c.id">{{ c.nom }}</option>
       </select>
+      <div *ngIf="confidentialites.length === 0" class="text-sm text-red-500 mt-1">
+        Aucune confidentialité disponible.
+      </div>
     </div>
 
     <div>
@@ -93,8 +96,11 @@
         class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400"
       >
         <option value="">Sélectionner</option>
-        <option *ngFor="let u of urgences" [value]="u.nom">{{ u.nom }}</option>
+        <option *ngFor="let u of urgences" [value]="u.id">{{ u.nom }}</option>
       </select>
+      <div *ngIf="urgences.length === 0" class="text-sm text-red-500 mt-1">
+        Aucune urgence disponible.
+      </div>
     </div>
   </div>
 
@@ -111,7 +117,7 @@
         <option *ngFor="let s of services" [value]="s.id">{{ s.nom }}</option>
       </select>
       <div *ngIf="services.length === 0" class="text-sm text-red-500 mt-1">
-        Aucun service disponible. Vérifiez la connexion au serveur.
+        Aucun service disponible.
       </div>
     </div>
 

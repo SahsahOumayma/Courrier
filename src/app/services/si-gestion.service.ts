@@ -10,15 +10,18 @@ export interface UtilisateurDTO {
   service: string;
   active: boolean;
   checkEmail: boolean;
+  dateSuppression?: string | null;
 }
 
 export interface RoleDTO {
   nom: string;
+  dateSuppression?: string | null;
 }
 
 export interface ServiceDTO {
   id: number;
   nom: string;
+   dateSuppression?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -51,4 +54,11 @@ export class SiGestionService {
   supprimerUtilisateur(id: number): Observable<string> {
     return this.http.delete<string>(`${this.apiUrl}/delete/user/${id}`);
   }
+  getUtilisateursSupprimes(): Observable<UtilisateurDTO[]> {
+  return this.http.get<UtilisateurDTO[]>(`${this.apiUrl}/users/deleted`);
+}
+
+restaurerUtilisateur(id: number): Observable<string> {
+  return this.http.put(`${this.apiUrl}/restore/user/${id}`, {}, { responseType: 'text' });
+}
 }

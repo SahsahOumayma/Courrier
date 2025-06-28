@@ -40,7 +40,8 @@ export class SiActivationService {
   }
 
   // Activer un utilisateur avec FormData (POST multipart)
-  activateUser(payload: {
+  // Envoie bien un JSON
+activateUser(payload: {
   id: number;
   role: string;
   serviceId: number;
@@ -52,3 +53,5 @@ export class SiActivationService {
 }
 
 }
+
+

@@ -14,6 +14,7 @@ export class AdminSiComponent implements AfterViewInit {
 
   sidebarOpen: boolean = true;
   showUtilisateurs: boolean = false;
+  showDictionnaire = false;
   constructor(private router: Router) {}
 
   toggleSidebar(): void {
@@ -25,6 +26,12 @@ export class AdminSiComponent implements AfterViewInit {
 
   // Relancer feather icons après apparition du sous-menu
   setTimeout(() => {
+    feather.replace();
+  }, 0);
+}
+toggleDictionnaire() {
+  this.showDictionnaire = !this.showDictionnaire;
+   setTimeout(() => {
     feather.replace();
   }, 0);
 }

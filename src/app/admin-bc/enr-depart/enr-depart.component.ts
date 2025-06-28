@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import feather from 'feather-icons';
 
 @Component({
@@ -48,12 +48,12 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
 
     this.http.get<any>('http://localhost:9090/api/admin-bc/admin/courriers/depart', { headers }).subscribe({
       next: data => {
-        this.services = data.services || [];
-        this.urgences = data.urgences || [];
-        this.confidentialites = data.confidentialites || [];
+        this.services = (data.services || []).filter((s: any) => !s.dateSuppression);
+        this.urgences = (data.urgences || []).filter((u: any) => !u.dateSuppression);
+        this.confidentialites = (data.confidentialites || []).filter((c: any) => !c.dateSuppression);
       },
       error: err => {
-        console.error('Erreur chargement des options :', err);
+        console.error('❌ Erreur lors du chargement des options :', err);
         this.services = [];
         this.urgences = [];
         this.confidentialites = [];
@@ -78,17 +78,26 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
     const formData = new FormData();
 
     formData.append('nomExpediteur', v.nomExpediteur);
-    formData.append('voieExpedition', v.voieExpedition); 
-    formData.append('numeroRegistre', v.numeroRegistre);// envoyer le nom (ex: "EMAIL")
+    formData.append('voieExpedition', v.voieExpedition);
+    formData.append('numeroRegistre', v.numeroRegistre);
     formData.append('objet', v.objet);
     formData.append('description', v.description);
-    formData.append('degreConfidentialite', v.degreConfidentialite); // ex: "ROUTINE"
-    formData.append('urgence', v.urgence); // ex: "NORMAL"
-    formData.append('service', String(v.service)); // ID du service
+    formData.append('degreConfidentialite', v.degreConfidentialite);
+    formData.append('urgence', v.urgence);
+    formData.append('service', String(v.service));
     formData.append('nature', v.nature);
     formData.append('attachment', this.file);
 
+    // Champs nécessaires dans le backend
+    const today = new Date().toISOString().split('T')[0];
+    formData.append('dateArrive', today);
+    formData.append('dateEnregistre', today);
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
     this.http.post('http://localhost:9090/api/admin-bc/admin/courriers/depart', formData, {
+      headers,
       responseType: 'text'
     }).subscribe({
       next: () => {
@@ -97,7 +106,7 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
         this.file = null;
       },
       error: err => {
-        console.error('Erreur lors de l’envoi :', err);
+        console.error('❌ Erreur lors de l’envoi :', err);
         alert("Erreur lors de l'envoi du courrier.");
       }
     });

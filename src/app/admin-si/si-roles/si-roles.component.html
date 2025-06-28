@@ -1,5 +1,6 @@
 <section class="p-8 bg-gradient-to-b from-[#f0f9ff] to-white rounded-3xl shadow-2xl border border-[#cfe7f9]">
-  <!-- Titre + bouton -->
+
+  <!-- Titre -->
   <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3">
       <span class="p-3 bg-blue-100 rounded-full">
@@ -7,52 +8,56 @@
       </span>
       Liste des rôles disponibles
     </h2>
-    <button (click)="showAddForm = !showAddForm"
+    <button (click)="toggleAddForm()"
       class="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg shadow hover:bg-sky-700 transition">
       <i data-feather="plus" class="w-5 h-5"></i>
       {{ showAddForm ? 'Annuler' : 'Nouveau rôle' }}
     </button>
   </div>
 
-  <!-- Formulaire ajout -->
+  <!-- Formulaire ajout/modification -->
   <div *ngIf="showAddForm" class="mb-6 flex items-center gap-4">
-    <input [(ngModel)]="newRoleName" placeholder="Nom du nouveau rôle"
+    <input [(ngModel)]="newRoleName" placeholder="Nom du rôle"
       class="w-96 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition" />
-    <button (click)="addRole()" [disabled]="!newRoleName.trim()"
+    <button (click)="addOrEditRole()" [disabled]="!newRoleName.trim()"
       class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
-      Sauvegarder
+      {{ editingRole ? 'Enregistrer les modifications' : 'Sauvegarder' }}
     </button>
   </div>
 
-  <!-- Barre de recherche + pagination -->
+  <!-- Recherche & pagination -->
   <div class="mb-4 flex items-center justify-between">
     <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()"
-      placeholder="🔍 Rechercher un rôle..."
+      placeholder="🔍 Rechercher un rôle actif..."
       class="w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition" />
-
     <select [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()"
       class="px-3 py-2 border rounded shadow-sm">
       <option *ngFor="let option of paginationOptions" [value]="option">{{ option }}/page</option>
     </select>
   </div>
 
-  <!-- Tableau -->
+  <!-- Tableau des rôles actifs -->
   <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
     <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
-      <thead class="text-xs uppercase font-bold text-[#005f8e] tracking-wide bg-sky-50">
-        <tr class="h-13">
-          <th class="px-4 py-3 rounded-l-xl w-[10%]">ID</th>
-          <th class="px-4 py-3 w-[60%] text-center">Nom du rôle</th>
-          <th class="px-4 py-3 text-center rounded-r-xl w-[30%]">Actions</th>
+      <thead class="bg-sky-50 text-sky-800 font-bold">
+        <tr>
+          <th class="px-4 py-3 w-[10%] text-left">ID</th>
+          <th class="px-4 py-3 w-[40%] text-center">Nom du rôle</th>
+          <th class="px-4 py-3 w-[25%] text-center">Date de création</th>
+          <th class="px-4 py-3 w-[25%] text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let role of paginatedRoles; let i = index"
-          [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
-          class="h-20 hover:shadow-md transition rounded-xl">
-          <td class="px-4 py-4 rounded-l-xl font-semibold truncate">{{ role.id }}</td>
-          <td class="px-4 py-4 truncate text-center">{{ role.nom }}</td>
-          <td class="px-4 py-4 text-center rounded-r-xl">
+        <tr *ngFor="let role of paginatedRoles; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+          <td class="px-4 py-3 font-semibold">{{ role.id }}</td>
+          <td class="px-4 py-3 text-center">{{ role.nom }}</td>
+          <td class="px-4 py-3 text-center">{{ role.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td class="px-4 py-3 text-center flex justify-center gap-2">
+            <button (click)="editRole(role)"
+              class="px-4 py-1 rounded-full text-white font-semibold text-sm hover:bg-blue-700 shadow"
+              style="background-color: #0d99ff;">
+              Modifier
+            </button>
             <button (click)="deleteRole(role.id)"
               class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:bg-red-600 shadow text-sm">
               Supprimer
@@ -60,23 +65,118 @@
           </td>
         </tr>
         <tr *ngIf="paginatedRoles.length === 0">
-          <td colspan="3" class="text-center py-4 text-gray-500">Aucun rôle trouvé</td>
+          <td colspan="4" class="text-center text-gray-400 py-4">Aucun rôle trouvé.</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <!-- Pagination -->
-  <div class="flex justify-between items-center mt-6">
+  <div class="flex justify-between items-center mt-4">
     <button (click)="previousPage()" [disabled]="currentPage === 1"
-      class="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
-      ⬅️ Précédent
+      [ngClass]="{ 'bg-sky-700 hover:bg-sky-800': currentPage > 1, 'bg-sky-400/60 cursor-not-allowed': currentPage === 1 }"
+      class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+      <i data-feather="arrow-left"></i> Précédent
     </button>
-    <span class="font-semibold">Page {{ currentPage }} / {{ totalPages() }}</span>
+    <span class="font-semibold text-sky-800">Page {{ currentPage }} / {{ totalPages() }}</span>
     <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
-      class="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
-      Suivant ➡️
+      [ngClass]="{ 'bg-sky-700 hover:bg-sky-800': currentPage < totalPages(), 'bg-sky-400/60 cursor-not-allowed': currentPage === totalPages() }"
+      class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+      Suivant <i data-feather="arrow-right"></i>
     </button>
+  </div>
+
+  <!-- Séparateur -->
+  <div class="my-16 h-6 rounded-3xl bg-[#003f67] opacity-60 shadow-md"></div>
+
+  <!-- Historique -->
+  <div>
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-extrabold italic text-pink-800 flex items-center gap-3">
+        <span class="p-3 bg-pink-100 rounded-full">
+          <i data-feather="clock" class="w-6 h-6 text-pink-600"></i>
+        </span>
+        Historique des rôles supprimés
+      </h2>
+      <select [(ngModel)]="itemsPerPageDeleted" (change)="changeItemsPerPageDeleted()"
+        class="px-3 py-2 border rounded-lg">
+        <option [value]="5">5/page</option>
+        <option [value]="10">10/page</option>
+        <option [value]="20">20/page</option>
+      </select>
+    </div>
+
+    <!-- Recherche historique -->
+    <div class="mb-4">
+      <input type="text" [(ngModel)]="searchDeleted" (input)="applyFilterDeleted()"
+        placeholder="🔍 Rechercher dans l'historique..."
+        class="w-96 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-400" />
+    </div>
+
+    <!-- Tableau historique -->
+    <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+      <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+        <thead class="bg-pink-50 text-pink-800 font-bold">
+          <tr>
+            <th class="px-4 py-3 w-[10%] text-left">ID</th>
+            <th class="px-4 py-3 w-[40%] text-center">Nom du rôle</th>
+            <th class="px-4 py-3 w-[25%] text-center">Date de suppression</th>
+            <th class="px-4 py-3 w-[25%] text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of paginatedDeleted; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+            <td class="px-4 py-3 font-semibold">{{ role.id }}</td>
+            <td class="px-4 py-3 text-center">{{ role.nom }}</td>
+            <td class="px-4 py-3 text-center">{{ role.dateSuppression | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="px-4 py-3 text-center">
+              <button (click)="restoreRole(role.id)"
+                class="bg-green-600 text-white px-4 py-1 rounded-full font-semibold hover:bg-green-700 shadow text-sm">
+                Restaurer
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedDeleted.length === 0">
+            <td colspan="4" class="text-center text-gray-400 py-4">Aucun rôle supprimé.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MODAL MODIFICATION DU RÔLE -->
+    <div *ngIf="showEditModal && editingRole" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 border border-gray-200 space-y-6">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <i data-feather="edit" class="w-5 h-5 text-sky-600"></i>
+          Modifier le rôle
+        </h2>
+        <form (ngSubmit)="saveRole()" class="space-y-4">
+          <div>
+            <label class="text-sm text-gray-700 block mb-1">Nom du rôle</label>
+            <input [(ngModel)]="newRoleName" name="nom" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400" />
+          </div>
+          <div class="flex justify-end gap-4 pt-4 border-t">
+            <button type="button" (click)="cancelEdit()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Annuler</button>
+            <button type="submit" [disabled]="!newRoleName.trim()" class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow disabled:opacity-50">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Pagination historique -->
+    <div class="flex justify-between items-center mt-4">
+      <button (click)="previousDeletedPage()" [disabled]="deletedPage === 1"
+        [ngClass]="{ 'bg-pink-700 hover:bg-pink-800': deletedPage > 1, 'bg-pink-400/60 cursor-not-allowed': deletedPage === 1 }"
+        class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+        <i data-feather="arrow-left"></i> Précédent
+      </button>
+      <span class="font-semibold text-pink-800">Page {{ deletedPage }} / {{ totalDeletedPages() }}</span>
+      <button (click)="nextDeletedPage()" [disabled]="deletedPage === totalDeletedPages()"
+        [ngClass]="{ 'bg-pink-700 hover:bg-pink-800': deletedPage < totalDeletedPages(), 'bg-pink-400/60 cursor-not-allowed': deletedPage === totalDeletedPages() }"
+        class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+        Suivant <i data-feather="arrow-right"></i>
+      </button>
+    </div>
   </div>
 </section>
 

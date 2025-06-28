@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 export interface Role {
   id: number;
   nom: string;
+  dateCreation?: string | null;
+  dateSuppression?: string | null;
 }
 
 @Injectable({
@@ -20,18 +22,23 @@ export class SiRoleService {
     return this.http.get<Role[]>(`${this.apiBase}/roles`);
   }
 
-  // ✅ Mettre à jour un rôle
-  updateRole(role: Role): Observable<any> {
-    return this.http.put(`${this.apiBase}/roles/${role.id}`, role, { responseType: 'text' });
-  }
-
-  // ✅ Supprimer un rôle avec l’endpoint correct
-  deleteRole(id: number): Observable<any> {
-    return this.http.delete(`${this.apiBase}/delete/role/${id}`, { responseType: 'text' });
-  }
 
   // ✅ Ajouter un nouveau rôle
   createRole(role: Partial<Role>): Observable<any> {
     return this.http.post(`${this.apiBase}/roles`, role, { responseType: 'text' });
+  }
+   deleteRole(id: number): Observable<any> {
+    return this.http.put(`${this.apiBase}/delete/role/${id}`, {}, { responseType: 'text' });
+  }
+  updateRole(role: Role): Observable<any> {
+  return this.http.put(
+    `${this.apiBase}/role/update/${role.id}?nom=${encodeURIComponent(role.nom)}`,
+    {},
+    { responseType: 'text' }
+  );
+}
+
+ restoreRole(id: number): Observable<any> {
+    return this.http.put(`${this.apiBase}/role/restore/${id}`, {}, { responseType: 'text' });
   }
 }

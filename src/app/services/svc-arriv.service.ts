@@ -30,12 +30,10 @@ export class SvcArrivService {
 
 
   // 🔄 Mettre à jour le statut d’un courrier d’arrivée
-  updateStatutCourrier(data: {
-    courrierId: number;
-    newStatus: string;
-  }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/courriers/update-status`, data, {
-      responseType: 'text' as const
-    });
-  }
+ updateStatutCourrier(payload: { courrierId: number, newStatus: string }) {
+  return this.http.post(`${this.baseUrl}/courriers/update-status`, payload, {
+    responseType: 'text' // ✅ indique que c'est du texte, pas du JSON
+  });
+}
+
 }

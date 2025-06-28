@@ -1,33 +1,38 @@
 import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SiConfidService, Confidentialite } from '../../services/si-confid.service';
 import feather from 'feather-icons';
-import { SiConfidService } from '../../services/si-confid.service';
-
-interface Confidentialite {
-  id: number;
-  nom: string;
-  code: string;
-}
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-si-confid',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './si-confid.component.html',
-  styleUrls: ['./si-confid.component.css']
+  styleUrls: ['./si-confid.component.css'],
 })
 export class SiConfidComponent implements OnInit, AfterViewInit {
-
   confidentialites: Confidentialite[] = [];
-  filteredConfidentialites: Confidentialite[] = [];
+  historiques: Confidentialite[] = [];
 
-  newConfidName: string = '';
-  showAddForm: boolean = false;
+  filteredConfids: Confidentialite[] = [];
+  filteredHistoriques: Confidentialite[] = [];
+
+  currentPage = 1;
+  itemsPerPage = 5;
+
+  currentPageSupp = 1;
+  itemsPerPageSupp = 5;
 
   searchTerm: string = '';
-  currentPage: number = 1;
-  itemsPerPage: number = 5;
+  searchSupp: string = '';
+
+  showAddForm = false;
+  newConfidName: string = '';
+
+  editingId: number | null = null;
+  editedName: string = '';
 
   private siConfidService = inject(SiConfidService);
 
@@ -42,73 +47,161 @@ export class SiConfidComponent implements OnInit, AfterViewInit {
   loadConfidentialites(): void {
     this.siConfidService.getAll().subscribe({
       next: (data) => {
-        this.confidentialites = data;
+        this.confidentialites = data.filter(c => !c.dateSuppression);
+        this.historiques = data.filter(c => !!c.dateSuppression);
         this.applyFilter();
+        this.applyFilterSupp();
       },
-      error: (err) => console.error('Erreur chargement', err)
+      error: (err) => console.error('Erreur chargement des niveaux :', err),
     });
   }
 
   applyFilter(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredConfidentialites = this.confidentialites.filter(c =>
+    const term = this.searchTerm.toLowerCase().trim();
+    this.filteredConfids = this.confidentialites.filter(c =>
       c.nom.toLowerCase().includes(term)
     );
     this.currentPage = 1;
   }
 
+  applyFilterSupp(): void {
+    const term = this.searchSupp.toLowerCase().trim();
+    this.filteredHistoriques = this.historiques.filter(c =>
+      c.nom.toLowerCase().includes(term)
+    );
+    this.currentPageSupp = 1;
+  }
+
   get paginatedConfids(): Confidentialite[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredConfidentialites.slice(start, start + this.itemsPerPage);
+    return this.filteredConfids.slice(start, start + this.itemsPerPage);
+  }
+
+  get paginatedConfidsSupp(): Confidentialite[] {
+    const start = (this.currentPageSupp - 1) * this.itemsPerPageSupp;
+    return this.filteredHistoriques.slice(start, start + this.itemsPerPageSupp);
+  }
+
+  totalPages(): number {
+    return Math.ceil(this.filteredConfids.length / this.itemsPerPage);
+  }
+
+  totalPagesSupp(): number {
+    return Math.ceil(this.filteredHistoriques.length / this.itemsPerPageSupp);
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) this.currentPage--;
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages()) this.currentPage++;
+  }
+
+  previousPageSupp(): void {
+    if (this.currentPageSupp > 1) this.currentPageSupp--;
+  }
+
+  nextPageSupp(): void {
+    if (this.currentPageSupp < this.totalPagesSupp()) this.currentPageSupp++;
   }
 
   addConfidentialite(): void {
-    if (!this.newConfidName.trim()) return;
-
-    const newItem = {
+    const payload = {
       nom: this.newConfidName,
-      code: '' // code par défaut
+      code: '',
+      dateSuppression: undefined
     };
 
-    this.siConfidService.create(newItem).subscribe({
+    this.siConfidService.create(payload).subscribe({
       next: () => {
         this.newConfidName = '';
         this.showAddForm = false;
         this.loadConfidentialites();
+        Swal.fire('✅ Succès', 'Confidentialité ajoutée.', 'success');
       },
-      error: (err) => console.error('Erreur ajout', err)
+      error: () => {
+        Swal.fire('❌ Erreur', 'Échec de l’ajout.', 'error');
+      }
     });
   }
 
   deleteConfidentialite(id: number): void {
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette confidentialité ?')) {
-    this.siConfidService.delete(id).subscribe({
-      next: () => {
-        alert('Confidentialité supprimée avec succès ✅');
-        this.loadConfidentialites(); // ou `this.fetchConfidentialites()` si tu renommes
-      },
-      error: err => {
-        console.error('Erreur suppression confidentialité', err);
-        alert('Erreur lors de la suppression de la confidentialité.');
+    Swal.fire({
+      title: 'Supprimer ?',
+      text: 'Cette confidentialité sera déplacée dans l’historique.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.siConfidService.delete(id).subscribe({
+          next: () => {
+            this.loadConfidentialites();
+            Swal.fire('✅ Supprimé', 'Déplacé dans l’historique.', 'success');
+          },
+          error: () => {
+            Swal.fire('❌ Erreur', 'Échec de la suppression.', 'error');
+          }
+        });
       }
     });
   }
-}
 
-
-  totalPages(): number {
-    return Math.ceil(this.filteredConfidentialites.length / this.itemsPerPage);
+  restaurerConfidentialite(id: number): void {
+    Swal.fire({
+      title: 'Restaurer ?',
+      text: 'Cette confidentialité sera réactivée.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Oui, restaurer',
+      cancelButtonText: 'Annuler'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.siConfidService.restore(id).subscribe({
+          next: () => {
+            this.loadConfidentialites();
+            Swal.fire('✅ Restauré', 'La confidentialité a été restaurée.', 'success');
+          },
+          error: () => {
+            Swal.fire('❌ Erreur', 'Échec de la restauration.', 'error');
+          }
+        });
+      }
+    });
   }
 
-  previousPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-    }
+  editConfidentialite(c: Confidentialite): void {
+    this.editingId = c.id;
+    this.editedName = c.nom;
   }
 
-  nextPage(): void {
-    if (this.currentPage < this.totalPages()) {
-      this.currentPage++;
-    }
+  cancelEdit(): void {
+    this.editingId = null;
+    this.editedName = '';
+  }
+
+  confirmEdit(): void {
+    if (!this.editedName.trim()) return;
+
+    const updated: Confidentialite = {
+      id: this.editingId!,
+      nom: this.editedName,
+      code: '',
+      dateSuppression: undefined
+    };
+
+    this.siConfidService.update(updated).subscribe({
+      next: () => {
+        this.editingId = null;
+        this.editedName = '';
+        this.loadConfidentialites();
+        Swal.fire('✅ Modifié', 'Niveau mis à jour.', 'success');
+      },
+      error: () => {
+        Swal.fire('❌ Erreur', 'Échec de la modification.', 'error');
+      }
+    });
   }
 }

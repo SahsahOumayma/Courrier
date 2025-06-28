@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 export interface Urgence {
   id: number;
   nom: string;
+  dateCreation?: string | null;
+  dateSuppression?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -17,16 +19,35 @@ export class SiUrgenceService {
     return this.http.get<Urgence[]>(this.baseUrl);
   }
 
-  create(urgence: Partial<Urgence>): Observable<any> {
-    return this.http.post(this.baseUrl, urgence);
-  }
-
-  update(urgence: Urgence): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${urgence.id}`, urgence);
-  }
-
-  delete(id: number): Observable<any> {
-  return this.http.delete(`${this.baseUrl}/${id}`);
+create(urgence: Partial<Urgence>): Observable<any> {
+  return this.http.post(this.baseUrl, urgence, {
+    responseType: 'text'
+  });
 }
+ update(u: Urgence): Observable<any> {
+  return this.http.put(
+    `http://localhost:9090/api/admin-si/urgence/update/${u.id}?nom=${encodeURIComponent(u.nom)}`,
+    {}, // Corps vide
+    { responseType: 'text' }
+  );
+}
+
+
+restore(id: number): Observable<any> {
+  return this.http.put(
+    `http://localhost:9090/api/admin-si/urgence/restore/${id}`,
+    {},
+    { responseType: 'text' }
+  );
+}
+
+delete(id: number): Observable<any> {
+  return this.http.put(
+    `http://localhost:9090/api/admin-si/delete/urgence/${id}`,
+    {},
+    { responseType: 'text' }
+  );
+}
+
 
 }

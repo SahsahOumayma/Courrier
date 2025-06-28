@@ -1,5 +1,6 @@
+<!-- Composant HTML complet avec formulaire de modification modal --> 
 <section class="p-8 bg-gradient-to-b from-[#e8f4fc] to-white rounded-3xl shadow-2xl border border-blue-200">
-  <!-- Titre + bouton d'ajout -->
+  <!-- Titre + bouton ajout -->
   <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3">
       <span class="p-3 bg-blue-100 rounded-full">
@@ -24,14 +25,20 @@
     </button>
   </div>
 
-  <!-- Recherche -->
+  <!-- Barre de recherche + sélection page -->
   <div class="flex justify-between items-center mb-4">
     <input type="text" [(ngModel)]="searchQuery" (input)="filterServices()"
       placeholder="🔍 Rechercher un service..."
       class="w-96 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+    <select [(ngModel)]="itemsPerPageServices" (change)="changeItemsPerPage('services')"
+      class="px-3 py-2 border rounded-lg">
+      <option [value]="5">5/page</option>
+      <option [value]="10">10/page</option>
+      <option [value]="20">20/page</option>
+    </select>
   </div>
 
-  <!-- Tableau -->
+  <!-- Tableau des services -->
   <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
     <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
       <thead class="bg-sky-50 text-sky-800 font-bold">
@@ -43,24 +50,144 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let s of filteredServices; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+        <tr *ngFor="let s of paginatedServices; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
           <td class="px-4 py-3 font-semibold">{{ s.id }}</td>
           <td class="px-4 py-3 text-center">{{ s.nom }}</td>
           <td class="px-4 py-3 text-center">{{ s.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
           <td class="px-4 py-3 text-center">
-            <button (click)="deleteService(s.id)"
-              class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:bg-red-600 shadow text-sm">
-              Supprimer
-            </button>
+            <div class="flex justify-center gap-2">
+              <button (click)="startEdit(s)"
+                class="px-4 py-1 rounded-full text-white font-semibold text-sm"
+                style="background-color: #0d99ff;">
+                Modifier
+              </button>
+              <button (click)="deleteService(s.id)"
+                class="px-4 py-1 rounded-full text-white font-semibold text-sm"
+                style="background-color: #ff3b30;">
+                Supprimer
+              </button>
+            </div>
           </td>
         </tr>
-        <tr *ngIf="filteredServices.length === 0">
+        <tr *ngIf="paginatedServices.length === 0">
           <td colspan="4" class="text-center text-gray-500 py-4">Aucun service trouvé.</td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <!-- Pagination services avec couleurs foncées -->
+  <div class="flex justify-between items-center mt-4">
+    <button (click)="previousPage('services')" [disabled]="currentPageServices === 1"
+      class="px-4 py-2 bg-[#003f67] text-white rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+      <i data-feather="arrow-left"></i> Précédent
+    </button>
+    <span class="font-semibold text-[#003f67]">Page {{ currentPageServices }} / {{ totalPagesServices }}</span>
+    <button (click)="nextPage('services')" [disabled]="currentPageServices === totalPagesServices"
+      class="px-4 py-2 bg-[#003f67] text-white rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+      Suivant <i data-feather="arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- Séparateur bleu foncé -->
+  <div class="my-16 h-6 rounded-3xl bg-[#003f67] opacity-60 shadow-md"></div>
+
+  <!-- Historique -->
+  <div>
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-extrabold italic text-pink-800 flex items-center gap-3">
+        <span class="p-3 bg-pink-100 rounded-full">
+          <i data-feather="clock" class="w-6 h-6 text-pink-600"></i>
+        </span>
+        Historique des services supprimés
+      </h2>
+      <select [(ngModel)]="itemsPerPageHistory" (change)="changeItemsPerPage('history')"
+        class="px-3 py-2 border rounded-lg">
+        <option [value]="5">5/page</option>
+        <option [value]="10">10/page</option>
+        <option [value]="20">20/page</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <input type="text" [(ngModel)]="searchHistory" (input)="filterHistory()"
+        placeholder="🔍 Rechercher dans l'historique..."
+        class="w-96 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-400" />
+    </div>
+
+    <!-- Tableau historique -->
+    <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+      <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+        <thead class="bg-pink-50 text-pink-800 font-bold">
+          <tr>
+            <th class="px-4 py-3 w-[10%] text-left">#</th>
+            <th class="px-4 py-3 w-[50%] text-center">Nom du service</th>
+            <th class="px-4 py-3 w-[20%] text-center">Date de suppression</th>
+            <th class="px-4 py-3 w-[20%] text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let h of paginatedHistory; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+            <td class="px-4 py-3 font-semibold">{{ i + 1 }}</td>
+            <td class="px-4 py-3 text-center">{{ h.nom }}</td>
+            <td class="px-4 py-3 text-center">{{ h.dateSuppression | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="px-4 py-3 text-center">
+              <button (click)="restoreService(h.id)"
+                class="bg-green-600 text-white px-4 py-1 rounded-full font-semibold hover:bg-green-700 shadow text-sm">
+                Restaurer
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedHistory.length === 0">
+            <td colspan="4" class="text-center text-gray-400 py-4">Aucune suppression enregistrée.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination historique avec couleurs foncées -->
+    <div class="flex justify-between items-center mt-4">
+      <button (click)="previousPage('history')" [disabled]="currentPageHistory === 1"
+        class="px-4 py-2 bg-[#9e3c67] text-white rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+        <i data-feather="arrow-left"></i> Précédent
+      </button>
+      <span class="font-semibold text-[#9e3c67]">Page {{ currentPageHistory }} / {{ totalPagesHistory }}</span>
+      <button (click)="nextPage('history')" [disabled]="currentPageHistory === totalPagesHistory"
+        class="px-4 py-2 bg-[#9e3c67] text-white rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+        Suivant <i data-feather="arrow-right"></i>
+      </button>
+    </div>
+  </div>
 </section>
+
+<!-- MODAL DE MODIFICATION DU SERVICE -->
+<div *ngIf="editingId !== null" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 border border-gray-200 space-y-6">
+    <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+      <i data-feather="edit" class="w-5 h-5 text-sky-600"></i>
+      Modifier le service
+    </h2>
+
+    <form (ngSubmit)="confirmEdit({ id: editingId, nom: editedName })" class="space-y-4">
+      <div>
+        <label class="text-sm text-gray-700 block mb-1">Nom du service</label>
+        <input [(ngModel)]="editedName" name="nom" required
+               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400" />
+      </div>
+
+      <div class="flex justify-end gap-4 pt-4 border-t">
+        <button type="button" (click)="cancelEdit()"
+                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+          Annuler
+        </button>
+        <button type="submit" [disabled]="!editedName.trim()"
+                class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow disabled:opacity-50">
+          Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
