@@ -42,12 +42,14 @@ export class AuthService {
   resetPasswordByQuestions(email: string, newPassword: string) {
     const params = new URLSearchParams({
       email: email,
-      newPassword: newPassword
+      newPassword: newPassword,
     });
-  
-    return this.http.post(`/recover/reset-password-question?${params.toString()}`, {});
+
+    return this.http.post(
+      `/recover/reset-password-question?${params.toString()}`,
+      {}
+    );
   }
-  
 
   resetPasswordFinal(email: string, newPassword: string): Observable<any> {
     const params = new HttpParams()
@@ -72,25 +74,23 @@ export class AuthService {
     });
   }
   isLoggedIn(): boolean {
-  return !!localStorage.getItem('token');
-}
+    return !!localStorage.getItem('token');
+  }
 
-getUserRole(): string {
-  return localStorage.getItem('role') || '';
-}
-verifySecurityQuestions(payload: any) {
-  const params = new URLSearchParams({
-    email: payload.email,
-    question1: payload.question1,
-    answer1: payload.answer1,
-    question2: payload.question2,
-    answer2: payload.answer2,
-    question3: payload.question3,
-    answer3: payload.answer3
-  });
+  getUserRole(): string {
+    return localStorage.getItem('role') || '';
+  }
+  verifySecurityQuestions(payload: any) {
+    const params = new URLSearchParams({
+      email: payload.email,
+      question1: payload.question1,
+      answer1: payload.answer1,
+      question2: payload.question2,
+      answer2: payload.answer2,
+      question3: payload.question3,
+      answer3: payload.answer3,
+    });
 
-  return this.http.post(`/recover/questions?${params.toString()}`, {});
-}
-
-
+    return this.http.post(`/recover/questions?${params.toString()}`, {});
+  }
 }
