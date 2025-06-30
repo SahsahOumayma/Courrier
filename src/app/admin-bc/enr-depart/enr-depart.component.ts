@@ -21,6 +21,7 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
   urgences: any[] = [];
   voies: any[] = [];
   natures: string[] = ['PERSONNEL', 'ADMINISTRATIF', 'CONTRAT', 'AUTRE'];
+  voieExpeditions: any;
 
   constructor(private fb: FormBuilder, private http: HttpClient) {}
 
@@ -56,7 +57,7 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
         this.services = (data.services || []).filter((s: any) => !s.dateSuppression);
         this.urgences = (data.urgences || []).filter((u: any) => !u.dateSuppression);
         this.confidentialites = (data.confidentialites || []).filter((c: any) => !c.dateSuppression);
-        this.voies = (data.voies || []).filter((v: any) => !v.dateSuppression); // 👈 voieExpédition depuis backend
+        this.voieExpeditions = (data.voies || []).filter((v: any) => !v.dateSuppression); // 👈 voieExpédition depuis backend
       },
       error: err => {
         console.error('❌ Erreur lors du chargement des options :', err);

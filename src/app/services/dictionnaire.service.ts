@@ -75,22 +75,22 @@ export class DictionnaireService {
 
   // ---- Voie d'expédition ----
  getAllVoies(): Observable<VoieExpedition[]> {
-    return this.http.get<VoieExpedition[]>(this.baseUrl);
+    return this.http.get<VoieExpedition[]>(`${this.baseUrl}/Voie`,);
   }
 
   addVoie(voie: Partial<VoieExpedition>): Observable<any> {
-    return this.http.post(this.baseUrl, voie);
+    return this.http.post(`${this.baseUrl}/Voie`, voie);
   }
 
   updateVoie(id: number, nom: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/update/${id}?nom=${encodeURIComponent(nom)}`, {});
+    return this.http.put(`${this.baseUrl}/voiexpedition/update/${id}?nom=${encodeURIComponent(nom)}`, {});
   }
 
   deleteVoie(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/delete/${id}`, {});
+    return this.http.put(`${this.baseUrl}/voiexpedition/delete/${id}`, {});
   }
 
   restoreVoie(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/restore/${id}`, {});
+    return this.http.put(`${this.baseUrl}/voiexpedition/restore/{id}`, {});
   }
 }
