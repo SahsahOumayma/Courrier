@@ -16,5 +16,17 @@ export class ConsCourrierService {
   getCourriersDepart(): Observable<any> {
   return this.http.get(`${this.baseUrl}/courriers/departs`);
 }
+  getStaticOptions(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/static-options`);
+  }
 
+  updateCourrier(courrier: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/courriers/update`, courrier);
+  }
+
+  archiverCourrier(id: number): Observable<any> {
+   return this.http.put(`${this.baseUrl}/courrier/archiver/${id}`, null, { responseType: 'text' });
+
+  }
 }
+

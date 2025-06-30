@@ -53,6 +53,11 @@ import { SupportSiComponent } from './admin-si/support-si/support-si.component';
 import { SupportSvcComponent } from './res-svc/support-svc/support-svc.component';
 import { SupportRhComponent } from './rh-archives/support-rh/support-rh.component';
 import { AuthGuard } from './guards/auth.guard';
+import { DictionnaireComponent } from './admin-bc/dictionnaire/dictionnaire.component';
+import { DictRoleComponent } from './admin-bc/dict-role/dict-role.component';
+import { DictServiceComponent } from './admin-bc/dict-service/dict-service.component';
+import { DictConfidComponent } from './admin-bc/dict-confid/dict-confid.component';
+import { DictVoieComponent } from './admin-bc/dict-voie/dict-voie.component';
 
 export const routes: Routes = [
   { path: '', component: ConnexionComponent }, //canActivate: [AuthGuard]  },
@@ -100,6 +105,15 @@ export const routes: Routes = [
       { path: 'enregistrer-employe', component: EnrEmployeComponent },
       { path: 'statistiques', component: BcStatistiqueComponent },
       { path: 'support', component: SupportBcComponent },
+      {
+  path: 'urgences',
+  component: DictionnaireComponent
+}
+,
+ { path: 'roles', component: DictRoleComponent },
+  { path: 'services', component: DictServiceComponent },
+  { path: 'confidentialites', component: DictConfidComponent },
+  { path: 'voix', component: DictVoieComponent },
 
       {
         path: 'consulter-employe',

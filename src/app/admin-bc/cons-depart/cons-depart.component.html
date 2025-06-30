@@ -8,22 +8,19 @@
     <h2 class="text-2xl font-extrabold italic tracking-wide">Courriers Départs</h2>
   </div>
 
-  <!-- 🔍 Recherche + Filtres -->
+  <!-- 🔍 Filtres -->
   <div class="flex flex-col md:flex-row flex-wrap justify-between items-center gap-4 text-sm text-blue-900 mb-6">
     <input type="text" [(ngModel)]="searchTerm" placeholder="🔍 Rechercher par objet ou service..."
       class="flex-grow min-w-[250px] px-4 py-2 rounded-lg border border-blue-300 focus:ring outline-none" />
-
     <select [(ngModel)]="selectedService" class="px-4 py-2 rounded-lg border border-blue-300">
       <option value="">Tous les services</option>
       <option *ngFor="let s of services" [value]="s">{{ s }}</option>
     </select>
-
     <select [(ngModel)]="selectedStatus" class="px-4 py-2 rounded-lg border border-blue-300">
       <option value="">Tous les statuts</option>
       <option value="enCours">En cours</option>
       <option value="archive">Archivé</option>
     </select>
-
     <select [(ngModel)]="itemsPerPage" class="px-4 py-2 rounded-lg border border-blue-300">
       <option value="5">5/page</option>
       <option value="10">10/page</option>
@@ -63,6 +60,10 @@
               <button (click)="telechargerPdf(c.id)"
                 class="bg-green-500 text-white font-semibold px-4 py-1 rounded-full shadow hover:bg-green-600 transition">
                 Télécharger
+              </button>
+              <button (click)="archiverCourrier(c.id)"
+                class="bg-red-500 text-white font-semibold px-4 py-1 rounded-full shadow hover:bg-red-600 transition">
+                Archiver
               </button>
             </td>
           </tr>

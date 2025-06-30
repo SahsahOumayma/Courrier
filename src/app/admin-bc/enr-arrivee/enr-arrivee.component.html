@@ -1,9 +1,8 @@
-<form
+<form 
   class="p-10 max-w-6xl mx-auto bg-gradient-to-br from-[#eaf6ff] via-white to-white rounded-3xl shadow-xl border border-[#c7e4f6] space-y-12 mt-4 mb-20"
-  [formGroup]="courrierForm"
+  [formGroup]="arriveeForm"
   (ngSubmit)="onSubmit()"
 >
-
   <!-- Titre -->
   <div class="flex items-center gap-4 text-[#003b63]">
     <div class="bg-[#0d88c6]/10 p-3 rounded-full shadow-inner">
@@ -14,86 +13,77 @@
 
   <!-- Signataire -->
   <div>
-    <label class="block text-[15px] font-semibold mb-2">Signataire</label>
+    <label class="block text-sm font-semibold mb-2">Signataire</label>
     <input type="text" formControlName="signataire" placeholder="Nom du signataire"
-           class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400 focus:outline-none transition-all"/>
+           class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400" />
   </div>
 
-  <!-- Numéro, Objet, Description -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Numéro de registre + Objet -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Numéro de registre</label>
+      <label class="block text-sm font-semibold mb-2">Numéro de registre</label>
       <input type="number" formControlName="numeroRegistre" placeholder="ex: 45"
-             class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400 transition"/>
+             class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400" />
     </div>
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Objet</label>
+      <label class="block text-sm font-semibold mb-2">Objet</label>
       <input type="text" formControlName="objet"
-             class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400 transition"/>
-    </div>
-    <div class="md:col-span-2">
-      <label class="block text-[15px] font-semibold mb-2">Description</label>
-      <textarea rows="3" formControlName="description"
-                class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm resize-none focus:ring-2 focus:ring-sky-400 transition"></textarea>
+             class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400" />
     </div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- Description -->
+  <div class="mt-4">
+    <label class="block text-sm font-semibold mb-2">Description</label>
+    <textarea rows="3" formControlName="description"
+              class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm resize-none focus:ring-2 focus:ring-sky-400"></textarea>
+  </div>
+
+  <!-- Dates -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Date d’enregistrement</label>
-      <input
-        type="date"
-        formControlName="dateEnregistrement"
-        class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400"
-      />
+      <label class="block text-sm font-semibold mb-2">Date d’enregistrement</label>
+      <input type="date" formControlName="dateEnregistrement"
+             class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400" />
     </div>
-  
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Date de départ</label>
-      <input
-        type="date"
-        formControlName="dateDepart"
-        class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400"
-      />
+      <label class="block text-sm font-semibold mb-2">Date d’arrivée</label>
+      <input type="date" formControlName="dateDepart"
+             class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400" />
     </div>
   </div>
-  <!-- Sélections -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+  <!-- Ligne Confidentialité / Urgence / Service / Nature -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Confidentialité</label>
+      <label class="block text-sm font-semibold mb-2">Confidentialité</label>
       <select formControlName="degreConfidentialite"
               class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
         <option value="">Sélectionner</option>
-        <option value="ROUTINE">Routine</option>
-        <option value="CONFIDENTIEL">Confidentiel</option>
-        <option value="SECRET">Secret</option>
+        <option *ngFor="let c of confidentialites" [value]="c.id">{{ c.nom }}</option>
       </select>
     </div>
 
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Urgence</label>
+      <label class="block text-sm font-semibold mb-2">Urgence</label>
       <select formControlName="urgence"
               class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
         <option value="">Sélectionner</option>
-        <option value="FLASH">Flash</option>
-        <option value="ROUTINE">Routine</option>
-        <option value="URGENT">Urgent</option>
+        <option *ngFor="let u of urgences" [value]="u.id">{{ u.nom }}</option>
       </select>
     </div>
 
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Service cible</label>
+      <label class="block text-sm font-semibold mb-2">Service cible</label>
       <select formControlName="service"
               class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
         <option value="">Sélectionner</option>
-        <option value="1">Service RH</option>
-        <option value="2">Service Informatique</option>
-        <option value="3">Service Financier</option>
+        <option *ngFor="let s of services" [value]="s.id">{{ s.nom }}</option>
       </select>
     </div>
 
-    <!-- ✅ Champ Nature ajouté -->
     <div>
-      <label class="block text-[15px] font-semibold mb-2">Nature</label>
+      <label class="block text-sm font-semibold mb-2">Nature</label>
       <select formControlName="nature"
               class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400">
         <option value="">Sélectionner</option>
@@ -105,15 +95,49 @@
     </div>
   </div>
 
-  <!-- Fichier joint -->
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Employé -->
   <div>
-    <label class="block text-[15px] font-semibold mb-2">Fichier joint</label>
+    <label class="block text-[15px] font-semibold mb-2">Employé</label>
+    <select
+      formControlName="employe"
+      class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400"
+    >
+      <option value="">Aucun</option>
+      <option *ngFor="let e of employes" [value]="e.id">
+        {{ e.prenom }} {{ e.nom }}
+      </option>
+    </select>
+    <div *ngIf="employes.length === 0" class="text-sm text-red-500 mt-1">
+      Aucun employé disponible.
+    </div>
+  </div>
+
+  <!-- Réponse à -->
+  <div>
+    <label class="block text-[15px] font-semibold mb-2">Réponse à</label>
+    <input
+      type="number"
+      formControlName="reponseA"
+      placeholder="Numéro du courrier source (facultatif)"
+      class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400"
+    />
+    <div class="text-sm text-gray-500 mt-1">
+      Laisser vide si ce courrier n’est pas une réponse.
+    </div>
+  </div>
+</div>
+
+
+  <!-- Fichier -->
+  <div class="mt-6">
+    <label class="block text-sm font-semibold mb-2">Fichier joint</label>
     <input type="file" (change)="onFileChange($event)"
-           class="block w-full text-sm text-gray-600 border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-white file:bg-[#0d88c6] hover:file:bg-[#0b76aa] shadow-sm"/>
+           class="block w-full text-sm text-gray-600 border border-gray-300 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-white file:bg-[#0d88c6] hover:file:bg-[#0b76aa] shadow-sm" />
   </div>
 
   <!-- Bouton -->
-  <div class="text-right">
+  <div class="text-right mt-6">
     <button type="submit"
             class="inline-flex items-center gap-3 px-8 py-3 bg-[#0d88c6] text-white font-bold rounded-xl shadow-lg hover:bg-[#0b76aa] hover:scale-[1.02] transition-all duration-200">
       <i data-feather="save" class="w-5 h-5"></i>

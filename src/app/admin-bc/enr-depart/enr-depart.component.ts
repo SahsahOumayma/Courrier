@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import feather from 'feather-icons';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-enr-depart',
@@ -18,6 +19,7 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
   services: any[] = [];
   confidentialites: any[] = [];
   urgences: any[] = [];
+  voies: any[] = [];
   natures: string[] = ['PERSONNEL', 'ADMINISTRATIF', 'CONTRAT', 'AUTRE'];
 
   constructor(private fb: FormBuilder, private http: HttpClient) {}
@@ -28,6 +30,7 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
       voieExpedition: ['', Validators.required],
       numeroRegistre: ['', Validators.required],
       objet: ['', Validators.required],
+      reponseA: [null],
       description: ['', Validators.required],
       degreConfidentialite: ['', Validators.required],
       urgence: ['', Validators.required],
@@ -53,12 +56,15 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
         this.services = (data.services || []).filter((s: any) => !s.dateSuppression);
         this.urgences = (data.urgences || []).filter((u: any) => !u.dateSuppression);
         this.confidentialites = (data.confidentialites || []).filter((c: any) => !c.dateSuppression);
+        this.voies = (data.voies || []).filter((v: any) => !v.dateSuppression); // 👈 voieExpédition depuis backend
       },
       error: err => {
         console.error('❌ Erreur lors du chargement des options :', err);
-        this.services = [];
-        this.urgences = [];
-        this.confidentialites = [];
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de charger les données nécessaires.'
+        });
       }
     });
   }
@@ -72,7 +78,11 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     if (this.departForm.invalid || !this.file) {
-      alert('Veuillez remplir tous les champs et sélectionner un fichier.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Champs requis manquants',
+        text: 'Veuillez remplir tous les champs obligatoires et joindre un fichier.'
+      });
       return;
     }
 
@@ -80,20 +90,22 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
     const formData = new FormData();
 
     formData.append('nomExpediteur', v.nomExpediteur);
-    formData.append('voieExpedition', v.voieExpedition);
+    formData.append('voieExpedition', v.voieExpedition); // maintenant l'ID
     formData.append('numeroRegistre', v.numeroRegistre);
     formData.append('objet', v.objet);
     formData.append('description', v.description);
     formData.append('degreConfidentialite', v.degreConfidentialite);
     formData.append('urgence', v.urgence);
-    formData.append('service', String(v.service));
+    formData.append('service', v.service);
     formData.append('nature', v.nature);
     formData.append('attachment', this.file);
 
-    // Champs nécessaires dans le backend
-    const today = new Date().toISOString().split('T')[0];
-    formData.append('dateArrive', today);
-    formData.append('dateEnregistre', today);
+    formData.append('dateArrive', v.dateDepart);
+    formData.append('dateEnregistre', v.dateEnregistrement);
+
+    if (v.reponseA !== null && v.reponseA !== '') {
+      formData.append('reponseAId', v.reponseA);
+    }
 
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -103,13 +115,21 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
       responseType: 'text'
     }).subscribe({
       next: () => {
-        alert('✅ Courrier envoyé avec succès.');
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Le courrier a bien été enregistré.'
+        });
         this.departForm.reset();
         this.file = null;
       },
       error: err => {
         console.error('❌ Erreur lors de l’envoi :', err);
-        alert("Erreur lors de l'envoi du courrier.");
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: "Échec de l'envoi du courrier. Veuillez réessayer."
+        });
       }
     });
   }

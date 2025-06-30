@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConsCourrierService } from '../../services/cons-courrier.service';
 import feather from 'feather-icons';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cons-arrivee',
@@ -15,12 +16,12 @@ export class ConsArriveeComponent implements OnInit, AfterViewInit {
   enCours: any[] = [];
   archives: any[] = [];
   services: string[] = [];
+  servicesFull: any[] = [];
 
   searchTerm: string = '';
   selectedService: string = '';
-  selectedStatus: string = ''; // ⬅️ filtre par statut
+  selectedStatus: string = '';
   itemsPerPage: number = 5;
-
   currentPage: number = 1;
   currentPageArchive: number = 1;
 
@@ -32,13 +33,14 @@ export class ConsArriveeComponent implements OnInit, AfterViewInit {
         const allCourriers = data.courriers || [];
         this.enCours = allCourriers.filter((c: any) => !c.archiver);
         this.archives = allCourriers.filter((c: any) => c.archiver);
+        this.services = [...new Set(allCourriers.map((c: any) => c.service).filter(Boolean))] as string[];
+      },
+      error: (err) => console.error('Erreur chargement courriers :', err)
+    });
 
-        const rawServices: any[] = allCourriers.map((c: any) => c.service).filter((s: any): s is string => typeof s === 'string');
-        this.services = [...new Set<string>(rawServices)];
-      },
-      error: (err) => {
-        console.error('Erreur de chargement des courriers :', err);
-      },
+    this.courrierService.getStaticOptions().subscribe({
+      next: (res) => this.servicesFull = res.services || [],
+      error: (err) => console.error('Erreur chargement services :', err)
     });
   }
 
@@ -46,7 +48,7 @@ export class ConsArriveeComponent implements OnInit, AfterViewInit {
     feather.replace();
   }
 
-  // 🔵 Courriers en cours
+  // 📥 EN COURS
   get filteredEnCours(): any[] {
     return this.enCours.filter(c =>
       (!this.searchTerm || c.object?.toLowerCase().includes(this.searchTerm.toLowerCase()) || c.service?.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
@@ -67,7 +69,7 @@ export class ConsArriveeComponent implements OnInit, AfterViewInit {
     this.currentPage = page;
   }
 
-  // 🟡 Courriers archivés
+  // 📦 ARCHIVES
   get filteredArchives(): any[] {
     return this.archives.filter(c =>
       (!this.searchTerm || c.object?.toLowerCase().includes(this.searchTerm.toLowerCase()) || c.service?.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
@@ -88,27 +90,61 @@ export class ConsArriveeComponent implements OnInit, AfterViewInit {
     this.currentPageArchive = page;
   }
 
-  // ✅ Action : archiver
-  traiterCourrier(index: number): void {
-    const courrier = this.paginatedEnCours[index];
-    courrier.archiver = true;
-    this.archives.push(courrier);
-    this.enCours = this.enCours.filter(c => c !== courrier);
-  }
-
-  // ✅ Voir le PDF
+  // 📄 PDF
   voirPdf(id: number): void {
     window.open(`http://localhost:9090/api/admin-bc/api/courriers/${id}/view-pdf`, '_blank');
   }
-  // ✅ Télécharger le PDF
-telechargerPdf(id: number): void {
-  const url = `http://localhost:9090/api/admin-bc/api/courriers/${id}/download`;
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', '');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
 
+  telechargerPdf(id: number): void {
+    const link = document.createElement('a');
+    link.href = `http://localhost:9090/api/admin-bc/api/courriers/${id}/download`;
+    link.setAttribute('download', '');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // 🗃️ ARCHIVER avec SweetAlert
+ archiverCourrier(id: number): void {
+  const courrier = this.enCours.find(c => c.id === id);
+  if (!courrier) return;
+
+  Swal.fire({
+    title: 'Archiver ce courrier ?',
+    text: `Objet : "${courrier.object}"`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Oui, archiver',
+    cancelButtonText: 'Annuler',
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.courrierService.archiverCourrier(id).subscribe({
+        next: (res: any) => {
+          // Mise à jour immédiate de l'affichage
+          courrier.archiver = true;
+          this.archives.push(courrier);
+          this.enCours = this.enCours.filter(c => c.id !== id);
+
+          Swal.fire({
+            title: 'Archivé !',
+            text: 'Le courrier a été archivé avec succès.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        },
+        error: (err) => {
+          console.error('Erreur archivage :', err);
+          Swal.fire({
+            title: 'Erreur',
+            text: 'Une erreur est survenue lors de l’archivage.',
+            icon: 'error'
+          });
+        }
+      });
+    }
+  });
+}
 }

@@ -1,6 +1,6 @@
 <section class="p-10 max-w-7xl mx-auto bg-gradient-to-b from-[#eef6fc] to-white rounded-3xl shadow-xl space-y-12 mt-8 mb-20">
 
-  <!-- 🧾 Titre -->
+  <!-- 📎 Titre -->
   <div class="flex items-center gap-4 text-blue-900 mb-4">
     <div class="bg-blue-100 p-3 rounded-full shadow-inner">
       <i data-feather="inbox" class="w-7 h-7 text-blue-600"></i>
@@ -31,7 +31,7 @@
     </select>
   </div>
 
-  <!-- 🟦 TABLEAU EN COURS -->
+  <!-- 🗾 TABLEAU EN COURS -->
   <section *ngIf="selectedStatus !== 'archive'" class="space-y-4">
     <div class="flex items-center gap-3 text-blue-800 text-lg font-semibold">
       <div class="bg-blue-100 p-2 rounded-full">
@@ -47,6 +47,7 @@
             <th class="px-6 py-3 text-left">Objet</th>
             <th class="px-6 py-3 text-left">Service</th>
             <th class="px-6 py-3 text-left">Date</th>
+            <th class="px-6 py-3 text-left">Statut</th>
             <th class="px-6 py-3 text-left">Action</th>
           </tr>
         </thead>
@@ -55,6 +56,7 @@
             <td class="px-6 py-4 font-medium">{{ c.object }}</td>
             <td class="px-6 py-4">{{ c.service }}</td>
             <td class="px-6 py-4">{{ c.dateArrive }}</td>
+            <td class="px-6 py-4">{{ c.statutCourrier || '—' }}</td>
             <td class="px-6 py-4 space-x-2">
               <button (click)="voirPdf(c.id)"
                 class="bg-[#0288D1] text-white font-semibold px-4 py-1 rounded-full shadow hover:bg-[#0277BD] transition">
@@ -64,13 +66,17 @@
                 class="bg-green-500 text-white font-semibold px-4 py-1 rounded-full shadow hover:bg-green-600 transition">
                 Télécharger
               </button>
+              <button (click)="archiverCourrier(c.id)"
+                class="bg-red-500 text-white font-semibold px-4 py-1 rounded-full shadow hover:bg-red-600 transition">
+                Archiver
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Pagination EN COURS -->
+    <!-- Pagination -->
     <div class="flex justify-end items-center gap-4 mt-4 text-sm">
       <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
         class="px-3 py-1 bg-gray-200 text-gray-600 rounded disabled:opacity-50">⬅ Précédent</button>
@@ -80,7 +86,7 @@
     </div>
   </section>
 
-  <!-- 🟨 TABLEAU ARCHIVÉ -->
+  <!-- 🔨 TABLEAU ARCHIVÉ -->
   <section *ngIf="selectedStatus !== 'enCours'" class="space-y-4">
     <div class="flex items-center gap-3 text-gray-700 text-lg font-semibold">
       <div class="bg-yellow-100 p-2 rounded-full">
@@ -96,6 +102,7 @@
             <th class="px-6 py-3 text-left">Objet</th>
             <th class="px-6 py-3 text-left">Service</th>
             <th class="px-6 py-3 text-left">Date</th>
+            <th class="px-6 py-3 text-left">Statut</th>
             <th class="px-6 py-3 text-left">Action</th>
           </tr>
         </thead>
@@ -104,6 +111,7 @@
             <td class="px-6 py-4 font-medium">{{ c.object }}</td>
             <td class="px-6 py-4">{{ c.service }}</td>
             <td class="px-6 py-4">{{ c.dateArrive }}</td>
+            <td class="px-6 py-4">{{ c.statutCourrier || '—' }}</td>
             <td class="px-6 py-4 space-x-2">
               <button (click)="voirPdf(c.id)"
                 class="bg-[#0288D1] text-white font-semibold px-4 py-1 rounded-full shadow hover:bg-[#0277BD] transition">
@@ -128,5 +136,4 @@
         class="px-3 py-1 bg-gray-200 text-gray-600 rounded disabled:opacity-50">Suivant ➡</button>
     </div>
   </section>
-
 </section>

@@ -1,0 +1,122 @@
+<section class="p-8 bg-gradient-to-b from-[#f0f9ff] to-white rounded-3xl shadow-2xl border border-[#cfe7f9]">
+  <!-- Titre -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3">
+      <span class="p-3 bg-blue-100 rounded-full">
+        <i data-feather="lock" class="w-6 h-6 text-sky-600"></i>
+      </span>
+      Liste des niveaux de confidentialité
+    </h2>
+    <button (click)="showAddForm = !showAddForm"
+      class="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg shadow hover:bg-sky-700 transition">
+      <i data-feather="plus" class="w-5 h-5"></i>
+      {{ showAddForm ? 'Annuler' : 'Nouveau niveau' }}
+    </button>
+  </div>
+
+  <!-- Formulaire ajout -->
+  <div *ngIf="showAddForm" class="mb-6 flex items-center gap-4">
+    <input [(ngModel)]="newConfidName" placeholder="Nom du niveau"
+      class="w-96 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+    <button (click)="addConfidentialite()" [disabled]="!newConfidName.trim()"
+      class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition disabled:opacity-50">
+      Sauvegarder
+    </button>
+  </div>
+
+  <!-- Recherche + pagination -->
+  <div class="mb-4 flex items-center justify-between">
+    <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()"
+      placeholder="🔍 Rechercher un niveau actif..."
+      class="w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
+    <select [(ngModel)]="itemsPerPage" (change)="currentPage = 1"
+      class="px-3 py-2 border rounded shadow-sm">
+      <option *ngFor="let option of [5, 10, 20]" [value]="option">{{ option }}/page</option>
+    </select>
+  </div>
+
+  <!-- Tableau niveaux actifs -->
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+      <thead class="bg-sky-50 text-sky-800 font-bold">
+        <tr>
+          <th class="px-4 py-3 w-[10%]">ID</th>
+          <th class="px-4 py-3 w-[30%] text-center">Nom</th>
+          <th class="px-4 py-3 w-[30%] text-center">Date de création</th>
+          <th class="px-4 py-3 w-[30%] text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of paginatedConfids; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+          <td class="px-4 py-3 font-semibold">{{ c.id }}</td>
+          <td class="px-4 py-3 text-center">{{ c.nom }}</td>
+          <td class="px-4 py-3 text-center">{{ c.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td class="px-4 py-3 text-center space-x-2">
+            <button (click)="editConfidentialite(c)"
+              class="bg-[#007bff] text-white px-4 py-1 rounded-full font-semibold hover:bg-blue-700 text-sm shadow">
+              Modifier
+            </button>
+            <button (click)="deleteConfidentialite(c.id)"
+              class="bg-[#ff3b3b] text-white px-4 py-1 rounded-full font-semibold hover:bg-red-600 text-sm shadow">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="paginatedConfids.length === 0">
+          <td colspan="4" class="text-center py-4 text-gray-400">Aucun niveau trouvé.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Historique -->
+  <div class="mt-16">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-extrabold italic text-pink-800 flex items-center gap-3">
+        <span class="p-3 bg-pink-100 rounded-full">
+          <i data-feather="clock" class="w-6 h-6 text-pink-600"></i>
+        </span>
+        Historique des niveaux supprimés
+      </h2>
+      <select [(ngModel)]="itemsPerPageSupp" (change)="currentPageSupp = 1"
+        class="px-3 py-2 border rounded-lg">
+        <option [value]="5">5/page</option>
+        <option [value]="10">10/page</option>
+        <option [value]="20">20/page</option>
+      </select>
+    </div>
+
+    <input type="text" [(ngModel)]="searchSupp" (input)="applyFilterSupp()"
+      placeholder="🔍 Rechercher dans l'historique..."
+      class="w-96 px-4 py-2 mb-4 border rounded-lg shadow-sm focus:ring-2 focus:ring-pink-400" />
+
+    <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+      <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+        <thead class="bg-pink-50 text-pink-800 font-bold">
+          <tr>
+            <th class="px-4 py-3 w-[10%]">ID</th>
+            <th class="px-4 py-3 w-[30%] text-center">Nom</th>
+            <th class="px-4 py-3 w-[30%] text-center">Date de suppression</th>
+            <th class="px-4 py-3 w-[30%] text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of paginatedConfidsSupp; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-pink-50'">
+            <td class="px-4 py-3">{{ c.id }}</td>
+            <td class="px-4 py-3 text-center">{{ c.nom }}</td>
+            <td class="px-4 py-3 text-center">{{ c.dateSuppression | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="px-4 py-3 text-center">
+              <button (click)="restaurerConfidentialite(c.id)"
+                class="bg-green-600 text-white px-4 py-1 rounded-full font-semibold hover:bg-green-700 text-sm">
+                Restaurer
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedConfidsSupp.length === 0">
+            <td colspan="4" class="text-center text-gray-400 py-4">Aucun niveau supprimé.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

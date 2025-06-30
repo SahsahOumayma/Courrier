@@ -9,10 +9,10 @@
 <div class="relative min-h-screen bg-blue-50 text-gray-800 font-poppins overflow-x-hidden flex">
 
   <!-- SIDEBAR -->
- <aside
-  class="fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-sky-900 to-sky-700 text-sky-100 px-6 pt-12 flex flex-col transform transition-transform duration-300 ease-in-out shadow-2xl rounded-r-2xl overflow-y-auto"
-  [ngClass]="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
->
+  <aside
+    class="fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-sky-900 to-sky-700 text-sky-100 px-6 pt-12 flex flex-col transform transition-transform duration-300 ease-in-out shadow-2xl rounded-r-2xl overflow-y-auto"
+    [ngClass]="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
+  >
 
     <!-- BOUTON FERMER -->
     <button
@@ -48,27 +48,19 @@
            [ngClass]="{ 'rotate-180': showEnregistrer }"></i>
       </div>
       <ul *ngIf="showEnregistrer" class="ml-6 mt-2 space-y-2">
-  <li>
-    <a routerLink="/admin-bc/enregistrer-arrivee" routerLinkActive="bg-white text-sky-900"
-       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
-      <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i> <span>Arrivée</span>
-    </a>
-  </li>
-  <li>
-    <a routerLink="/admin-bc/enregistrer-depart" routerLinkActive="bg-white text-sky-900"
-       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
-      <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départ</span>
-    </a>
-  </li>
-  <!-- 👇 Nouveau lien ajouté ici -->
-  <li>
-    <a routerLink="/admin-bc/enregistrer-employe" routerLinkActive="bg-white text-sky-900"
-       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
-      <i data-feather="user-check" class="w-4 h-4 mr-2"></i> <span>Employé</span>
-    </a>
-  </li>
-</ul>
-
+        <li>
+          <a routerLink="/admin-bc/enregistrer-arrivee" routerLinkActive="bg-white text-sky-900"
+             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+            <i data-feather="arrow-down-circle" class="w-4 h-4 mr-2"></i> <span>Arrivée</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin-bc/enregistrer-depart" routerLinkActive="bg-white text-sky-900"
+             class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+            <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départ</span>
+          </a>
+        </li>
+      </ul>
 
       <!-- Consulter Courrier -->
       <div (click)="toggleConsulter()" class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-sky-800 cursor-pointer transition">
@@ -92,13 +84,49 @@
             <i data-feather="arrow-up-circle" class="w-4 h-4 mr-2"></i> <span>Départ</span>
           </a>
         </li>
-        <li>
-    <a routerLink="/admin-bc/consulter-employe" routerLinkActive="bg-white text-sky-900"
+      </ul>
+      <!-- Ajouter dictionnaire -->
+<div (click)="toggleDictionnaire()" class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-sky-800 cursor-pointer transition">
+  <div class="flex items-center">
+    <i data-feather="book-open" class="w-5 h-5 mr-3"></i>
+    <span>Ajouter dictionnaire</span>
+  </div>
+  <i data-feather="chevron-down" class="w-4 h-4 transition-transform duration-200"
+     [ngClass]="{ 'rotate-180': showDictionnaire }"></i>
+</div>
+<ul *ngIf="showDictionnaire" class="ml-6 mt-2 space-y-2">
+  <li>
+    <a routerLink="/admin-bc/urgences" routerLinkActive="bg-white text-sky-900"
        class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
-      <i data-feather="user-check" class="w-4 h-4 mr-2"></i> <span>Employé</span>
+      <i data-feather="alert-circle" class="w-4 h-4 mr-2"></i> <span>Urgences</span>
     </a>
   </li>
-      </ul>
+  <li>
+    <a routerLink="/admin-bc/roles" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="shield" class="w-4 h-4 mr-2"></i> <span>Rôles</span>
+    </a>
+  </li>
+  <li>
+    <a routerLink="/admin-bc/services" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="briefcase" class="w-4 h-4 mr-2"></i> <span>Services</span>
+    </a>
+  </li>
+  <li>
+    <a routerLink="/admin-bc/voix" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="truck" class="w-4 h-4 mr-2"></i> <span>Voies expédition</span>
+    </a>
+  </li>
+  <li>
+    <a routerLink="/admin-bc/confidentialites" routerLinkActive="bg-white text-sky-900"
+       class="flex items-center px-3 py-2 rounded-lg hover:bg-sky-800 transition">
+      <i data-feather="lock" class="w-4 h-4 mr-2"></i> <span>Confidentialités</span>
+    </a>
+  </li>
+</ul>
+
 
       <a routerLink="/admin-bc/statistiques" routerLinkActive="bg-white text-sky-900"
          class="flex items-center px-4 py-3 rounded-xl hover:bg-sky-800 transition">
@@ -115,9 +143,8 @@
         <i data-feather="help-circle" class="w-5 h-5 mr-3"></i> <span>Support</span>
       </a>
       <a (click)="deconnexion()" class="flex items-center px-4 py-2 rounded-lg hover:bg-sky-800 transition cursor-pointer">
-  <i data-feather="log-out" class="w-5 h-5 mr-3"></i> <span>Déconnexion</span>
-</a>
-
+        <i data-feather="log-out" class="w-5 h-5 mr-3"></i> <span>Déconnexion</span>
+      </a>
     </div>
   </aside>
 
@@ -126,29 +153,21 @@
 
     <!-- HEADER -->
     <header class="flex items-center gap-4 h-20 px-6 lg:px-10 bg-white border-b shadow-sm w-full">
-
-  <!-- Ligne verticale bleue -->
-  <div class="w-1 h-10 bg-sky-600 rounded-sm"></div>
-
-  <!-- Bouton menu -->
-  <button
-    *ngIf="!sidebarOpen"
-    (click)="toggleSidebar()"
-    class="w-11 h-11 flex items-center justify-center bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-lg shadow transition"
-    aria-label="Ouvrir le menu"
-  >
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  </button>
-
-  <!-- Titre juste à côté -->
-  <h1 class="text-[1.65rem] tracking-wide font-bold text-gray-800 uppercase">
-    Gestion des courriers
-  </h1>
-
-</header>
-
+      <div class="w-1 h-10 bg-sky-600 rounded-sm"></div>
+      <button
+        *ngIf="!sidebarOpen"
+        (click)="toggleSidebar()"
+        class="w-11 h-11 flex items-center justify-center bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-lg shadow transition"
+        aria-label="Ouvrir le menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <h1 class="text-[1.65rem] tracking-wide font-bold text-gray-800 uppercase">
+        Gestion des courriers
+      </h1>
+    </header>
 
     <!-- CONTENU -->
     <main class="flex-1 w-full max-w-screen overflow-x-hidden p-4 sm:p-6 lg:p-8 bg-white rounded-tl-2xl shadow-inner">

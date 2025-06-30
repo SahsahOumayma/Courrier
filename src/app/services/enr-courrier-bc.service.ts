@@ -15,7 +15,7 @@ export class EnrCourrierBcService {
    */
   envoyerCourrierArrivee(formData: FormData): Observable<string> {
     return this.http.post(`${this.apiUrl}/arrivee`, formData, {
-      responseType: 'text' as const // ✅ réponse texte
+      responseType: 'text' as const
     });
   }
 
@@ -24,30 +24,40 @@ export class EnrCourrierBcService {
    */
   envoyerCourrierDepart(formData: FormData): Observable<string> {
     return this.http.post(`${this.apiUrl}/depart`, formData, {
-      responseType: 'text' as const // ✅ réponse texte
+      responseType: 'text' as const
     });
   }
 
   /**
-   * Récupération des listes
+   * Récupération des listes (urgences, services, confidentialités)
    */
- getOptionsAjoutCourrier() {
-  return this.http.get<{
+  getOptionsAjoutCourrier(): Observable<{
     urgences: any[],
     confidentialites: any[],
     services: any[]
-  }>('http://localhost:9090/api/admin-bc/admin/courriers/arrivee');
-}
+  }> {
+    return this.http.get<{
+      urgences: any[],
+      confidentialites: any[],
+      services: any[]
+    }>(`${this.apiUrl}/arrivee`);
+  }
 
- envoyerCourrierEmploye(formData: FormData): Observable<string> {
+  /**
+   * Envoi pour employé (si utilisé ailleurs)
+   */
+  envoyerCourrierEmploye(formData: FormData): Observable<string> {
     return this.http.post('http://localhost:9090/api/admin-bc/courrier/employe', formData, {
       responseType: 'text' as const
     });
   }
 
+  /**
+   * Récupération des employés (optionnel selon ton besoin)
+   */
   getStaticOptions(): Observable<{ employes: any[] }> {
     return this.http.get<{ employes: any[] }>('http://localhost:9090/api/admin-bc/courrier/employe');
   }
+  
 
 }
-

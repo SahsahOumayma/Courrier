@@ -1,0 +1,159 @@
+<section class="p-8 bg-gradient-to-b from-[#f0f9ff] to-white rounded-3xl shadow-2xl border border-[#cfe7f9]">
+  <!-- Titre -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3">
+      <span class="p-3 bg-blue-100 rounded-full">
+        <i data-feather="send" class="w-6 h-6 text-sky-600"></i>
+      </span>
+      Liste des voies d'expédition
+    </h2>
+    <button (click)="toggleAddForm()"
+      class="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg shadow hover:bg-sky-700 transition">
+      <i data-feather="plus" class="w-5 h-5"></i>
+      {{ showAddForm ? 'Annuler' : 'Nouvelle voie' }}
+    </button>
+  </div>
+
+  <!-- Formulaire ajout/modification -->
+  <div *ngIf="showAddForm" class="mb-6 flex items-center gap-4">
+    <input [(ngModel)]="newVoieName" placeholder="Nom de la voie"
+      class="w-96 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition" />
+    <button (click)="addOrEditVoie()" [disabled]="!newVoieName.trim()"
+      class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+      {{ editingVoie ? 'Enregistrer les modifications' : 'Sauvegarder' }}
+    </button>
+  </div>
+
+  <!-- Recherche & pagination -->
+  <div class="mb-4 flex items-center justify-between">
+    <input type="text" [(ngModel)]="search" (input)="applyFilter()"
+      placeholder="🔍 Rechercher une voie active..."
+      class="w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition" />
+    <select [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()" class="px-3 py-2 border rounded shadow-sm">
+      <option *ngFor="let option of paginationOptions" [value]="option">{{ option }}/page</option>
+    </select>
+  </div>
+
+  <!-- Tableau actif -->
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+      <thead class="bg-sky-50 text-sky-800 font-bold">
+        <tr>
+          <th class="px-4 py-3 w-[10%] text-left">ID</th>
+          <th class="px-4 py-3 w-[40%] text-center">Nom</th>
+          <th class="px-4 py-3 w-[25%] text-center">Date de création</th>
+          <th class="px-4 py-3 w-[25%] text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let voie of paginatedVoies; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+          <td class="px-4 py-3 font-semibold">{{ voie.id }}</td>
+          <td class="px-4 py-3 text-center">{{ voie.nom }}</td>
+          <td class="px-4 py-3 text-center">{{ voie.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td class="px-4 py-3 text-center flex justify-center gap-2">
+            <button (click)="editVoie(voie)"
+              class="px-4 py-1 rounded-full text-white font-semibold text-sm hover:bg-blue-700 shadow"
+              style="background-color: #0d99ff;">
+              Modifier
+            </button>
+            <button (click)="deleteVoie(voie.id)"
+              class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:bg-red-600 shadow text-sm">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="paginatedVoies.length === 0">
+          <td colspan="4" class="text-center text-gray-400 py-4">Aucune voie trouvée.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination actif -->
+  <div class="flex justify-between items-center mt-4">
+    <button (click)="previousPage()" [disabled]="currentPage === 1"
+      [ngClass]="{ 'bg-sky-700 hover:bg-sky-800': currentPage > 1, 'bg-sky-400/60 cursor-not-allowed': currentPage === 1 }"
+      class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+      <i data-feather="arrow-left"></i> Précédent
+    </button>
+    <span class="font-semibold text-sky-800">Page {{ currentPage }} / {{ totalPages() }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
+      [ngClass]="{ 'bg-sky-700 hover:bg-sky-800': currentPage < totalPages(), 'bg-sky-400/60 cursor-not-allowed': currentPage === totalPages() }"
+      class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+      Suivant <i data-feather="arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- Séparateur -->
+  <div class="my-16 h-6 rounded-3xl bg-[#003f67] opacity-60 shadow-md"></div>
+
+  <!-- Historique -->
+  <div>
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-extrabold italic text-pink-800 flex items-center gap-3">
+        <span class="p-3 bg-pink-100 rounded-full">
+          <i data-feather="clock" class="w-6 h-6 text-pink-600"></i>
+        </span>
+        Historique des voies supprimées
+      </h2>
+      <select [(ngModel)]="itemsPerPageDeleted" (change)="changeItemsPerPageDeleted()" class="px-3 py-2 border rounded-lg">
+        <option [value]="5">5/page</option>
+        <option [value]="10">10/page</option>
+        <option [value]="20">20/page</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <input type="text" [(ngModel)]="searchDeleted" (input)="applyFilterDeleted()"
+        placeholder="🔍 Rechercher dans l'historique..."
+        class="w-96 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-400" />
+    </div>
+
+    <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+      <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+        <thead class="bg-pink-50 text-pink-800 font-bold">
+          <tr>
+            <th class="px-4 py-3 w-[10%] text-left">ID</th>
+            <th class="px-4 py-3 w-[40%] text-center">Nom</th>
+            <th class="px-4 py-3 w-[25%] text-center">Date de suppression</th>
+            <th class="px-4 py-3 w-[25%] text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let voie of paginatedDeletedVoies; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-pink-50'">
+            <td class="px-4 py-3 font-semibold">{{ voie.id }}</td>
+            <td class="px-4 py-3 text-center">{{ voie.nom }}</td>
+            <td class="px-4 py-3 text-center">{{ voie.dateSuppression | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="px-4 py-3 text-center">
+              <button (click)="restoreVoie(voie.id)"
+                class="bg-green-600 text-white px-4 py-1 rounded-full font-semibold hover:bg-green-700 shadow text-sm">
+                Restaurer
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedDeletedVoies.length === 0">
+            <td colspan="4" class="text-center text-gray-400 py-4">Aucune voie supprimée.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination historique -->
+    <div class="flex justify-between items-center mt-4">
+      <button (click)="previousDeletedPage()" [disabled]="deletedPage === 1"
+        [ngClass]="{ 'bg-pink-700 hover:bg-pink-800': deletedPage > 1, 'bg-pink-400/60 cursor-not-allowed': deletedPage === 1 }"
+        class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+        <i data-feather="arrow-left"></i> Précédent
+      </button>
+      <span class="font-semibold text-pink-800">Page {{ deletedPage }} / {{ totalDeletedPages() }}</span>
+      <button (click)="nextDeletedPage()" [disabled]="deletedPage === totalDeletedPages()"
+        [ngClass]="{ 'bg-pink-700 hover:bg-pink-800': deletedPage < totalDeletedPages(), 'bg-pink-400/60 cursor-not-allowed': deletedPage === totalDeletedPages() }"
+        class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+        Suivant <i data-feather="arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</section>
+<script>
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
+</script>

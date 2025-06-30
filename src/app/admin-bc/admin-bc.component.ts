@@ -32,6 +32,13 @@ export class AdminBcComponent implements AfterViewInit {
     this.showConsulter = !this.showConsulter;
     setTimeout(() => feather.replace(), 0); // recharge icônes sous-menu
   }
+  showDictionnaire: boolean = false;
+
+toggleDictionnaire() {
+  this.showDictionnaire = !this.showDictionnaire;
+  setTimeout(() => feather.replace(), 0); // recharge les icônes après toggle
+}
+
 
   ngAfterViewInit(): void {
     feather.replace(); // première initialisation
@@ -40,4 +47,5 @@ export class AdminBcComponent implements AfterViewInit {
     localStorage.clear();
     this.router.navigateByUrl('/');
   }
+  
 }
