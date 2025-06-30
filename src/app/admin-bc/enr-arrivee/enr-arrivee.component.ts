@@ -32,7 +32,9 @@ export class EnrArriveeComponent implements AfterViewInit {
       degreConfidentialite: ['', Validators.required],
       urgence: ['', Validators.required],
       service: ['', Validators.required],
-      nature: ['', Validators.required], // champ ajouté
+      nature: ['', Validators.required],
+      dateEnregistrement: ['', Validators.required],
+      dateDepart: ['', Validators.required] // champ ajouté
     });
   }
 

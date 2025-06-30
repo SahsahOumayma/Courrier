@@ -32,7 +32,9 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
       degreConfidentialite: ['', Validators.required],
       urgence: ['', Validators.required],
       service: ['', Validators.required],
-      nature: ['', Validators.required]
+      nature: ['', Validators.required],
+      dateEnregistrement: ['', Validators.required],
+      dateDepart: ['', Validators.required]
     });
 
     this.loadOptions();
