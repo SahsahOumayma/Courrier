@@ -38,14 +38,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let courrier of courriersFiltres; let i = index" class="hover:bg-sky-50 rounded-xl">
-          <td class="px-4 py-6 align-middle font-bold rounded-l-xl">{{ i + 1 }}</td>
-          <td class="px-4 py-6 align-middle">{{ courrier.objet || '—' }}</td>
-          <td class="px-4 py-6 align-middle">{{ courrier.signataire || '—' }}</td>
-          <td class="px-4 py-6 align-middle">
+        <tr *ngFor="let courrier of courriersPagine; let i = index" class="hover:bg-sky-50 rounded-xl">
+          <td class="px-4 py-6 font-bold rounded-l-xl">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td class="px-4 py-6">{{ courrier.objet || '—' }}</td>
+          <td class="px-4 py-6">{{ courrier.signataire || '—' }}</td>
+          <td class="px-4 py-6">
             {{ courrier.dateRegistre ? (courrier.dateRegistre | date: 'dd/MM/yyyy') : '—' }}
           </td>
-          <td class="px-4 py-6 align-middle">
+          <td class="px-4 py-6">
             <span class="px-3 py-1.5 text-xs font-semibold rounded-full border"
               [ngClass]="{
                 'bg-red-600 text-white border-red-600': courrier.urgence === 'URGENT',
@@ -56,7 +56,7 @@
               {{ courrier.urgence || '—' }}
             </span>
           </td>
-          <td class="px-4 py-6 align-middle flex gap-2 justify-center rounded-r-xl">
+          <td class="px-4 py-6 flex gap-2 justify-center rounded-r-xl">
             <button
               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition"
               (click)="voirPDF(courrier.id)">
@@ -69,17 +69,63 @@
             </button>
             <button
               class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow transition"
-              (click)="archiver(courrier.id)">
-              Archiver
+              (click)="ouvrirModaleStatut(courrier)">
+              Modifier statut
             </button>
           </td>
         </tr>
 
         <!-- Aucun résultat -->
-        <tr *ngIf="courriersFiltres.length === 0 && !loading">
+        <tr *ngIf="courriersPagine.length === 0 && !loading">
           <td colspan="6" class="text-center py-6 text-gray-500">Aucun courrier trouvé.</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-between items-center mt-6" *ngIf="courriersFiltres.length > itemsPerPage">
+    <div class="text-sm text-gray-600">
+      Page {{ currentPage }} / {{ totalPages() }}
+    </div>
+    <div class="flex gap-2">
+      <button
+        class="px-3 py-1 rounded-md bg-sky-100 text-sky-700 font-semibold hover:bg-sky-200 disabled:opacity-50"
+        [disabled]="currentPage === 1"
+        (click)="changerPage(currentPage - 1)">
+        Précédent
+      </button>
+      <button
+        class="px-3 py-1 rounded-md bg-sky-100 text-sky-700 font-semibold hover:bg-sky-200 disabled:opacity-50"
+        [disabled]="currentPage === totalPages()"
+        (click)="changerPage(currentPage + 1)">
+        Suivant
+      </button>
+    </div>
+  </div>
+
+  <!-- Modale de modification de statut -->
+  <div *ngIf="showStatutModal && courrierSelectionne" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 border border-gray-200 space-y-6">
+      <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+        <i data-feather="edit" class="w-5 h-5 text-sky-600"></i>
+        Modifier le statut du courrier
+      </h2>
+      <form (ngSubmit)="confirmerModificationStatut()" class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-700 block mb-1">Nouveau statut</label>
+          <select [(ngModel)]="nouveauStatut" name="statut" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400">
+            <option value="" disabled selected>Sélectionner un statut</option>
+            <option *ngFor="let statut of listeStatuts" [value]="statut">{{ statut.replaceAll('_', ' ') }}</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-4 pt-4 border-t">
+          <button type="button" (click)="fermerModaleStatut()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Annuler</button>
+          <button type="submit" [disabled]="!nouveauStatut" class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow disabled:opacity-50">
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </section>

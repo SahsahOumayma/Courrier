@@ -31,8 +31,9 @@ export class DictConfidComponent implements OnInit, AfterViewInit {
   showAddForm = false;
   newConfidName: string = '';
 
+  showEditModal = false;
   editingId: number | null = null;
-  editedName: string = '';
+  editedConfidName: string = '';
 
   private siConfidService = inject(SiConfidService);
 
@@ -174,20 +175,22 @@ export class DictConfidComponent implements OnInit, AfterViewInit {
 
   editConfidentialite(c: Confidentialite): void {
     this.editingId = c.id;
-    this.editedName = c.nom;
+    this.editedConfidName = c.nom;
+    this.showEditModal = true;
   }
 
   cancelEdit(): void {
     this.editingId = null;
-    this.editedName = '';
+    this.editedConfidName = '';
+    this.showEditModal = false;
   }
 
   confirmEdit(): void {
-    if (!this.editedName.trim()) return;
+    if (!this.editedConfidName.trim()) return;
 
     const updated: Confidentialite = {
       id: this.editingId!,
-      nom: this.editedName,
+      nom: this.editedConfidName,
       code: '',
       dateSuppression: undefined
     };
@@ -195,7 +198,8 @@ export class DictConfidComponent implements OnInit, AfterViewInit {
     this.siConfidService.update(updated).subscribe({
       next: () => {
         this.editingId = null;
-        this.editedName = '';
+        this.editedConfidName = '';
+        this.showEditModal = false;
         this.loadConfidentialites();
         Swal.fire('✅ Modifié', 'Niveau mis à jour.', 'success');
       },
@@ -204,4 +208,5 @@ export class DictConfidComponent implements OnInit, AfterViewInit {
       }
     });
   }
+  
 }

@@ -10,12 +10,13 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './cons-depart.component.html',
-  styleUrls: ['./cons-depart.component.css'],
+  styleUrls: ['./cons-depart.component.css']
 })
 export class ConsDepartComponent implements OnInit, AfterViewInit {
   enCours: any[] = [];
   archives: any[] = [];
   services: string[] = [];
+  servicesFull: any[] = [];
 
   searchTerm: string = '';
   selectedService: string = '';
@@ -27,20 +28,22 @@ export class ConsDepartComponent implements OnInit, AfterViewInit {
   constructor(private courrierService: ConsCourrierService) {}
 
   ngOnInit(): void {
+    this.chargerCourriers();
+    this.courrierService.getStaticOptions().subscribe({
+      next: (res) => this.servicesFull = res.services || [],
+      error: (err) => console.error('Erreur chargement services :', err)
+    });
+  }
+
+  chargerCourriers(): void {
     this.courrierService.getCourriersDepart().subscribe({
       next: (data: any) => {
         const allCourriers = data.courriers || [];
         this.enCours = allCourriers.filter((c: any) => !c.archiver);
         this.archives = allCourriers.filter((c: any) => c.archiver);
-
-        const rawServices = allCourriers
-          .map((c: any) => c.service)
-          .filter((s: any) => typeof s === 'string');
-        this.services = [...new Set<string>(rawServices)];
+        this.services = [...new Set(allCourriers.map((c: any) => c.service).filter(Boolean))] as string[];
       },
-      error: (err) => {
-        console.error('Erreur de chargement des courriers départ :', err);
-      },
+      error: (err) => console.error('Erreur chargement courriers :', err)
     });
   }
 
@@ -48,7 +51,7 @@ export class ConsDepartComponent implements OnInit, AfterViewInit {
     feather.replace();
   }
 
-  // ----- FILTRES -----
+  // 🔎 EN COURS
   get filteredEnCours(): any[] {
     return this.enCours.filter(c =>
       (!this.searchTerm || c.object?.toLowerCase().includes(this.searchTerm.toLowerCase()) || c.service?.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
@@ -56,6 +59,20 @@ export class ConsDepartComponent implements OnInit, AfterViewInit {
     );
   }
 
+  get paginatedEnCours(): any[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredEnCours.slice(start, start + this.itemsPerPage);
+  }
+
+  totalPages(): number {
+    return Math.ceil(this.filteredEnCours.length / this.itemsPerPage);
+  }
+
+  setPage(page: number): void {
+    this.currentPage = page;
+  }
+
+  // 📦 ARCHIVÉS
   get filteredArchives(): any[] {
     return this.archives.filter(c =>
       (!this.searchTerm || c.object?.toLowerCase().includes(this.searchTerm.toLowerCase()) || c.service?.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
@@ -63,45 +80,30 @@ export class ConsDepartComponent implements OnInit, AfterViewInit {
     );
   }
 
-  // ----- PAGINATION -----
-  get paginatedEnCours(): any[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredEnCours.slice(start, start + this.itemsPerPage);
-  }
-
   get paginatedArchives(): any[] {
     const start = (this.currentPageArchive - 1) * this.itemsPerPage;
     return this.filteredArchives.slice(start, start + this.itemsPerPage);
-  }
-
-  totalPages(): number {
-    return Math.ceil(this.filteredEnCours.length / this.itemsPerPage);
   }
 
   totalPagesArchive(): number {
     return Math.ceil(this.filteredArchives.length / this.itemsPerPage);
   }
 
-  setPage(page: number): void {
-    this.currentPage = page;
-  }
-
   setPageArchive(page: number): void {
     this.currentPageArchive = page;
   }
 
-  // ----- ACTIONS -----
   voirPdf(id: number): void {
-    const url = `http://localhost:9090/api/admin-bc/api/courriers/${id}/view-pdf`;
-    window.open(url, '_blank');
+    window.open(`http://localhost:9090/api/admin-bc/api/courriers/${id}/view-pdf`, '_blank');
   }
 
   telechargerPdf(id: number): void {
-    const url = `http://localhost:9090/api/admin-bc/api/courriers/${id}/download`;
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = '';
-    a.click();
+    const link = document.createElement('a');
+    link.href = `http://localhost:9090/api/admin-bc/api/courriers/${id}/download`;
+    link.setAttribute('download', '');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   archiverCourrier(id: number): void {

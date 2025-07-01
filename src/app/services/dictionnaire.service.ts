@@ -12,14 +12,14 @@ export interface Urgence {
 export interface Confidentialite {
   id: number;
   nom: string;
-  dateCreation?: Date;
+  dateCreation?: string | null;
   dateSuppression?: Date;
 }
 
 export interface VoieExpedition {
   id: number;
   nom: string;
-  dateCreation?: Date;
+  dateCreation?: string | null;
   dateSuppression?: Date;
 }
 
@@ -81,16 +81,19 @@ export class DictionnaireService {
   addVoie(voie: Partial<VoieExpedition>): Observable<any> {
     return this.http.post(`${this.baseUrl}/Voie`, voie);
   }
+deleteVoie(id: number): Observable<any> {
+  return this.http.put(`${this.baseUrl}/voiexpedition/delete/${id}`, {}, { responseType: 'text' });
+}
 
-  updateVoie(id: number, nom: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/voiexpedition/update/${id}?nom=${encodeURIComponent(nom)}`, {});
-  }
+restoreVoie(id: number): Observable<any> {
+  return this.http.put(`${this.baseUrl}/voiexpedition/restore/${id}`, {}, { responseType: 'text' });
+}
 
-  deleteVoie(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/voiexpedition/delete/${id}`, {});
-  }
+updateVoie(id: number, nom: string): Observable<any> {
+  return this.http.put(`${this.baseUrl}/voiexpedition/update/${id}?nom=${encodeURIComponent(nom)}`, {}, { responseType: 'text' });
 
-  restoreVoie(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/voiexpedition/restore/{id}`, {});
-  }
+}
+
+
+
 }

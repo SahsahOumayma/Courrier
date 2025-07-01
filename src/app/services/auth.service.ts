@@ -93,4 +93,9 @@ export class AuthService {
 
     return this.http.post(`/recover/questions?${params.toString()}`, {});
   }
+
+  getSecurityQuestions(token: string): Observable<any> {
+    const params = new HttpParams().set('token', token);
+    return this.http.get(`${this.baseUrl}/verify`, { params });
+  }
 }

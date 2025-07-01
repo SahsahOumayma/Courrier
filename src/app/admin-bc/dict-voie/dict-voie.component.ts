@@ -1,4 +1,3 @@
-// dict-voie.component.ts
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +31,10 @@ export class DictVoieComponent implements OnInit, AfterViewInit {
 
   showAddForm = false;
   newVoieName = '';
-  editingVoie: VoieExpedition | null = null;
+
+  showEditModal = false;
+  editedVoie: VoieExpedition | null = null;
+  editedVoieName: string = '';
 
   constructor(private dictionnaireService: DictionnaireService) {}
 
@@ -46,43 +48,62 @@ export class DictVoieComponent implements OnInit, AfterViewInit {
 
   toggleAddForm(): void {
     this.showAddForm = !this.showAddForm;
-    if (!this.showAddForm) this.resetForm();
-  }
-
-  resetForm(): void {
-    this.newVoieName = '';
-    this.editingVoie = null;
-  }
-
-  addOrEditVoie(): void {
-    const nom = this.newVoieName.trim();
-    if (!nom) return;
-
-    if (this.editingVoie) {
-      this.dictionnaireService.updateVoie(this.editingVoie.id, nom).subscribe({
-        next: () => {
-          Swal.fire('Succès', 'Voie modifiée avec succès.', 'success');
-          this.resetForm();
-          this.fetchVoies();
-        },
-        error: () => Swal.fire('Erreur', 'Échec de la modification.', 'error')
-      });
-    } else {
-      this.dictionnaireService.addVoie({ nom }).subscribe({
-        next: () => {
-          Swal.fire('Succès', 'Voie ajoutée avec succès.', 'success');
-          this.resetForm();
-          this.fetchVoies();
-        },
-        error: () => Swal.fire('Erreur', 'Impossible d’ajouter cette voie.', 'error')
-      });
+    if (!this.showAddForm) {
+      this.newVoieName = '';
     }
   }
 
-  editVoie(voie: VoieExpedition): void {
-    this.editingVoie = { ...voie };
-    this.newVoieName = voie.nom;
-    this.showAddForm = true;
+  fetchVoies(): void {
+    this.dictionnaireService.getAllVoies().subscribe({
+      next: data => {
+        this.voies = data.filter(v => !v.dateSuppression);
+        this.deletedVoies = data.filter(v => v.dateSuppression);
+        this.applyFilter();
+        this.applyFilterDeleted();
+        feather.replace();
+      },
+      error: () => Swal.fire('Erreur', 'Échec du chargement des voies.', 'error')
+    });
+  }
+
+  addVoie(): void {
+    const nom = this.newVoieName.trim();
+    if (!nom) return;
+
+    this.dictionnaireService.addVoie({ nom }).subscribe({
+      next: () => {
+        Swal.fire('Succès', 'Voie ajoutée avec succès.', 'success');
+        this.newVoieName = '';
+        this.fetchVoies();
+      },
+      error: () => Swal.fire('Erreur', 'Impossible d’ajouter cette voie.', 'error')
+    });
+  }
+
+  openEditModal(voie: VoieExpedition): void {
+    this.editedVoie = voie;
+    this.editedVoieName = voie.nom;
+    this.showEditModal = true;
+  }
+
+  saveEditVoie(): void {
+    const nom = this.editedVoieName.trim();
+    if (!this.editedVoie || !nom) return;
+
+    this.dictionnaireService.updateVoie(this.editedVoie.id, nom).subscribe({
+      next: () => {
+        Swal.fire('Succès', 'Voie modifiée avec succès.', 'success');
+        this.cancelEdit();
+        this.fetchVoies();
+      },
+      error: () => Swal.fire('Erreur', 'Échec de la modification.', 'error')
+    });
+  }
+
+  cancelEdit(): void {
+    this.editedVoie = null;
+    this.editedVoieName = '';
+    this.showEditModal = false;
   }
 
   deleteVoie(id: number): void {
@@ -112,18 +133,6 @@ export class DictVoieComponent implements OnInit, AfterViewInit {
         this.fetchVoies();
       },
       error: () => Swal.fire('Erreur', 'Échec de la restauration.', 'error')
-    });
-  }
-
-  fetchVoies(): void {
-    this.dictionnaireService.getAllVoies().subscribe({
-      next: data => {
-        this.voies = data.filter(v => !v.dateSuppression);
-        this.deletedVoies = data.filter(v => v.dateSuppression);
-        this.applyFilter();
-        this.applyFilterDeleted();
-      },
-      error: () => Swal.fire('Erreur', 'Échec du chargement des voies.', 'error')
     });
   }
 

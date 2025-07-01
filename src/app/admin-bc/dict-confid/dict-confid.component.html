@@ -1,5 +1,5 @@
 <section class="p-8 bg-gradient-to-b from-[#f0f9ff] to-white rounded-3xl shadow-2xl border border-[#cfe7f9]">
-  <!-- Titre -->
+  <!-- Titre + bouton -->
   <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3">
       <span class="p-3 bg-blue-100 rounded-full">
@@ -67,6 +67,19 @@
         </tr>
       </tbody>
     </table>
+    <div class="flex justify-between items-center mt-4">
+  <button (click)="previousPage()" [disabled]="currentPage === 1"
+    [ngClass]="{ 'bg-sky-700 hover:bg-sky-800': currentPage > 1, 'bg-sky-400/60 cursor-not-allowed': currentPage === 1 }"
+    class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+    <i data-feather="arrow-left"></i> Précédent
+  </button>
+  <span class="font-semibold text-sky-800">Page {{ currentPage }} / {{ totalPages() }}</span>
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
+    [ngClass]="{ 'bg-sky-700 hover:bg-sky-800': currentPage < totalPages(), 'bg-sky-400/60 cursor-not-allowed': currentPage === totalPages() }"
+    class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+    Suivant <i data-feather="arrow-right"></i>
+  </button>
+</div>
   </div>
 
   <!-- Historique -->
@@ -117,6 +130,51 @@
           </tr>
         </tbody>
       </table>
+      <div class="flex justify-between items-center mt-4">
+  <button (click)="previousPageSupp()" [disabled]="currentPageSupp === 1"
+    [ngClass]="{ 'bg-pink-700 hover:bg-pink-800': currentPageSupp > 1, 'bg-pink-400/60 cursor-not-allowed': currentPageSupp === 1 }"
+    class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+    <i data-feather="arrow-left"></i> Précédent
+  </button>
+  <span class="font-semibold text-pink-800">Page {{ currentPageSupp }} / {{ totalPagesSupp() }}</span>
+  <button (click)="nextPageSupp()" [disabled]="currentPageSupp === totalPagesSupp()"
+    [ngClass]="{ 'bg-pink-700 hover:bg-pink-800': currentPageSupp < totalPagesSupp(), 'bg-pink-400/60 cursor-not-allowed': currentPageSupp === totalPagesSupp() }"
+    class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+    Suivant <i data-feather="arrow-right"></i>
+  </button>
+</div>
+
     </div>
   </div>
 </section>
+
+<!-- ✅ MODAL MODIFICATION -->
+<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 border border-gray-200 space-y-6 relative">
+    <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+      <i data-feather="edit" class="w-5 h-5 text-sky-600"></i>
+      Modifier le niveau de confidentialité
+    </h2>
+    <form (ngSubmit)="confirmEdit()" class="space-y-4">
+      <div>
+        <label class="text-sm text-gray-700 block mb-1">Nom du niveau</label>
+        <input [(ngModel)]="editedConfidName" name="nom" required
+          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400" />
+      </div>
+      <div class="flex justify-end gap-4 pt-4 border-t">
+        <button type="button" (click)="cancelEdit()"
+          class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+          Annuler
+        </button>
+        <button type="submit" [disabled]="!editedConfidName.trim()"
+          class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow disabled:opacity-50">
+          Enregistrer
+        </button>
+      </div>
+    </form>
+    <button (click)="cancelEdit()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+      <i data-feather="x" class="w-5 h-5"></i>
+    </button>
+  </div>
+  
+</div>

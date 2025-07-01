@@ -1,8 +1,9 @@
-import { Component, AfterViewChecked } from '@angular/core';
+import { Component, AfterViewChecked, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import feather from 'feather-icons';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-questions',
@@ -11,27 +12,50 @@ import feather from 'feather-icons';
   templateUrl: './questions.component.html',
   styleUrls: ['./questions.component.css']
 })
-export class QuestionsComponent implements AfterViewChecked {
+export class QuestionsComponent implements OnInit, AfterViewChecked {
   step: number = 1;
   password: string = '';
   confirmPassword: string = '';
   pwError: boolean = false;
 
-  questions = [
-    "Nom de votre premier animal ?",
-    "Votre couleur préférée ?",
-    "Nom de jeune fille de votre mère ?",
-    "Votre premier emploi ?",
-    "Ville de naissance ?",
-    "Film favori ?",
-    "École primaire ?",
-    "Plat préféré ?"
-  ];
+  questions: string[] = [];  // <-- vide au départ, chargée dynamiquement
 
   selectedQuestions: string[] = ['', '', ''];
   answers: string[] = ['', '', ''];
 
   constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    const token = this.getTokenFromURL();
+    if (token) {
+      this.authService.getSecurityQuestions(token).subscribe({
+        next: (res) => {
+          this.questions = res.questions || [];
+          if (this.questions.length === 0) {
+            Swal.fire({
+              icon: 'info',
+              title: 'Info',
+              text: 'Aucune question de sécurité disponible.',
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Erreur lors du chargement des questions:', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: "Erreur lors du chargement des questions de sécurité.",
+          });
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: "Token introuvable dans l'URL.",
+      });
+    }
+  }
 
   getAvailableQuestions(index: number): string[] {
     const used = this.selectedQuestions.slice(0, index);
@@ -45,11 +69,22 @@ export class QuestionsComponent implements AfterViewChecked {
         this.step++;
       } else {
         this.pwError = true;
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: "Les mots de passe ne correspondent pas.",
+        });
       }
     } else if (this.step >= 2 && this.step <= 3) {
       const idx = this.step - 2;
       if (this.selectedQuestions[idx] && this.answers[idx]) {
         this.step++;
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Attention',
+          text: "Veuillez sélectionner une question et fournir une réponse.",
+        });
       }
     }
   }
@@ -72,26 +107,45 @@ export class QuestionsComponent implements AfterViewChecked {
       this.authService.sendSecurityQuestions(token, payload).subscribe({
         next: (res) => {
           console.log('✅ Réponse reçue :', res);
-          alert('✅ Questions de sécurité enregistrées avec succès.');
-          window.location.href = '/'; // 🔁 Redirection vers la page de connexion
+          Swal.fire({
+            icon: 'success',
+            title: 'Succès',
+            text: 'Questions de sécurité enregistrées avec succès.',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            window.location.href = '/'; // Redirection vers la page de connexion
+          });
         },
         error: (err) => {
           if (err.status === 200 && err.error === '') {
-            console.warn('ℹ️ Faux positif détecté (200 avec corps vide)');
-            alert('✅ Questions de sécurité enregistrées avec succès.');
-            window.location.href = '/'; // 🔁 Redirection même dans ce cas
+            Swal.fire({
+              icon: 'success',
+              title: 'Succès',
+              text: 'Questions de sécurité enregistrées avec succès.',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              window.location.href = '/';
+            });
             return;
           }
-
-          console.error('❌ Erreur réelle :', err);
           const message =
             err?.error?.message ||
             (typeof err?.error === 'string' ? err.error : null) ||
             err?.statusText ||
             "Une erreur inconnue est survenue.";
 
-          alert("❌ Erreur : " + message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: "Erreur : " + message,
+          });
         }
+      });
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Attention',
+        text: 'Veuillez remplir toutes les questions et réponses avant de soumettre.',
       });
     }
   }

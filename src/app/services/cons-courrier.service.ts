@@ -28,5 +28,8 @@ export class ConsCourrierService {
    return this.http.put(`${this.baseUrl}/courrier/archiver/${id}`, null, { responseType: 'text' });
 
   }
+  getOptionsDepart(): Observable<any> {
+  return this.http.get(`${this.baseUrl}/admin/courriers/depart`);
+}
 }
 

@@ -58,6 +58,10 @@ import { DictRoleComponent } from './admin-bc/dict-role/dict-role.component';
 import { DictServiceComponent } from './admin-bc/dict-service/dict-service.component';
 import { DictConfidComponent } from './admin-bc/dict-confid/dict-confid.component';
 import { DictVoieComponent } from './admin-bc/dict-voie/dict-voie.component';
+import { DictQuestComponent } from './admin-si/dict-quest/dict-quest.component';
+
+
+
 
 export const routes: Routes = [
   { path: '', component: ConnexionComponent }, //canActivate: [AuthGuard]  },
@@ -88,6 +92,10 @@ export const routes: Routes = [
       { path: 'urgences', component: SiUrgenceComponent },
       { path: 'profil', component: SiProfilComponent },
       { path: 'support', component: SupportSiComponent },
+       {
+    path: 'questions',
+    component: DictQuestComponent
+  }
     ],
   },
 

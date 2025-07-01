@@ -43,12 +43,12 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
     <div>
       <label class="block text-sm font-semibold mb-2">Date d’enregistrement</label>
-      <input type="date" formControlName="dateEnregistrement"
+      <input type="date" formControlName="dateEnregistre"
              class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400" />
     </div>
     <div>
       <label class="block text-sm font-semibold mb-2">Date d’arrivée</label>
-      <input type="date" formControlName="dateDepart"
+      <input type="date" formControlName="dateArrive"
              class="w-full px-6 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-sky-400" />
     </div>
   </div>
@@ -95,9 +95,8 @@
     </div>
   </div>
 
- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
   <!-- Employé -->
-  <div>
+  <div class="mt-6">
     <label class="block text-[15px] font-semibold mb-2">Employé</label>
     <select
       formControlName="employe"
@@ -112,22 +111,6 @@
       Aucun employé disponible.
     </div>
   </div>
-
-  <!-- Réponse à -->
-  <div>
-    <label class="block text-[15px] font-semibold mb-2">Réponse à</label>
-    <input
-      type="number"
-      formControlName="reponseA"
-      placeholder="Numéro du courrier source (facultatif)"
-      class="w-full px-6 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-sky-400"
-    />
-    <div class="text-sm text-gray-500 mt-1">
-      Laisser vide si ce courrier n’est pas une réponse.
-    </div>
-  </div>
-</div>
-
 
   <!-- Fichier -->
   <div class="mt-6">

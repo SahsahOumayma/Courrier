@@ -41,8 +41,7 @@ export class EnrArriveeComponent implements OnInit, AfterViewInit {
       employe: [''],
       nature: ['', Validators.required],
       dateArrive: ['', Validators.required],
-      dateEnregistre: ['', Validators.required],
-      reponseA: ['']
+      dateEnregistre: ['', Validators.required]
     });
 
     this.loadOptions();
@@ -56,7 +55,6 @@ export class EnrArriveeComponent implements OnInit, AfterViewInit {
     const token = localStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
 
-    // Chargement des urgences, services, confidentialités
     this.courrierService.getOptionsAjoutCourrier().subscribe({
       next: data => {
         this.services = (data.services || []).filter(s => !s.dateSuppression);
@@ -68,7 +66,6 @@ export class EnrArriveeComponent implements OnInit, AfterViewInit {
       }
     });
 
-    // Chargement des employés
     this.courrierService.getStaticOptions().subscribe({
       next: data => {
         this.employes = (data.employes || []).filter(e => !e.dateSuppression);
@@ -101,14 +98,15 @@ export class EnrArriveeComponent implements OnInit, AfterViewInit {
     formData.append('description', v.description);
     formData.append('degreConfidentialite', v.degreConfidentialite);
     formData.append('urgence', v.urgence);
-    formData.append('serviceId', v.service);
+    formData.append('service', v.service);
     formData.append('nature', v.nature);
     formData.append('attachment', this.file);
     formData.append('dateArrive', v.dateArrive);
     formData.append('dateEnregistre', v.dateEnregistre);
 
-    if (v.employe) formData.append('employe', v.employe);
-    if (v.reponseA) formData.append('reponseAId', v.reponseA);
+    if (v.employe) {
+      formData.append('employe', v.employe);
+    }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('token')}`);
 

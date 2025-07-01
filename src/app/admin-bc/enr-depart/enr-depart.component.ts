@@ -21,7 +21,6 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
   urgences: any[] = [];
   voies: any[] = [];
   natures: string[] = ['PERSONNEL', 'ADMINISTRATIF', 'CONTRAT', 'AUTRE'];
-  voieExpeditions: any;
 
   constructor(private fb: FormBuilder, private http: HttpClient) {}
 
@@ -31,7 +30,6 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
       voieExpedition: ['', Validators.required],
       numeroRegistre: ['', Validators.required],
       objet: ['', Validators.required],
-      reponseA: [null],
       description: ['', Validators.required],
       degreConfidentialite: ['', Validators.required],
       urgence: ['', Validators.required],
@@ -57,7 +55,7 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
         this.services = (data.services || []).filter((s: any) => !s.dateSuppression);
         this.urgences = (data.urgences || []).filter((u: any) => !u.dateSuppression);
         this.confidentialites = (data.confidentialites || []).filter((c: any) => !c.dateSuppression);
-        this.voieExpeditions = (data.voies || []).filter((v: any) => !v.dateSuppression); // 👈 voieExpédition depuis backend
+        this.voies = (data.voieExpeditions || []).filter((v: any) => !v.dateSuppression);
       },
       error: err => {
         console.error('❌ Erreur lors du chargement des options :', err);
@@ -91,7 +89,7 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
     const formData = new FormData();
 
     formData.append('nomExpediteur', v.nomExpediteur);
-    formData.append('voieExpedition', v.voieExpedition); // maintenant l'ID
+    formData.append('voieExpedition', v.voieExpedition);
     formData.append('numeroRegistre', v.numeroRegistre);
     formData.append('objet', v.objet);
     formData.append('description', v.description);
@@ -100,13 +98,8 @@ export class EnrDepartComponent implements OnInit, AfterViewInit {
     formData.append('service', v.service);
     formData.append('nature', v.nature);
     formData.append('attachment', this.file);
-
-    formData.append('dateArrive', v.dateDepart);
+    formData.append('dateDepart', v.dateDepart);
     formData.append('dateEnregistre', v.dateEnregistrement);
-
-    if (v.reponseA !== null && v.reponseA !== '') {
-      formData.append('reponseAId', v.reponseA);
-    }
 
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);

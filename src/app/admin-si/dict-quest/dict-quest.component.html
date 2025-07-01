@@ -1,0 +1,161 @@
+<section class="p-8 bg-gradient-to-b from-[#f0f9ff] to-white rounded-3xl shadow-2xl border border-[#cfe7f9]">
+
+  <!-- Titre et bouton ajout -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-extrabold italic text-[#004b74] flex items-center gap-3">
+      <span class="p-3 bg-blue-100 rounded-full">
+        <i data-feather="help-circle" class="w-6 h-6 text-sky-600"></i>
+      </span>
+      Liste des questions disponibles
+    </h2>
+    <button (click)="showAddModal = true"
+      class="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg shadow hover:bg-sky-700 transition">
+      <i data-feather="plus" class="w-5 h-5"></i>
+      Nouvelle question
+    </button>
+  </div>
+
+  <!-- Recherche & pagination -->
+  <div class="mb-4 flex items-center justify-between">
+    <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()"
+      placeholder="🔍 Rechercher une question active..."
+      class="w-80 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 transition" />
+    <select [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()"
+      class="px-3 py-2 border rounded shadow-sm">
+      <option *ngFor="let option of paginationOptions" [value]="option">{{ option }}/page</option>
+    </select>
+  </div>
+
+  <!-- Tableau des questions actives -->
+  <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+    <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+      <thead class="bg-sky-50 text-sky-800 font-bold">
+        <tr>
+          <th class="px-4 py-3 w-[10%] text-left">ID</th>
+          <th class="px-4 py-3 w-[50%] text-center">Nom de la question</th>
+          <th class="px-4 py-3 w-[40%] text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let question of paginatedQuestions; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+          <td class="px-4 py-3 font-semibold">{{ question.id }}</td>
+          <td class="px-4 py-3 text-center">{{ question.nom }}</td>
+          <td class="px-4 py-3 text-center flex justify-center gap-2">
+            <button (click)="openEditModal(question)"
+              class="px-4 py-1 rounded-full text-white font-semibold text-sm hover:bg-blue-700 shadow"
+              style="background-color: #0d99ff;">
+              Modifier
+            </button>
+            <button (click)="deleteQuestion(question.id)"
+              class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:bg-red-600 shadow text-sm">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="paginatedQuestions.length === 0">
+          <td colspan="3" class="text-center text-gray-400 py-4">Aucune question trouvée.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-between items-center mt-4">
+    <button (click)="previousPage()" [disabled]="currentPage === 1"
+      [ngClass]="{ 'bg-sky-700 hover:bg-sky-800': currentPage > 1, 'bg-sky-400/60 cursor-not-allowed': currentPage === 1 }"
+      class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+      <i data-feather="arrow-left"></i> Précédent
+    </button>
+    <span class="font-semibold text-sky-800">Page {{ currentPage }} / {{ totalPages() }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
+      [ngClass]="{ 'bg-sky-700 hover:bg-sky-800': currentPage < totalPages(), 'bg-sky-400/60 cursor-not-allowed': currentPage === totalPages() }"
+      class="px-4 py-2 text-white rounded-lg font-semibold flex items-center gap-2 transition">
+      Suivant <i data-feather="arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- Séparateur -->
+  <div class="my-16 h-6 rounded-3xl bg-[#003f67] opacity-60 shadow-md"></div>
+
+  <!-- Historique -->
+  <div>
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-extrabold italic text-pink-800 flex items-center gap-3">
+        <span class="p-3 bg-pink-100 rounded-full">
+          <i data-feather="archive" class="w-6 h-6 text-pink-600"></i>
+        </span>
+        Historique des questions supprimées
+      </h2>
+      <select [(ngModel)]="itemsPerPageDeleted" (change)="changeItemsPerPageDeleted()"
+        class="px-3 py-2 border rounded-lg">
+        <option [value]="5">5/page</option>
+        <option [value]="10">10/page</option>
+        <option [value]="20">20/page</option>
+      </select>
+    </div>
+
+    <!-- Recherche historique -->
+    <div class="mb-4">
+      <input type="text" [(ngModel)]="searchDeleted" (input)="applyFilterDeleted()"
+        placeholder="🔍 Rechercher dans l'historique..."
+        class="w-96 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-400" />
+    </div>
+
+    <!-- Tableau historique -->
+    <div class="overflow-x-auto rounded-2xl shadow-inner border border-gray-100 bg-white">
+      <table class="w-full text-sm text-left text-gray-800 border-separate border-spacing-y-2 table-fixed">
+        <thead class="bg-pink-50 text-pink-800 font-bold">
+          <tr>
+            <th class="px-4 py-3 w-[10%] text-left">ID</th>
+            <th class="px-4 py-3 w-[50%] text-center">Nom de la question</th>
+            <th class="px-4 py-3 w-[40%] text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let question of paginatedDeleted; let i = index" [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+            <td class="px-4 py-3 font-semibold">{{ question.id }}</td>
+            <td class="px-4 py-3 text-center">{{ question.nom }}</td>
+            <td class="px-4 py-3 text-center">
+              <button (click)="restoreQuestion(question.id)"
+                class="bg-green-600 text-white px-4 py-1 rounded-full font-semibold hover:bg-green-700 shadow text-sm">
+                Restaurer
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedDeleted.length === 0">
+            <td colspan="3" class="text-center text-gray-400 py-4">Aucune question supprimée.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Ajout/Modification -->
+  <div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 border border-gray-200 space-y-6">
+      <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+        <i data-feather="edit" class="w-5 h-5 text-sky-600"></i>
+        {{ editingQuestion ? 'Modifier la question' : 'Nouvelle question' }}
+      </h2>
+      <form (ngSubmit)="addOrEditQuestion()" class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-700 block mb-1">Nom de la question</label>
+          <input [(ngModel)]="newQuestionName" name="nom" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sky-400" />
+        </div>
+        <div class="flex justify-end gap-4 pt-4 border-t">
+          <button type="button" (click)="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Annuler</button>
+          <button type="submit" [disabled]="!newQuestionName.trim()" class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 shadow disabled:opacity-50">
+            {{ editingQuestion ? 'Enregistrer' : 'Ajouter' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    feather.replace();
+  });
+</script>
