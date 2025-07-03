@@ -44,7 +44,7 @@
       <tbody>
         <tr *ngFor="let courrier of courriersFiltres; let i = index"
             class="shadow-sm hover:shadow-md transition rounded-xl text-gray-800"
-            [ngClass]="{ 'bg-red-100': courrier.urgence?.nom === 'FLASH' }">
+            [ngClass]="{ 'bg-red-100': courrier.urgence === 'FLASH' }">
           <td class="px-4 py-4 font-semibold rounded-l-xl">{{ i + 1 }}</td>
           <td class="px-4 py-4">{{ courrier.objet }}</td>
           <td class="px-4 py-4">{{ courrier.description }}</td>
@@ -59,15 +59,15 @@
 
           <!-- Statut -->
           <td class="px-4 py-4 text-center">
-            <ng-container *ngIf="courrier.statutCourrier && courrier.statutCourrier.toLowerCase() !== 'null'; else noStatus">
+            <ng-container *ngIf="courrier.status && courrier.status.toLowerCase() !== 'null'; else noStatus">
               <span class="inline-block px-3 py-1.5 text-xs font-semibold rounded-full"
                     [ngClass]="{
-                      'bg-blue-100 text-blue-800': courrier.statutCourrier === 'EN_COURS',
-                      'bg-green-100 text-green-800': courrier.statutCourrier === 'TRAITE',
-                      'bg-yellow-100 text-yellow-800': courrier.statutCourrier === 'ENREGISTRE',
-                      'bg-purple-100 text-purple-800': courrier.statutCourrier === 'RETOURE'
+                      'bg-blue-100 text-blue-800': courrier.status === 'EN_COURS',
+                      'bg-green-100 text-green-800': courrier.status === 'TRAITE',
+                      'bg-yellow-100 text-yellow-800': courrier.status === 'ENREGISTRE',
+                      'bg-purple-100 text-purple-800': courrier.status === 'RETOURE'
                     }">
-                {{ courrier.statutCourrier.replaceAll('_', ' ') }}
+                {{ courrier.status.replaceAll('_', ' ') }}
               </span>
             </ng-container>
             <ng-template #noStatus>
@@ -75,6 +75,7 @@
             </ng-template>
           </td>
 
+          <!-- Signataire -->
           <td class="px-4 py-4">{{ courrier.signataire || '—' }}</td>
 
           <!-- Urgence -->
@@ -82,12 +83,12 @@
             <span
               class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full"
               [ngClass]="{
-                'bg-red-600 text-white animate-pulse': courrier.urgence?.nom === 'FLASH',
-                'bg-yellow-300 text-yellow-900': courrier.urgence?.nom === 'URGENT',
-                'bg-green-200 text-green-800': courrier.urgence?.nom === 'ROUTINE',
+                'bg-red-600 text-white animate-pulse': courrier.urgence === 'FLASH',
+                'bg-yellow-300 text-yellow-900': courrier.urgence === 'URGENT',
+                'bg-green-200 text-green-800': courrier.urgence === 'ROUTINE',
                 'bg-gray-200 text-gray-800': !courrier.urgence
               }">
-              {{ courrier.urgence?.nom || '—' }}
+              {{ courrier.urgence || '—' }}
             </span>
           </td>
 
